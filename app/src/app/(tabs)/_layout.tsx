@@ -11,31 +11,34 @@ import {
     Settings,
 } from 'lucide-react-native';
 import { useResponsive } from '../../hooks/useResponsive';
+import { useTheme } from '../../hooks/useTheme';
 
 /**
  * Custom Tab Bar Background for premium look
  */
-const TabBarBackground = () => (
-    <View style={styles.tabBarBackground} />
-);
+const TabBarBackground = () => {
+    const theme = useTheme();
+    return <View style={[styles.tabBarBackground, { backgroundColor: theme.background.card }]} />;
+};
 
 export default function TabLayout() {
     const { isTablet } = useResponsive();
+    const theme = useTheme();
 
     const screenOptions = useMemo(() => ({
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.text.tertiary,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.text.tertiary,
         tabBarStyle: {
-            backgroundColor: COLORS.background.card,
+            backgroundColor: theme.background.card,
             borderTopWidth: 1,
-            borderTopColor: COLORS.divider,
+            borderTopColor: theme.divider,
             height: Platform.OS === 'ios' ? 95 : 75,
             paddingBottom: Platform.OS === 'ios' ? 35 : 15,
             paddingTop: 12,
             elevation: 10,
-            shadowColor: COLORS.shadow,
+            shadowColor: theme.shadow,
             shadowOffset: { width: 0, height: -5 },
             shadowOpacity: 0.12,
             shadowRadius: 12,
@@ -46,7 +49,7 @@ export default function TabLayout() {
                 marginBottom: 25,
                 marginHorizontal: 20,
                 borderWidth: 1,
-                borderColor: COLORS.divider,
+                borderColor: theme.divider,
             } : {}),
         },
         tabBarLabelStyle: {
@@ -54,7 +57,7 @@ export default function TabLayout() {
             fontWeight: '600',
             marginTop: -4,
         }
-    }), [isTablet]);
+    }), [isTablet, theme]);
 
     return (
         <Tabs screenOptions={screenOptions as any}>
@@ -128,7 +131,6 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
     tabBarBackground: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: COLORS.background.card,
         opacity: 0.95,
     },
 });

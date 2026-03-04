@@ -5,17 +5,19 @@ import { combineReducers } from 'redux';
 import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import matchReducer from './slices/matchSlice';
+import themeReducer from './slices/themeSlice';
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['auth'], // Only persist auth (which holds the user profile)
+    whitelist: ['auth', 'theme'], // Persist auth and theme preferences
 };
 
 const rootReducer = combineReducers({
     auth: authReducer,
     user: userReducer,
     match: matchReducer,
+    theme: themeReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -14,7 +14,6 @@ import Animated, {
     runOnJS,
     SharedValue
 } from 'react-native-reanimated';
-import { COLORS as STATIC_COLORS } from '../theme/colors';
 import { RADIUS } from '../theme/spacing';
 import { useTheme } from '../hooks/useTheme';
 

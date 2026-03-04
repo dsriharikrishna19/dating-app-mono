@@ -8,10 +8,10 @@ import {
     TextStyle,
     View,
 } from 'react-native';
-import { COLORS } from '../theme/colors';
 import { SPACING, RADIUS } from '../theme/spacing';
 import { TYPOGRAPHY } from '../theme/typography';
 import { useResponsive } from '../hooks/useResponsive';
+import { useTheme } from '../hooks/useTheme';
 
 interface ButtonProps {
     title: string;
@@ -40,26 +40,27 @@ const Button: React.FC<ButtonProps> = ({
     leftIcon,
 }) => {
     const { scale } = useResponsive();
+    const theme = useTheme();
 
     const getBackgroundColor = () => {
-        if (disabled) return COLORS.background.surface;
+        if (disabled) return theme.background.surface;
         switch (variant) {
-            case 'primary': return COLORS.primary;
-            case 'secondary': return COLORS.secondary;
-            case 'accent': return COLORS.accent;
+            case 'primary': return theme.primary;
+            case 'secondary': return theme.secondary;
+            case 'accent': return theme.accent;
             case 'outline':
             case 'ghost': return 'transparent';
-            default: return COLORS.primary;
+            default: return theme.primary;
         }
     };
 
     const getTextColor = () => {
-        if (disabled) return COLORS.text.tertiary;
+        if (disabled) return theme.text.tertiary;
         switch (variant) {
             case 'outline':
-            case 'ghost': return COLORS.primary;
-            case 'accent': return COLORS.text.primary;
-            default: return COLORS.text.light;
+            case 'ghost': return theme.primary;
+            case 'accent': return theme.text.primary;
+            default: return theme.text.light;
         }
     };
 
@@ -83,8 +84,9 @@ const Button: React.FC<ButtonProps> = ({
                     paddingHorizontal: padding.px,
                     minHeight: padding.h,
                     width: fullWidth ? '100%' : 'auto',
+                    shadowColor: theme.shadow,
                 },
-                variant === 'outline' && { borderWidth: 1.5, borderColor: COLORS.primary },
+                variant === 'outline' && { borderWidth: 1.5, borderColor: theme.primary },
                 disabled && { opacity: 0.7 },
                 style,
             ]}
@@ -120,7 +122,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
         elevation: 2,
-        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,

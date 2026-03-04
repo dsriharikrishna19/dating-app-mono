@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -24,22 +24,23 @@ import FormSelect from '../../components/FormSelect';
 import SelectionGroup from '../../components/SelectionGroup';
 import Button from '../../components/Button';
 import AppText from '../../components/AppText';
-import { COLORS } from '../../theme/colors';
 import { SPACING, RADIUS } from '../../theme/spacing';
 import { TYPOGRAPHY } from '../../theme/typography';
 import { useResponsive } from '../../hooks/useResponsive';
 import { Camera, ArrowLeft, ChevronRight } from 'lucide-react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
+    const theme = useTheme();
     const router = useRouter();
     const dispatch = useDispatch();
     const registrationMobile = useSelector((state: RootState) => state.auth.registrationMobile);
     const [step, setStep] = useState(1);
-    const { isTablet, scale } = useResponsive();
+    const { isTablet } = useResponsive();
 
-    const { control, handleSubmit, formState: { errors }, setValue, trigger, getValues } = useForm<OnboardingFormData>({
+    const { control, handleSubmit, setValue, trigger, getValues } = useForm<OnboardingFormData>({
         resolver: zodResolver(onboardingSchema),
         defaultValues: {
             fullName: '',
@@ -91,14 +92,6 @@ export default function OnboardingScreen() {
         router.replace('/pages/home');
     };
 
-    const onError = (errors: any) => {
-        const errorMessages = Object.entries(errors)
-            .map(([field, err]: any) => `• ${field}: ${err?.message || 'Invalid'}`)
-            .join('\n');
-        Alert.alert('Please fix the following errors', errorMessages);
-        console.log('Form errors:', JSON.stringify(errors, null, 2));
-    };
-
     const nextStep = async () => {
         let fieldsToValidate: any[] = [];
 
@@ -134,8 +127,8 @@ export default function OnboardingScreen() {
             case 1:
                 return (
                     <View style={styles.formSection}>
-                        <AppText variant="h1" style={styles.sectionTitle}>The Basics</AppText>
-                        <AppText variant="body" style={styles.sectionSubtitle}>Tell us the basics to get started.</AppText>
+                        <AppText variant="h1" style={[styles.sectionTitle, { color: theme.text.primary }]}>The Basics</AppText>
+                        <AppText variant="body" style={[styles.sectionSubtitle, { color: theme.text.secondary }]}>Tell us the basics to get started.</AppText>
 
                         <FormInput control={control} name="fullName" label="Full Name" placeholder="Rahul Sharma" required={true} />
                         <FormInput control={control} name="mobile" label="Mobile Number" placeholder="9876543210" keyboardType="numeric" maxLength={10} required={true} />
@@ -161,8 +154,8 @@ export default function OnboardingScreen() {
             case 2:
                 return (
                     <View style={styles.formSection}>
-                        <AppText variant="h1" style={styles.sectionTitle}>About You</AppText>
-                        <AppText variant="body" style={styles.sectionSubtitle}>Share a bit of your personality.</AppText>
+                        <AppText variant="h1" style={[styles.sectionTitle, { color: theme.text.primary }]}>About You</AppText>
+                        <AppText variant="body" style={[styles.sectionSubtitle, { color: theme.text.secondary }]}>Share a bit of your personality.</AppText>
 
                         <FormInput
                             control={control}
@@ -202,8 +195,8 @@ export default function OnboardingScreen() {
             case 3:
                 return (
                     <View style={styles.formSection}>
-                        <AppText variant="h1" style={styles.sectionTitle}>Preferences</AppText>
-                        <AppText variant="body" style={styles.sectionSubtitle}>Fine-tune your discovery.</AppText>
+                        <AppText variant="h1" style={[styles.sectionTitle, { color: theme.text.primary }]}>Preferences</AppText>
+                        <AppText variant="body" style={[styles.sectionSubtitle, { color: theme.text.secondary }]}>Fine-tune your discovery.</AppText>
 
                         <SelectionGroup
                             control={control}
@@ -220,7 +213,7 @@ export default function OnboardingScreen() {
                         <FormInput control={control} name="email" label="Email (Optional)" placeholder="rahul@example.com" keyboardType="email-address" autoCapitalize="none" />
 
                         <View style={styles.locationContainer}>
-                            <AppText variant="caption" style={styles.locationLabel}>Location</AppText>
+                            <AppText variant="caption" style={[styles.locationLabel, { color: theme.text.secondary }]}>Location</AppText>
                             <FormInput control={control} name="city" label="City" placeholder="City (e.g. Hyderabad)" required={true} />
                             <View style={styles.row}>
                                 <View style={styles.half}>
@@ -236,14 +229,14 @@ export default function OnboardingScreen() {
             case 4:
                 return (
                     <View style={styles.formSection}>
-                        <AppText variant="h1" style={styles.sectionTitle}>Show Yourself</AppText>
-                        <AppText variant="body" style={styles.sectionSubtitle}>Upload 4 photos to complete your profile.</AppText>
+                        <AppText variant="h1" style={[styles.sectionTitle, { color: theme.text.primary }]}>Show Yourself</AppText>
+                        <AppText variant="body" style={[styles.sectionSubtitle, { color: theme.text.secondary }]}>Upload 4 photos to complete your profile.</AppText>
 
                         <View style={styles.imageGrid}>
                             {[0, 1, 2, 3].map((idx) => (
                                 <TouchableOpacity
                                     key={idx}
-                                    style={styles.imagePlaceholder}
+                                    style={[styles.imagePlaceholder, { backgroundColor: theme.background.surface, borderColor: theme.divider }]}
                                     activeOpacity={0.7}
                                     onPress={() => pickImage(idx)}
                                 >
@@ -251,10 +244,10 @@ export default function OnboardingScreen() {
                                         <Image source={{ uri: watchedImages[idx] }} style={styles.selectedImage} />
                                     ) : (
                                         <>
-                                            <View style={styles.imageIconCircle}>
-                                                <Camera color={COLORS.primary} size={24} />
+                                            <View style={[styles.imageIconCircle, { backgroundColor: theme.background.card, shadowColor: theme.primary }]}>
+                                                <Camera color={theme.primary} size={24} />
                                             </View>
-                                            <AppText variant="caption" color={COLORS.text.tertiary} style={styles.imageLabel}>
+                                            <AppText variant="caption" color={theme.text.tertiary} style={styles.imageLabel}>
                                                 PHOTO {idx + 1}
                                             </AppText>
                                         </>
@@ -263,8 +256,8 @@ export default function OnboardingScreen() {
                             ))}
                         </View>
 
-                        <View style={styles.infoBox}>
-                            <AppText variant="body" color={COLORS.primary} align="center" style={styles.infoText}>
+                        <View style={[styles.infoBox, { backgroundColor: theme.primaryAlpha(0.08), borderColor: theme.primaryAlpha(0.2) }]}>
+                            <AppText variant="body" color={theme.primary} align="center" style={styles.infoText}>
                                 💡 Tip: Clear, smiling photos get 60% more matches!
                             </AppText>
                         </View>
@@ -276,20 +269,20 @@ export default function OnboardingScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background.main }]}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 style={styles.flex}
             >
-                <View style={styles.header}>
+                <View style={[styles.header, { backgroundColor: theme.background.main }]}>
                     <TouchableOpacity onPress={step > 1 ? prevStep : () => router.back()} style={styles.backButton}>
-                        <ArrowLeft color={COLORS.text.primary} size={24} />
+                        <ArrowLeft color={theme.text.primary} size={24} />
                     </TouchableOpacity>
                     <View style={styles.progressContainer}>
-                        <View style={styles.progressBar}>
-                            <View style={[styles.progressFill, { width: `${(step / 4) * 100}%` }]} />
+                        <View style={[styles.progressBar, { backgroundColor: theme.divider }]}>
+                            <View style={[styles.progressFill, { backgroundColor: theme.primary, width: `${(step / 4) * 100}%` }]} />
                         </View>
-                        <AppText variant="caption" style={styles.stepText}>STEP {step} OF 4</AppText>
+                        <AppText variant="caption" style={[styles.stepText, { color: theme.text.tertiary }]}>STEP {step} OF 4</AppText>
                     </View>
                     <View style={styles.headerRight} />
                 </View>
@@ -301,17 +294,17 @@ export default function OnboardingScreen() {
                     ]}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View style={[styles.contentContainer, isTablet && styles.tabletContent]}>
+                    <View style={[styles.contentContainer, isTablet && styles.tabletContent, isTablet && { backgroundColor: theme.background.card, shadowColor: theme.shadow }]}>
                         {renderStepContent()}
                     </View>
                 </ScrollView>
 
-                <View style={[styles.footer, isTablet && styles.tabletFooter]}>
+                <View style={[styles.footer, { backgroundColor: theme.background.main, borderTopColor: theme.divider }, isTablet && styles.tabletFooter]}>
                     <Button
                         title={step === 4 ? "Complete Profile" : "Continue"}
                         onPress={nextStep}
                         size="lg"
-                        rightIcon={step < 4 ? <ChevronRight color={COLORS.text.light} size={20} /> : undefined}
+                        rightIcon={step < 4 ? <ChevronRight color={theme.text.light} size={20} /> : undefined}
                     />
                 </View>
             </KeyboardAvoidingView>
@@ -322,7 +315,6 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background.main,
     },
     flex: {
         flex: 1,
@@ -332,7 +324,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
         paddingVertical: SPACING.md,
-        backgroundColor: COLORS.background.main,
     },
     backButton: {
         width: 40,
@@ -345,7 +336,6 @@ const styles = StyleSheet.create({
     },
     progressBar: {
         height: 6,
-        backgroundColor: COLORS.border,
         borderRadius: RADIUS.full,
         width: '80%',
         marginBottom: 6,
@@ -353,14 +343,12 @@ const styles = StyleSheet.create({
     },
     progressFill: {
         height: '100%',
-        backgroundColor: COLORS.primary,
         borderRadius: RADIUS.full,
     },
     stepText: {
         fontSize: 10,
         fontWeight: '800',
         letterSpacing: 1,
-        color: COLORS.text.tertiary,
     },
     headerRight: {
         width: 40,
@@ -377,12 +365,10 @@ const styles = StyleSheet.create({
         maxWidth: 500,
     },
     tabletContent: {
-        backgroundColor: COLORS.background.card,
         padding: SPACING.xl,
         borderRadius: RADIUS.xl,
         marginTop: SPACING.xl,
         elevation: 2,
-        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
         shadowRadius: 10,
@@ -394,7 +380,6 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.xxs,
     },
     sectionSubtitle: {
-        color: COLORS.text.secondary,
         marginBottom: SPACING.xl,
     },
     row: {
@@ -421,10 +406,8 @@ const styles = StyleSheet.create({
     imagePlaceholder: {
         width: '47%',
         aspectRatio: 0.85,
-        backgroundColor: COLORS.background.surface,
         borderRadius: RADIUS.xl,
         borderWidth: 2,
-        borderColor: COLORS.border,
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignItems: 'center',
@@ -434,12 +417,10 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: COLORS.background.card,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: SPACING.sm,
         elevation: 1,
-        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -454,12 +435,10 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS.lg,
     },
     infoBox: {
-        backgroundColor: COLORS.primaryAlpha(0.08),
         padding: SPACING.lg,
         borderRadius: RADIUS.lg,
         marginTop: SPACING.xl,
         borderWidth: 1,
-        borderColor: COLORS.primaryAlpha(0.2),
     },
     infoText: {
         fontWeight: TYPOGRAPHY.weight.medium,
@@ -467,9 +446,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         padding: SPACING.lg,
-        backgroundColor: COLORS.background.main,
         borderTopWidth: 1,
-        borderTopColor: COLORS.divider,
     },
     tabletFooter: {
         alignItems: 'center',

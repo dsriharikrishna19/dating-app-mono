@@ -3,7 +3,6 @@ import {
     View,
     StyleSheet,
     FlatList,
-    Image,
     SafeAreaView,
     TouchableOpacity,
     ScrollView,
@@ -11,7 +10,6 @@ import {
     Platform
 } from 'react-native';
 import { MOCK_USERS } from '../../../utils/mockData';
-import { COLORS } from '../../../theme/colors';
 import { SPACING, RADIUS } from '../../../theme/spacing';
 import { TYPOGRAPHY } from '../../../theme/typography';
 import { Search, X } from 'lucide-react-native';
@@ -19,9 +17,11 @@ import AppText from '../../../components/AppText';
 import Avatar from '../../../components/Avatar';
 import { useResponsive } from '../../../hooks/useResponsive';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../../../hooks/useTheme';
 
 const NewMatchItem = ({ item }: { item: typeof MOCK_USERS[0] }) => {
     const router = useRouter();
+    const theme = useTheme();
     return (
         <TouchableOpacity
             style={styles.newMatchItem}
@@ -33,10 +33,10 @@ const NewMatchItem = ({ item }: { item: typeof MOCK_USERS[0] }) => {
                     uri={item.images[0]}
                     size={64}
                     showOnline={true}
-                    imageStyle={{ borderWidth: 2, borderColor: COLORS.primary }}
+                    imageStyle={{ borderWidth: 2, borderColor: theme.primary }}
                 />
             </View>
-            <AppText variant="tiny" style={styles.newMatchName} numberOfLines={1}>
+            <AppText variant="tiny" style={[styles.newMatchName, { color: theme.text.primary }]} numberOfLines={1}>
                 {item.fullName.split(' ')[0]}
             </AppText>
         </TouchableOpacity>
@@ -45,6 +45,7 @@ const NewMatchItem = ({ item }: { item: typeof MOCK_USERS[0] }) => {
 
 const MessageItem = React.memo(({ item, index }: { item: typeof MOCK_USERS[0], index: number }) => {
     const router = useRouter();
+    const theme = useTheme();
     // Simulate dynamic data based on index
     const lastMessages = [
         "Hey! Are we still meeting tomorrow?",
@@ -73,17 +74,17 @@ const MessageItem = React.memo(({ item, index }: { item: typeof MOCK_USERS[0], i
                 </View>
                 <View style={styles.messageContent}>
                     <View style={styles.messageHeader}>
-                        <AppText variant="bodyBold" style={[styles.name, isUnread && styles.unreadName]}>
+                        <AppText variant="bodyBold" style={[styles.name, { color: theme.text.primary }]}>
                             {item.fullName}
                         </AppText>
-                        <AppText variant="tiny" color={isUnread ? COLORS.primary : COLORS.text.tertiary} weight={isUnread ? "bold" : "regular"}>
+                        <AppText variant="tiny" color={isUnread ? theme.primary : theme.text.tertiary} weight={isUnread ? "bold" : "regular"}>
                             {timestamps[index % timestamps.length]}
                         </AppText>
                     </View>
                     <View style={styles.messageFooter}>
                         <AppText
                             variant="small"
-                            color={isUnread ? COLORS.text.primary : COLORS.text.secondary}
+                            color={isUnread ? theme.text.primary : theme.text.secondary}
                             weight={isUnread ? "medium" : "regular"}
                             numberOfLines={1}
                             style={styles.lastMessageText}
@@ -91,20 +92,21 @@ const MessageItem = React.memo(({ item, index }: { item: typeof MOCK_USERS[0], i
                             {lastMessages[index % lastMessages.length]}
                         </AppText>
                         {isUnread && (
-                            <View style={styles.unreadBadge}>
-                                <AppText variant="tiny" color={COLORS.text.light} style={styles.unreadCount}>1</AppText>
+                            <View style={[styles.unreadBadge, { backgroundColor: theme.primary }]}>
+                                <AppText variant="tiny" color={theme.text.light} style={styles.unreadCount}>1</AppText>
                             </View>
                         )}
                     </View>
                 </View>
             </TouchableOpacity>
-            {index < MOCK_USERS.length - 1 && <View style={styles.separator} />}
+            {index < MOCK_USERS.length - 1 && <View style={[styles.separator, { backgroundColor: theme.divider }]} />}
         </View>
     );
 });
 
 export default function ChatScreen() {
     const { isTablet } = useResponsive();
+    const theme = useTheme();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -125,24 +127,24 @@ export default function ChatScreen() {
     ), []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background.main }]}>
             <View style={styles.header}>
-                <AppText variant="h1" style={styles.title}>Messages</AppText>
+                <AppText variant="h1" style={[styles.title, { color: theme.text.primary }]}>Messages</AppText>
             </View>
 
             <View style={styles.searchContainer}>
-                <View style={styles.searchBar}>
-                    <Search color={COLORS.text.tertiary} size={20} style={{ marginRight: SPACING.sm }} />
+                <View style={[styles.searchBar, { backgroundColor: theme.background.surface, borderColor: theme.divider }]}>
+                    <Search color={theme.text.tertiary} size={20} style={{ marginRight: SPACING.sm }} />
                     <TextInput
                         placeholder="Search messages"
-                        placeholderTextColor={COLORS.text.tertiary}
-                        style={styles.searchInput}
+                        placeholderTextColor={theme.text.tertiary}
+                        style={[styles.searchInput, { color: theme.text.primary }]}
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
                     {searchQuery.length > 0 && (
                         <TouchableOpacity onPress={() => setSearchQuery('')}>
-                            <X color={COLORS.text.tertiary} size={18} />
+                            <X color={theme.text.tertiary} size={18} />
                         </TouchableOpacity>
                     )}
                 </View>
@@ -151,7 +153,7 @@ export default function ChatScreen() {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={isTablet && styles.tabletContent}>
                 {filteredRecent.length > 0 && !searchQuery && (
                     <View style={styles.section}>
-                        <AppText variant="h3" style={styles.sectionTitle}>Recent Matches</AppText>
+                        <AppText variant="h3" style={[styles.sectionTitle, { color: theme.text.primary }]}>Recent Matches</AppText>
                         <FlatList
                             horizontal
                             data={filteredRecent}
@@ -164,7 +166,7 @@ export default function ChatScreen() {
                 )}
 
                 <View style={styles.section}>
-                    <AppText variant="h3" style={styles.sectionTitle}>
+                    <AppText variant="h3" style={[styles.sectionTitle, { color: theme.text.primary }]}>
                         {searchQuery ? 'Results' : 'Chats'}
                     </AppText>
                     {filteredChats.length > 0 ? (
@@ -177,9 +179,9 @@ export default function ChatScreen() {
                         />
                     ) : (
                         <View style={styles.emptyContainer}>
-                            <Search color={COLORS.text.tertiary} size={40} />
-                            <AppText variant="bodyBold" style={{ marginTop: SPACING.sm }}>No conversations found</AppText>
-                            <AppText variant="small" color={COLORS.text.tertiary}>Try a different name</AppText>
+                            <Search color={theme.text.tertiary} size={40} />
+                            <AppText variant="bodyBold" style={{ marginTop: SPACING.sm, color: theme.text.primary }}>No conversations found</AppText>
+                            <AppText variant="small" color={theme.text.tertiary}>Try a different name</AppText>
                         </View>
                     )}
                 </View>
@@ -191,7 +193,6 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background.main,
     },
     header: {
         flexDirection: 'row',
@@ -203,16 +204,6 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: TYPOGRAPHY.weight.black,
     },
-    newChatButton: {
-        width: 44,
-        height: 44,
-        borderRadius: RADIUS.md,
-        backgroundColor: COLORS.background.surface,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.divider,
-    },
     searchContainer: {
         paddingHorizontal: SPACING.lg,
         paddingBottom: SPACING.md,
@@ -220,17 +211,14 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLORS.background.surface,
         paddingHorizontal: SPACING.md,
         height: 52,
         borderRadius: RADIUS.lg,
         borderWidth: 1,
-        borderColor: COLORS.divider,
     },
     searchInput: {
         flex: 1,
         fontSize: 16,
-        color: COLORS.text.primary,
         fontWeight: '500',
     },
     tabletContent: {
@@ -295,7 +283,6 @@ const styles = StyleSheet.create({
         marginRight: SPACING.md,
     },
     unreadBadge: {
-        backgroundColor: COLORS.primary,
         width: 22,
         height: 22,
         borderRadius: 11,
@@ -313,23 +300,8 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginRight: SPACING.md,
     },
-    activeDot: {
-        position: 'absolute',
-        bottom: 2,
-        right: 2,
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: '#4ade80',
-        borderWidth: 2,
-        borderColor: COLORS.background.main,
-    },
-    unreadName: {
-        color: COLORS.text.primary,
-    },
     separator: {
         height: 1,
-        backgroundColor: COLORS.divider,
         marginLeft: 80, // avatar width + margin
         marginRight: SPACING.lg,
     },

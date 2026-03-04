@@ -7,8 +7,8 @@ import {
     Platform
 } from 'react-native';
 import AppText from './AppText';
-import { COLORS } from '../theme/colors';
 import { SPACING, RADIUS } from '../theme/spacing';
+import { useTheme } from '../hooks/useTheme';
 
 export interface PopoverOption {
     label: string;
@@ -23,6 +23,7 @@ interface PopoverMenuProps {
 }
 
 export default function PopoverMenu({ visible, onClose, options }: PopoverMenuProps) {
+    const theme = useTheme();
     if (!visible) return null;
 
     return (
@@ -37,7 +38,14 @@ export default function PopoverMenu({ visible, onClose, options }: PopoverMenuPr
                 activeOpacity={1}
                 onPress={onClose}
             >
-                <View style={styles.modalContainer}>
+                <View style={[
+                    styles.modalContainer,
+                    {
+                        backgroundColor: theme.background.main,
+                        borderColor: theme.divider,
+                        shadowColor: theme.shadow,
+                    }
+                ]}>
                     <View style={styles.modalContent}>
                         {options.map((option, index) => (
                             <React.Fragment key={index}>
@@ -50,12 +58,12 @@ export default function PopoverMenu({ visible, onClose, options }: PopoverMenuPr
                                 >
                                     <AppText
                                         variant="body"
-                                        style={option.color ? { color: option.color } : { color: COLORS.text.primary }}
+                                        style={option.color ? { color: option.color } : { color: theme.text.primary }}
                                     >
                                         {option.label}
                                     </AppText>
                                 </TouchableOpacity>
-                                {index < options.length - 1 && <View style={styles.menuSeparator} />}
+                                {index < options.length - 1 && <View style={[styles.menuSeparator, { backgroundColor: theme.divider }]} />}
                             </React.Fragment>
                         ))}
                     </View>
@@ -75,15 +83,12 @@ const styles = StyleSheet.create({
         top: Platform.OS === 'ios' ? 100 : 70, // Adjust this as needed based on header height
         right: SPACING.md,
         width: 180,
-        backgroundColor: COLORS.background.main,
         borderRadius: RADIUS.md,
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
         elevation: 5,
         borderWidth: 1,
-        borderColor: COLORS.divider,
         zIndex: 1000,
     },
     modalContent: {
@@ -96,6 +101,5 @@ const styles = StyleSheet.create({
     },
     menuSeparator: {
         height: 1,
-        backgroundColor: COLORS.divider,
     },
 });

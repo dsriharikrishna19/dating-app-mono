@@ -54,24 +54,31 @@ function AppLayout() {
     );
 }
 
-export default function RootLayout() {
+function RootLayoutContent() {
     const theme = useTheme();
+
+    return (
+        <PersistGate
+            loading={
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background.main }}>
+                    <ActivityIndicator color={theme.primary} size="large" />
+                </View>
+            }
+            persistor={persistor}
+        >
+            <ErrorBoundary>
+                <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.background.main }}>
+                    <AppLayout />
+                </GestureHandlerRootView>
+            </ErrorBoundary>
+        </PersistGate>
+    );
+}
+
+export default function RootLayout() {
     return (
         <Provider store={store}>
-            <PersistGate
-                loading={
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background.main }}>
-                        <ActivityIndicator color={theme.primary} size="large" />
-                    </View>
-                }
-                persistor={persistor}
-            >
-                <ErrorBoundary>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <AppLayout />
-                    </GestureHandlerRootView>
-                </ErrorBoundary>
-            </PersistGate>
+            <RootLayoutContent />
         </Provider>
     );
 }

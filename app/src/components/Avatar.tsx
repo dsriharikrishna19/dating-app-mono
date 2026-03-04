@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, StyleSheet, ViewStyle, ImageStyle } from 'react-native';
-import { COLORS } from '../theme/colors';
+import { useTheme } from '../hooks/useTheme';
 
 interface AvatarProps {
     uri: string | undefined;
@@ -17,7 +17,8 @@ export default function Avatar({
     style,
     imageStyle
 }: AvatarProps) {
-    const defaultImage = 'https://ui-avatars.com/api/?name=User&background=random';
+    const theme = useTheme();
+    const defaultImage = `https://ui-avatars.com/api/?name=User&background=random`;
 
     return (
         <View style={[styles.container, style, { width: size, height: size }]}>
@@ -25,7 +26,12 @@ export default function Avatar({
                 source={{ uri: uri || defaultImage }}
                 style={[
                     styles.image,
-                    { width: size, height: size, borderRadius: size / 2 },
+                    {
+                        width: size,
+                        height: size,
+                        borderRadius: size / 2,
+                        backgroundColor: theme.background.surface,
+                    },
                     imageStyle
                 ]}
             />
@@ -39,7 +45,8 @@ export default function Avatar({
                             borderRadius: (size * 0.25) / 2,
                             bottom: size * 0.05,
                             right: size * 0.05,
-                            borderWidth: size * 0.05
+                            borderWidth: size * 0.1,
+                            borderColor: theme.background.main,
                         }
                     ]}
                 />
@@ -53,11 +60,9 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     image: {
-        backgroundColor: COLORS.background.surface,
     },
     onlineDot: {
         position: 'absolute',
         backgroundColor: '#4ade80', // Tailwind green-400
-        borderColor: COLORS.background.main,
     },
 });

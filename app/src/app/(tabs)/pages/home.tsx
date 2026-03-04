@@ -19,7 +19,6 @@ import Animated, {
 import { MOCK_USERS } from '../../../utils/mockData';
 import Card from '../../../components/Card';
 import AppText from '../../../components/AppText';
-import { COLORS } from '../../../theme/colors';
 import { SPACING, RADIUS } from '../../../theme/spacing';
 import { useResponsive } from '../../../hooks/useResponsive';
 import { useTheme } from '../../../hooks/useTheme';
@@ -161,12 +160,22 @@ export default function HomeScreen() {
                             <Animated.View style={[styles.activeCard, animatedStyle]}>
                                 <Card user={currentUser} />
 
-                                <Animated.View style={[styles.overlayWrapper, styles.likeOverlay, likeOpacity]}>
-                                    <AppText variant="h1" style={styles.overlayText}>LIKE</AppText>
+                                <Animated.View style={[
+                                    styles.overlayWrapper,
+                                    styles.likeOverlay,
+                                    likeOpacity,
+                                    { borderColor: theme.accent }
+                                ]}>
+                                    <AppText variant="h1" style={[styles.overlayText, { color: theme.accent }]}>LIKE</AppText>
                                 </Animated.View>
 
-                                <Animated.View style={[styles.overlayWrapper, styles.nopeOverlay, nopeOpacity]}>
-                                    <AppText variant="h1" style={styles.overlayText}>NOPE</AppText>
+                                <Animated.View style={[
+                                    styles.overlayWrapper,
+                                    styles.nopeOverlay,
+                                    nopeOpacity,
+                                    { borderColor: theme.error }
+                                ]}>
+                                    <AppText variant="h1" style={[styles.overlayText, { color: theme.error }]}>NOPE</AppText>
                                 </Animated.View>
                             </Animated.View>
                         </GestureDetector>
@@ -176,7 +185,7 @@ export default function HomeScreen() {
                         <View style={[styles.emptyIconCircle, { backgroundColor: theme.primaryAlpha(0.1) }]}>
                             <RotateCcw color={theme.primary} size={40} />
                         </View>
-                        <AppText variant="h2" align="center" style={styles.emptyTitle}>No more matches!</AppText>
+                        <AppText variant="h2" align="center" color={theme.text.primary} style={styles.emptyTitle}>No more matches!</AppText>
                         <AppText variant="body" align="center" color={theme.text.secondary} style={styles.emptySubtitle}>
                             You've seen everyone nearby. Try changing your filters or check back later.
                         </AppText>
@@ -316,19 +325,16 @@ const styles = StyleSheet.create({
     },
     likeOverlay: {
         left: 30,
-        borderColor: COLORS.accent,
         transform: [{ rotate: '-15deg' }],
     },
     nopeOverlay: {
         right: 30,
-        borderColor: COLORS.error,
         transform: [{ rotate: '15deg' }],
     },
     overlayText: {
         fontSize: 42,
         fontWeight: '900',
         letterSpacing: 2,
-        color: 'inherit' as any, // Will be overridden by container border color if needed
     },
     emptyContainer: {
         alignItems: 'center',

@@ -1,8 +1,8 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS } from '../theme/colors';
 import { SPACING } from '../theme/spacing';
 import Button from './Button';
+import { useTheme } from '../hooks/useTheme';
 
 interface Props {
     children: ReactNode;
@@ -12,6 +12,23 @@ interface State {
     hasError: boolean;
     error: Error | null;
 }
+
+const ErrorFallback = ({ error, onReset }: { error: Error | null, onReset: () => void }) => {
+    const theme = useTheme();
+    return (
+        <View style={[styles.container, { backgroundColor: theme.background.main }]}>
+            <Text style={[styles.title, { color: theme.text.primary }]}>Something went wrong</Text>
+            <Text style={[styles.message, { color: theme.text.secondary }]}>
+                {error?.message || 'An unexpected error occurred.'}
+            </Text>
+            <Button
+                title="Try Again"
+                onPress={onReset}
+                style={styles.button}
+            />
+        </View>
+    );
+};
 
 /**
  * Global Error Boundary Component
@@ -38,17 +55,10 @@ class ErrorBoundary extends Component<Props, State> {
     public render() {
         if (this.state.hasError) {
             return (
-                <View style={styles.container}>
-                    <Text style={styles.title}>Something went wrong</Text>
-                    <Text style={styles.message}>
-                        {this.state.error?.message || 'An unexpected error occurred.'}
-                    </Text>
-                    <Button
-                        title="Try Again"
-                        onPress={this.handleReset}
-                        style={styles.button}
-                    />
-                </View>
+                <ErrorFallback
+                    error={this.state.error}
+                    onReset={this.handleReset}
+                />
             );
         }
 
@@ -62,17 +72,14 @@ const styles = StyleSheet.create({
         padding: SPACING.xl,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: COLORS.background.main,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.text.primary,
         marginBottom: SPACING.sm,
     },
     message: {
         fontSize: 16,
-        color: COLORS.text.secondary,
         textAlign: 'center',
         marginBottom: SPACING.xl,
     },

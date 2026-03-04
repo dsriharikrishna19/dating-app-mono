@@ -18,12 +18,13 @@ import { useRouter } from 'expo-router';
 import FormInput from '../../components/FormInput';
 import Button from '../../components/Button';
 import AppText from '../../components/AppText';
-import { COLORS } from '../../theme/colors';
 import { SPACING, RADIUS } from '../../theme/spacing';
 import { useResponsive } from '../../hooks/useResponsive';
 import { Phone } from 'lucide-react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function RegisterScreen() {
+    const theme = useTheme();
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
     const { loading } = useSelector((state: RootState) => state.auth);
@@ -42,7 +43,7 @@ export default function RegisterScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background.main }]}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.flex}
@@ -54,12 +55,12 @@ export default function RegisterScreen() {
                     ]}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View style={[styles.content, isTablet && styles.tabletContent]}>
+                    <View style={[styles.content, isTablet && styles.tabletContent, isTablet && { backgroundColor: theme.background.card, shadowColor: theme.shadow }]}>
                         <View style={styles.header}>
-                            <AppText variant="h1" align="center" style={styles.title}>
+                            <AppText variant="h1" align="center" style={[styles.title, { color: theme.text.primary }]}>
                                 Get Started
                             </AppText>
-                            <AppText variant="body" align="center" style={styles.subtitle}>
+                            <AppText variant="body" align="center" style={{ color: theme.text.secondary }}>
                                 Enter your mobile number to continue
                             </AppText>
                         </View>
@@ -71,7 +72,7 @@ export default function RegisterScreen() {
                                 label="Mobile Number"
                                 placeholder="9876543210"
                                 keyboardType="numeric"
-                                leftIcon={<Phone size={20} color={COLORS.text.tertiary} />}
+                                leftIcon={<Phone size={20} color={theme.text.tertiary} />}
                                 maxLength={10}
                             />
 
@@ -84,17 +85,17 @@ export default function RegisterScreen() {
                             />
 
                             <View style={styles.footer}>
-                                <AppText variant="body" color={COLORS.text.secondary}>
+                                <AppText variant="body" color={theme.text.secondary}>
                                     Already have an account?{' '}
                                 </AppText>
                                 <TouchableOpacity onPress={() => router.back()}>
-                                    <AppText variant="link">Login</AppText>
+                                    <AppText variant="bodyBold" color={theme.primary}>Login</AppText>
                                 </TouchableOpacity>
                             </View>
                         </View>
 
                         <View style={styles.termsContainer}>
-                            <AppText variant="caption" align="center" style={styles.termsText}>
+                            <AppText variant="caption" align="center" style={[styles.termsText, { color: theme.text.tertiary }]}>
                                 By continuing, you agree to our Terms of Service and Privacy Policy.
                             </AppText>
                         </View>
@@ -108,7 +109,6 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background.main,
     },
     flex: {
         flex: 1,
@@ -127,11 +127,9 @@ const styles = StyleSheet.create({
     },
     tabletContent: {
         width: 450,
-        backgroundColor: COLORS.background.card,
         padding: SPACING.xl,
         borderRadius: RADIUS.xl,
         elevation: 4,
-        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
@@ -141,9 +139,6 @@ const styles = StyleSheet.create({
     },
     title: {
         marginBottom: SPACING.xs,
-    },
-    subtitle: {
-        color: COLORS.text.secondary,
     },
     form: {
         width: '100%',
@@ -160,7 +155,6 @@ const styles = StyleSheet.create({
         marginTop: SPACING.xxl,
     },
     termsText: {
-        color: COLORS.text.tertiary,
         lineHeight: 18,
     },
 });

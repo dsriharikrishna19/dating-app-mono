@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { COLORS } from '../theme/colors';
 import { SPACING, RADIUS } from '../theme/spacing';
+import { useTheme } from '../hooks/useTheme';
 
 interface FormSelectProps<T extends FieldValues> {
     control: Control<T>;
@@ -20,6 +20,8 @@ const FormSelect = <T extends FieldValues>({
     required,
     options
 }: FormSelectProps<T>) => {
+    const theme = useTheme();
+
     return (
         <Controller
             control={control}
@@ -27,18 +29,24 @@ const FormSelect = <T extends FieldValues>({
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View style={styles.container}>
                     {label && (
-                        <Text style={styles.label}>
-                            {label}{required && <Text style={{ color: COLORS.error }}> *</Text>}
+                        <Text style={[styles.label, { color: theme.text.primary }]}>
+                            {label}{required && <Text style={{ color: theme.error }}> *</Text>}
                         </Text>
                     )}
-                    <View style={[styles.pickerContainer, error ? styles.errorBorder : null]}>
+                    <View style={[
+                        styles.pickerContainer,
+                        {
+                            backgroundColor: theme.background.card,
+                            borderColor: error ? theme.error : theme.border
+                        }
+                    ]}>
                         <Picker
                             selectedValue={value}
                             onValueChange={onChange}
-                            style={styles.picker}
-                            dropdownIconColor={COLORS.primary}
+                            style={[styles.picker, { color: theme.text.primary }]}
+                            dropdownIconColor={theme.primary}
                         >
-                            <Picker.Item label={`Select ${label}...`} value="" color={COLORS.text.secondary} />
+                            <Picker.Item label={`Select ${label}...`} value="" color={theme.text.secondary} />
                             {options.map((option) => {
                                 const labelText = typeof option === 'string' ? option : option.label;
                                 const valueText = typeof option === 'string' ? option : option.value;
@@ -47,13 +55,13 @@ const FormSelect = <T extends FieldValues>({
                                         key={valueText}
                                         label={labelText}
                                         value={valueText}
-                                        color={COLORS.text.primary}
+                                        color={theme.text.primary}
                                     />
                                 );
                             })}
                         </Picker>
                     </View>
-                    {error && <Text style={styles.errorText}>{error.message}</Text>}
+                    {error && <Text style={[styles.errorText, { color: theme.error }]}>{error.message}</Text>}
                 </View>
             )}
         />
@@ -68,13 +76,10 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '500',
-        color: COLORS.text.primary,
         marginBottom: SPACING.xs,
     },
     pickerContainer: {
-        backgroundColor: COLORS.background.card,
         borderWidth: 1,
-        borderColor: COLORS.border,
         borderRadius: RADIUS.md,
         overflow: 'hidden',
         minHeight: 48,
@@ -83,13 +88,8 @@ const styles = StyleSheet.create({
     picker: {
         width: '100%',
         height: 48,
-        color: COLORS.text.primary,
-    },
-    errorBorder: {
-        borderColor: COLORS.error,
     },
     errorText: {
-        color: COLORS.error,
         fontSize: 12,
         marginTop: 4,
     },

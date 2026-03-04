@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { COLORS } from '../theme/colors';
 import { SPACING, RADIUS } from '../theme/spacing';
+import { useTheme } from '../hooks/useTheme';
 
 interface Option {
     label: string;
@@ -27,6 +27,8 @@ const SelectionGroup = <T extends FieldValues>({
     options,
     type = 'radio'
 }: SelectionGroupProps<T>) => {
+    const theme = useTheme();
+
     return (
         <Controller
             control={control}
@@ -34,8 +36,8 @@ const SelectionGroup = <T extends FieldValues>({
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <View style={styles.container}>
                     {label && (
-                        <Text style={styles.label}>
-                            {label}{required && <Text style={{ color: COLORS.error }}> *</Text>}
+                        <Text style={[styles.label, { color: theme.text.primary }]}>
+                            {label}{required && <Text style={{ color: theme.error }}> *</Text>}
                         </Text>
                     )}
                     <View style={type === 'card' ? styles.cardContainer : styles.radioContainer}>
@@ -46,8 +48,11 @@ const SelectionGroup = <T extends FieldValues>({
                                     key={option.value}
                                     style={[
                                         type === 'card' ? styles.card : styles.radioItem,
-                                        isSelected ? styles.selectedItem : null,
-                                        error ? styles.errorBorder : null
+                                        {
+                                            borderColor: isSelected ? theme.primary : theme.border,
+                                            backgroundColor: isSelected ? `${theme.primary}15` : theme.background.card,
+                                        },
+                                        error ? { borderColor: theme.error } : null
                                     ]}
                                     onPress={() => onChange(option.value)}
                                     activeOpacity={0.7}
@@ -55,7 +60,7 @@ const SelectionGroup = <T extends FieldValues>({
                                     {option.icon && <Text style={styles.icon}>{option.icon}</Text>}
                                     <Text style={[
                                         styles.itemText,
-                                        isSelected ? styles.selectedItemText : null
+                                        { color: isSelected ? theme.primary : theme.text.primary, fontWeight: isSelected ? '700' : '500' }
                                     ]}>
                                         {option.label}
                                     </Text>
@@ -63,7 +68,7 @@ const SelectionGroup = <T extends FieldValues>({
                             );
                         })}
                     </View>
-                    {error && <Text style={styles.errorText}>{error.message}</Text>}
+                    {error && <Text style={[styles.errorText, { color: theme.error }]}>{error.message}</Text>}
                 </View>
             )}
         />
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '500',
-        color: COLORS.text.primary,
         marginBottom: SPACING.sm,
     },
     radioContainer: {
@@ -95,22 +99,14 @@ const styles = StyleSheet.create({
         paddingVertical: SPACING.sm,
         borderRadius: RADIUS.full,
         borderWidth: 1,
-        borderColor: COLORS.border,
-        backgroundColor: COLORS.background.card,
     },
     card: {
         flex: 1,
         padding: SPACING.lg,
         borderRadius: RADIUS.lg,
         borderWidth: 2,
-        borderColor: COLORS.border,
-        backgroundColor: COLORS.background.card,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    selectedItem: {
-        borderColor: COLORS.primary,
-        backgroundColor: `${COLORS.primary}10`, // 10% opacity
     },
     icon: {
         fontSize: 24,
@@ -118,18 +114,8 @@ const styles = StyleSheet.create({
     },
     itemText: {
         fontSize: 14,
-        color: COLORS.text.primary,
-        fontWeight: '500',
-    },
-    selectedItemText: {
-        color: COLORS.primary,
-        fontWeight: 'bold',
-    },
-    errorBorder: {
-        borderColor: COLORS.error,
     },
     errorText: {
-        color: COLORS.error,
         fontSize: 12,
         marginTop: 4,
     },

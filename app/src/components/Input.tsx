@@ -5,11 +5,10 @@ import {
     StyleSheet,
     ViewStyle,
     TextInputProps,
-    Animated,
 } from 'react-native';
-import { COLORS } from '../theme/colors';
 import { SPACING, RADIUS } from '../theme/spacing';
 import { TYPOGRAPHY } from '../theme/typography';
+import { useTheme } from '../hooks/useTheme';
 import AppText from './AppText';
 
 interface InputProps extends TextInputProps {
@@ -33,6 +32,7 @@ const Input: React.FC<InputProps> = ({
     ...props
 }) => {
     const [isFocused, setIsFocused] = useState(false);
+    const theme = useTheme();
 
     const handleFocus = (e: any) => {
         setIsFocused(true);
@@ -47,15 +47,20 @@ const Input: React.FC<InputProps> = ({
     return (
         <View style={[styles.container, containerStyle]}>
             {label && (
-                <AppText variant="caption" style={styles.label}>
-                    {label}{required && <AppText color={COLORS.error}> *</AppText>}
+                <AppText variant="caption" style={[styles.label, { color: theme.text.secondary }]}>
+                    {label}{required && <AppText color={theme.error}> *</AppText>}
                 </AppText>
             )}
             <View
                 style={[
                     styles.inputContainer,
+                    {
+                        backgroundColor: theme.background.card,
+                        borderColor: isFocused ? theme.primary : theme.border,
+                        shadowColor: isFocused ? theme.primary : 'transparent',
+                    },
                     isFocused && styles.inputFocused,
-                    error ? styles.inputError : null,
+                    error ? { borderColor: theme.error } : null,
                     props.multiline && styles.multilineContainer,
                 ]}
             >
@@ -63,9 +68,10 @@ const Input: React.FC<InputProps> = ({
                 <TextInput
                     style={[
                         styles.input,
+                        { color: theme.text.primary },
                         props.multiline && styles.multilineInput,
                     ]}
-                    placeholderTextColor={COLORS.text.tertiary}
+                    placeholderTextColor={theme.text.tertiary}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     {...props}
@@ -73,7 +79,7 @@ const Input: React.FC<InputProps> = ({
                 {rightIcon && <View style={styles.iconRight}>{rightIcon}</View>}
             </View>
             {error && (
-                <AppText variant="caption" color={COLORS.error} style={styles.errorText}>
+                <AppText variant="caption" color={theme.error} style={styles.errorText}>
                     {error}
                 </AppText>
             )}
@@ -88,36 +94,25 @@ const styles = StyleSheet.create({
     },
     label: {
         marginBottom: SPACING.xs,
-        color: COLORS.text.secondary,
         marginLeft: SPACING.xs,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLORS.background.card,
         borderWidth: 1.5,
-        borderColor: COLORS.border,
         borderRadius: RADIUS.lg,
         paddingHorizontal: SPACING.md,
         minHeight: 52,
     },
     inputFocused: {
-        borderColor: COLORS.primary,
-        backgroundColor: COLORS.background.card,
-        // Optional shadow for focused state
         elevation: 1,
-        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
     },
-    inputError: {
-        borderColor: COLORS.error,
-    },
     input: {
         flex: 1,
         fontSize: TYPOGRAPHY.size.base,
-        color: COLORS.text.primary,
         paddingVertical: SPACING.sm,
         fontWeight: TYPOGRAPHY.weight.medium,
     },

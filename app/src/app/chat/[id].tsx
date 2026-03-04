@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Send, MoreVertical, Phone } from 'lucide-react-native';
-import { COLORS } from '../../theme/colors';
 import { SPACING, RADIUS } from '../../theme/spacing';
 import AppText from '../../components/AppText';
 import Avatar from '../../components/Avatar';
 import { MOCK_USERS } from '../../utils/mockData';
 import PopoverMenu, { PopoverOption } from '../../components/PopoverMenu';
+import { useTheme } from '../../hooks/useTheme';
 
 interface Message {
     id: string;
@@ -28,6 +28,7 @@ interface Message {
 }
 
 export default function ChatDetailScreen() {
+    const theme = useTheme();
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const user = MOCK_USERS.find(u => u.id === id) || MOCK_USERS[0];
@@ -89,12 +90,14 @@ export default function ChatDetailScreen() {
         ]}>
             <View style={[
                 styles.messageBubble,
-                item.sender === 'me' ? styles.myMessage : styles.theirMessage
+                item.sender === 'me'
+                    ? [styles.myMessage, { backgroundColor: theme.primary }]
+                    : [styles.theirMessage, { backgroundColor: theme.background.card, borderColor: theme.divider }]
             ]}>
-                <AppText variant="body" style={item.sender === 'me' ? styles.myMessageText : styles.theirMessageText}>
+                <AppText variant="body" style={item.sender === 'me' ? styles.myMessageText : [styles.theirMessageText, { color: theme.text.primary }]}>
                     {item.text}
                 </AppText>
-                <AppText variant="tiny" style={styles.timestamp}>
+                <AppText variant="tiny" style={[styles.timestamp, { color: item.sender === 'me' ? 'rgba(255,255,255,0.7)' : theme.text.tertiary }]}>
                     {item.timestamp}
                 </AppText>
             </View>
@@ -110,11 +113,11 @@ export default function ChatDetailScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background.main }]}>
             {/* Custom Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: theme.background.card, borderBottomColor: theme.divider }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <ChevronLeft color={COLORS.text.primary} size={28} />
+                    <ChevronLeft color={theme.text.primary} size={28} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.userInfo} activeOpacity={0.7}>
@@ -125,20 +128,20 @@ export default function ChatDetailScreen() {
                         style={{ marginRight: SPACING.sm }}
                     />
                     <View style={styles.headerText}>
-                        <AppText variant="bodyBold" numberOfLines={1}>{user.fullName}</AppText>
-                        <AppText variant="tiny" color={COLORS.primary}>Online</AppText>
+                        <AppText variant="bodyBold" numberOfLines={1} style={{ color: theme.text.primary }}>{user.fullName}</AppText>
+                        <AppText variant="tiny" color={theme.primary}>Online</AppText>
                     </View>
                 </TouchableOpacity>
 
                 <View style={styles.headerActions}>
                     <TouchableOpacity style={styles.headerIcon} onPress={handleCall}>
-                        <Phone color={COLORS.text.secondary} size={20} />
+                        <Phone color={theme.text.secondary} size={20} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.headerIcon}
                         onPress={() => setIsMenuVisible(true)}
                     >
-                        <MoreVertical color={COLORS.text.secondary} size={20} />
+                        <MoreVertical color={theme.text.secondary} size={20} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -157,18 +160,22 @@ export default function ChatDetailScreen() {
                     onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
                 />
 
-                <View style={styles.inputArea}>
-                    <View style={styles.inputContainer}>
+                <View style={[styles.inputArea, { backgroundColor: theme.background.surface, borderTopColor: theme.divider }]}>
+                    <View style={[styles.inputContainer, { backgroundColor: theme.background.card, borderColor: theme.divider }]}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { color: theme.text.primary }]}
                             placeholder="Type a message..."
-                            placeholderTextColor={COLORS.text.tertiary}
+                            placeholderTextColor={theme.text.tertiary}
                             value={inputText}
                             onChangeText={setInputText}
                             multiline
                         />
                         <TouchableOpacity
-                            style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
+                            style={[
+                                styles.sendButton,
+                                { backgroundColor: theme.primary },
+                                !inputText.trim() && { backgroundColor: theme.text.tertiary, opacity: 0.6 }
+                            ]}
                             onPress={handleSend}
                             disabled={!inputText.trim()}
                         >
@@ -191,7 +198,6 @@ export default function ChatDetailScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background.main,
     },
     flex: {
         flex: 1,
@@ -202,8 +208,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.divider,
-        backgroundColor: COLORS.background.card,
     },
     backButton: {
         padding: 4,
@@ -247,48 +251,38 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     myMessage: {
-        backgroundColor: COLORS.primary,
         borderBottomRightRadius: 4,
     },
     theirMessage: {
-        backgroundColor: COLORS.background.card,
         borderBottomLeftRadius: 4,
         borderWidth: 1,
-        borderColor: COLORS.divider,
     },
     myMessageText: {
         color: '#FFF',
     },
     theirMessageText: {
-        color: COLORS.text.primary,
     },
     timestamp: {
         fontSize: 9,
         marginTop: 4,
         alignSelf: 'flex-end',
         opacity: 0.7,
-        color: 'inherit',
     },
     inputArea: {
         padding: SPACING.md,
-        backgroundColor: COLORS.background.surface,
         borderTopWidth: 1,
-        borderTopColor: COLORS.divider,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: COLORS.background.card,
         borderRadius: RADIUS.full,
         paddingHorizontal: SPACING.md,
         paddingVertical: Platform.OS === 'ios' ? 8 : 4,
         borderWidth: 1,
-        borderColor: COLORS.divider,
     },
     input: {
         flex: 1,
         fontSize: 16,
-        color: COLORS.text.primary,
         maxHeight: 100,
         paddingTop: Platform.OS === 'ios' ? 4 : 0,
     },
@@ -296,13 +290,8 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: SPACING.sm,
-    },
-    sendButtonDisabled: {
-        backgroundColor: COLORS.text.tertiary,
-        opacity: 0.6,
     },
 });
