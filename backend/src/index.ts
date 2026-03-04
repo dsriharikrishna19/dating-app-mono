@@ -10,6 +10,7 @@ import discoveryRoutes from './routes/discovery.routes.js';
 import chatRoutes from './routes/chat.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import safetyRoutes from './routes/safety.routes.js';
+import { errorHandler } from './middlewares/error.middleware.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -27,6 +28,9 @@ app.use('/api/discovery', discoveryRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/safety', safetyRoutes);
+
+// Error handler must be last
+app.use(errorHandler);
 
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({ status: 'OK', message: 'Dating App API is running' });

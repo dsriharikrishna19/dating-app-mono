@@ -1,6 +1,10 @@
-import { type Request, type Response } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
 import { z } from 'zod';
+import { sendSuccess } from '../utils/response.js';
+import { calculateDistance } from '../utils/geo.js';
+import { MatchService } from '../services/match.service.js';
+import { BadRequestError } from '../utils/errors.js';
 
 interface AuthRequest extends Request {
     userId?: string;
@@ -17,132 +21,110 @@ const FiltersSchema = z.object({
     gender: z.string().optional(),
 });
 
-export const getFeed = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getFeed = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
 
-        // Basic logic: Find all users who are onboarded, not the current user,
-        // and haven't been swiped on yet.
-
-        // Get list of users already swiped on (either as user1 or user2)
-        const swipedMatches = await prisma.match.findMany({
-            where: {
-                OR: [
-                    { user1Id: userId },
-                    { user2Id: userId },
-                ],
-            },
-            select: {
-                user1Id: true,
-                user2Id: true,
-            },
+        // Get user's own profile and filters
+        const ownProfile = await prisma.profile.findUnique({
+            where: { userId },
+            select: { filters: true, location: true, gender: true },
         });
 
+        if (!ownProfile) {
+            throw new BadRequestError('User profile not found. Please complete onboarding.');
+        }
+
+        const filters = ownProfile.filters ? JSON.parse(ownProfile.filters) : {
+            ageRange: [18, 50],
+            distance: 50,
+            gender: 'ANY',
+        };
+
+        const ownLocation = ownProfile.location ? JSON.parse(ownProfile.location) : null;
+
+        // Get list of users already swiped on or blocked
+        const swipedMatches = await prisma.match.findMany({
+            where: { OR: [{ user1Id: userId }, { user2Id: userId }] },
+            select: { user1Id: true, user2Id: true },
+        });
         const swipedUserIds = swipedMatches.map(m => m.user1Id === userId ? m.user2Id : m.user1Id);
 
         // Get blocked users
         const blocks = await prisma.block.findMany({
-            where: {
-                OR: [
-                    { blockerId: userId },
-                    { blockedId: userId },
-                ],
-            },
-        });
-        const blockedUserIds = blocks.map(b => b.blockerId === userId ? b.blockedId : b.blockerId);
+            where: { OR: [{ blockerId: userId }, { blockedId: userId }] },
+        }) as Array<{ blockerId: string, blockedId: string }>;
+        const blockedUserIds = blocks.map((b) => b.blockerId === userId ? b.blockedId : b.blockerId);
 
         const excludeIds = [...new Set([...swipedUserIds, ...blockedUserIds, userId])];
 
+        // Fetch potential profiles
+        const query: any = {
+            userId: { notIn: excludeIds },
+            user: { onboarded: true },
+        };
+
+        // Add gender filter if not 'ANY'
+        if (filters.gender && filters.gender !== 'ANY') {
+            query.gender = filters.gender;
+        }
+
         const profiles = await prisma.profile.findMany({
-            where: {
-                userId: {
-                    notIn: excludeIds,
-                },
-                user: {
-                    onboarded: true,
-                },
-            },
-            include: {
-                images: true,
-                interests: true,
-            },
-            take: 20,
+            where: query,
+            include: { images: true, interests: true },
+            take: 100, // Fetch more to filter by distance/age in memory if needed
         });
 
-        res.status(200).json({
-            feed: profiles.map(p => ({
+        // Current date for age calculation
+        const now = new Date();
+
+        // Advanced Filtering (Distance and Age)
+        const enrichedFeed = profiles.filter(p => {
+            // Age Filter
+            if (p.birthDate) {
+                const age = now.getFullYear() - p.birthDate.getFullYear();
+                if (age < filters.ageRange[0] || age > filters.ageRange[1]) return false;
+            }
+
+            // Distance Filter
+            if (ownLocation && p.location) {
+                const targetLoc = JSON.parse(p.location);
+                const distance = calculateDistance(ownLocation.lat, ownLocation.lng, targetLoc.lat, targetLoc.lng);
+                if (distance > filters.distance) return false;
+                (p as any).distance = Math.round(distance);
+            }
+
+            return true;
+        })
+            .slice(0, 20)
+            .map(p => ({
                 ...p,
                 location: p.location ? JSON.parse(p.location) : null,
-            })),
-        });
+            }));
+
+        sendSuccess(res, enrichedFeed, 'Discovery feed fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const swipe = async (req: AuthRequest, res: Response): Promise<void> => {
+export const swipe = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const { targetUserId, action } = SwipeSchema.parse(req.body);
 
-        if (action === 'NOPE') {
-            // Record a 'nope' by creating a match with a special status or just entry
-            await prisma.match.create({
-                data: {
-                    user1Id: userId < targetUserId ? userId : targetUserId,
-                    user2Id: userId < targetUserId ? targetUserId : userId,
-                    status: 'UNMATCHED', // Using UNMATCHED to mean "swiped but not a match"
-                },
-            });
+        const result = await MatchService.handleSwipe(userId, targetUserId, action);
 
-            res.status(200).json({ match: false });
-            return;
-        }
-
-        // Action is LIKE
-        // Check if the other user has already liked us
-        const existingInterest = await prisma.match.findFirst({
-            where: {
-                OR: [
-                    { user1Id: targetUserId, user2Id: userId, status: 'PENDING' },
-                    { user1Id: userId, user2Id: targetUserId, status: 'PENDING' },
-                ],
-            },
-        });
-
-        if (existingInterest) {
-            // It's a match!
-            const match = await prisma.match.update({
-                where: { id: existingInterest.id },
-                data: { status: 'MATCHED' },
-            });
-
-            res.status(200).json({ match: true, matchId: match.id });
-            return;
-        }
-
-        // No existing interest, create a pending match
-        await prisma.match.create({
-            data: {
-                user1Id: userId < targetUserId ? userId : targetUserId,
-                user2Id: userId < targetUserId ? targetUserId : userId,
-                status: 'PENDING',
-            },
-        });
-
-        res.status(200).json({ match: false });
+        sendSuccess(res, {
+            match: result?.status === 'MATCHED',
+            matchId: result?.status === 'MATCHED' ? result.id : null,
+        }, action === 'LIKE' ? 'User liked' : 'User passed');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const getFilters = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getFilters = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const profile = await prisma.profile.findUnique({
@@ -150,38 +132,30 @@ export const getFilters = async (req: AuthRequest, res: Response): Promise<void>
             select: { filters: true },
         });
 
-        res.status(200).json({
-            filters: profile?.filters ? JSON.parse(profile.filters) : {
-                ageRange: [18, 50],
-                distance: 50,
-                gender: 'ANY',
-            },
-        });
+        const filters = profile?.filters ? JSON.parse(profile.filters) : {
+            ageRange: [18, 50],
+            distance: 50,
+            gender: 'ANY',
+        };
+
+        sendSuccess(res, filters, 'Filters fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const updateFilters = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updateFilters = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const filters = FiltersSchema.parse(req.body);
 
         await prisma.profile.update({
             where: { userId },
-            data: {
-                filters: JSON.stringify(filters),
-            },
+            data: { filters: JSON.stringify(filters) },
         });
 
-        res.status(200).json({ message: 'Filters updated successfully' });
+        sendSuccess(res, null, 'Filters updated successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };

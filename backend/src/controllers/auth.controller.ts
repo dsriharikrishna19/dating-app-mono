@@ -1,8 +1,10 @@
-import { type Request, type Response } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { ENV_CONFIG } from '../config/env.config.js';
+import { sendSuccess } from '../utils/response.js';
+import { BadRequestError, NotFoundError } from '../utils/errors.js';
 
 const { JWT_SECRET, OTP_MOCK } = ENV_CONFIG;
 
@@ -19,7 +21,7 @@ const VerifyOtpSchema = z.object({
     otp: z.string().length(6),
 });
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { phoneNumber } = RegisterSchema.parse(req.body);
 
@@ -28,31 +30,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (existingUser) {
-            res.status(400).json({ error: 'User already exists' });
-            return;
+            throw new BadRequestError('User already exists');
         }
 
         const newUser = await prisma.user.create({
-            data: {
-                phoneNumber,
-            },
+            data: { phoneNumber },
         });
 
-        res.status(201).json({
-            message: 'User registered successfully. Please verify OTP.',
-            user: newUser,
-        });
+        sendSuccess(res, newUser, 'User registered successfully. Please verify OTP.', 201);
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { phoneNumber } = LoginSchema.parse(req.body);
 
@@ -61,34 +52,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
-            return;
+            throw new NotFoundError('User not found');
         }
 
         // Mock OTP sending
         console.log(`OTP for ${phoneNumber}: ${OTP_MOCK}`);
 
-        res.status(200).json({
-            message: 'OTP sent successfully',
-            phoneNumber,
-        });
+        sendSuccess(res, { phoneNumber }, 'OTP sent successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
+export const verifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { phoneNumber, otp } = VerifyOtpSchema.parse(req.body);
 
         if (otp !== OTP_MOCK) {
-            res.status(400).json({ error: 'Invalid OTP' });
-            return;
+            throw new BadRequestError('Invalid OTP');
         }
 
         const user = await prisma.user.findUnique({
@@ -96,8 +77,7 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
-            return;
+            throw new NotFoundError('User not found');
         }
 
         // Mark as verified if not already
@@ -110,31 +90,24 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
 
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({
-            message: 'Login successful',
+        sendSuccess(res, {
             token,
             user: {
                 id: user.id,
                 phoneNumber: user.phoneNumber,
                 onboarded: user.onboarded,
             },
-        });
+        }, 'Login successful');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
-    // In a real app, you might invalidate the token in a redis store or similar
-    res.status(200).json({ message: 'Logged out successfully' });
+    sendSuccess(res, null, 'Logged out successfully');
 };
 
-export const resendOtp = async (req: Request, res: Response): Promise<void> => {
+export const resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { phoneNumber } = LoginSchema.parse(req.body);
 
@@ -143,23 +116,14 @@ export const resendOtp = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
-            return;
+            throw new NotFoundError('User not found');
         }
 
         // Mock OTP sending
         console.log(`Resending OTP for ${phoneNumber}: ${OTP_MOCK}`);
 
-        res.status(200).json({
-            message: 'OTP resent successfully',
-            phoneNumber,
-        });
+        sendSuccess(res, { phoneNumber }, 'OTP resent successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };

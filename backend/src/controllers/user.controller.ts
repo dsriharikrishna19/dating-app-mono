@@ -1,6 +1,8 @@
-import { type Request, type Response } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
 import { z } from 'zod';
+import { sendSuccess } from '../utils/response.js';
+import { NotFoundError } from '../utils/errors.js';
 
 interface AuthRequest extends Request {
     userId?: string;
@@ -22,7 +24,7 @@ const OnboardingSchema = z.object({
 
 const UpdateProfileSchema = OnboardingSchema.partial();
 
-export const getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId;
 
@@ -30,20 +32,16 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
             where: { id: userId },
             include: {
                 profile: {
-                    include: {
-                        images: true,
-                        interests: true,
-                    },
+                    include: { images: true, interests: true },
                 },
             },
         });
 
         if (!user) {
-            res.status(404).json({ error: 'User not found' });
-            return;
+            throw new NotFoundError('User not found');
         }
 
-        res.status(200).json({
+        sendSuccess(res, {
             user: {
                 id: user.id,
                 phoneNumber: user.phoneNumber,
@@ -55,14 +53,13 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
                 location: user.profile.location ? JSON.parse(user.profile.location) : null,
                 filters: user.profile.filters ? JSON.parse(user.profile.filters) : null,
             } : null,
-        });
+        }, 'Profile fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const onboarding = async (req: AuthRequest, res: Response): Promise<void> => {
+export const onboarding = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const data = OnboardingSchema.parse(req.body);
@@ -101,24 +98,16 @@ export const onboarding = async (req: AuthRequest, res: Response): Promise<void>
             data: { onboarded: true },
         });
 
-        res.status(200).json({
-            message: 'Onboarding completed successfully',
-            profile: {
-                ...profile,
-                location: profile.location ? JSON.parse(profile.location) : null,
-            },
-        });
+        sendSuccess(res, {
+            ...profile,
+            location: profile.location ? JSON.parse(profile.location) : null,
+        }, 'Onboarding completed successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const data = UpdateProfileSchema.parse(req.body);
@@ -140,61 +129,46 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
             },
         });
 
-        res.status(200).json({
-            message: 'Profile updated successfully',
-            profile: {
-                ...profile,
-                location: profile.location ? JSON.parse(profile.location) : null,
-            },
-        });
+        sendSuccess(res, {
+            ...profile,
+            location: profile.location ? JSON.parse(profile.location) : null,
+        }, 'Profile updated successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const uploadImages = async (req: AuthRequest, res: Response): Promise<void> => {
+export const uploadImages = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        // In a real app, you'd use multer and upload to S3/Cloudinary
-        // Mocking image upload
         const { urls } = req.body as { urls: string[] };
         const userId = req.userId!;
 
         const profile = await prisma.profile.findUnique({ where: { userId } });
         if (!profile) {
-            res.status(404).json({ error: 'Profile not found' });
-            return;
+            throw new NotFoundError('Profile not found');
         }
 
         const images = await Promise.all(
             urls.map((url) =>
                 prisma.image.create({
-                    data: {
-                        profileId: profile.id,
-                        url,
-                    },
+                    data: { profileId: profile.id, url },
                 })
             )
         );
 
-        res.status(201).json({ message: 'Images uploaded successfully', images });
+        sendSuccess(res, images, 'Images uploaded successfully', 201);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const deleteImage = async (req: AuthRequest, res: Response): Promise<void> => {
+export const deleteImage = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const id = req.params.id as string;
         await prisma.image.delete({ where: { id } });
-        res.status(200).json({ message: 'Image deleted successfully' });
+        sendSuccess(res, null, 'Image deleted successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
+

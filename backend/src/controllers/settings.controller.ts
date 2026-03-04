@@ -1,6 +1,7 @@
-import { type Request, type Response } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
 import { z } from 'zod';
+import { sendSuccess } from '../utils/response.js';
 
 interface AuthRequest extends Request {
     userId?: string;
@@ -17,7 +18,7 @@ const PrivacySchema = z.object({
     ghostMode: z.boolean(),
 });
 
-export const getNotifications = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getNotifications = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const profile = await prisma.profile.findUnique({
@@ -29,20 +30,19 @@ export const getNotifications = async (req: AuthRequest, res: Response): Promise
             },
         });
 
-        res.status(200).json({
+        sendSuccess(res, {
             notifications: {
                 newMatches: profile?.notificationMatches ?? true,
                 messages: profile?.notificationMessages ?? true,
                 promotions: profile?.notificationPromos ?? false,
             },
-        });
+        }, 'Notifications fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const updateNotifications = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updateNotifications = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const { newMatches, messages, promotions } = NotificationSchema.parse(req.body);
@@ -56,62 +56,48 @@ export const updateNotifications = async (req: AuthRequest, res: Response): Prom
             },
         });
 
-        res.status(200).json({ message: 'Notification preferences updated' });
+        sendSuccess(res, null, 'Notification preferences updated');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const updatePrivacy = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updatePrivacy = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const { profileVisible, ghostMode } = PrivacySchema.parse(req.body);
 
         await prisma.profile.update({
             where: { userId },
-            data: {
-                profileVisible,
-                ghostMode,
-            },
+            data: { profileVisible, ghostMode },
         });
 
-        res.status(200).json({ message: 'Privacy settings updated' });
+        sendSuccess(res, null, 'Privacy settings updated');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const deleteAccount = async (req: AuthRequest, res: Response): Promise<void> => {
+export const deleteAccount = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         await prisma.user.delete({ where: { id: userId } });
-        res.status(200).json({ message: 'Account and all data deleted permanently' });
+        sendSuccess(res, null, 'Account and all data deleted permanently');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const getConfig = async (req: Request, res: Response): Promise<void> => {
+export const getConfig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const interests = await prisma.interest.findMany();
-        res.status(200).json({
+        sendSuccess(res, {
             interests: interests.map((i) => i.name),
             genderOptions: ['MALE', 'FEMALE', 'NON_BINARY', 'OTHER'],
             lookingForOptions: ['MEN', 'WOMEN', 'EVERYONE'],
-        });
+        }, 'Config fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
+

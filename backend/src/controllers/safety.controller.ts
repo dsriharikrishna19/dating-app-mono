@@ -1,7 +1,8 @@
-import { type Response } from 'express';
-import { type Request } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
 import { z } from 'zod';
+import { sendSuccess } from '../utils/response.js';
+import { BadRequestError } from '../utils/errors.js';
 
 interface AuthRequest extends Request {
     userId?: string;
@@ -17,20 +18,17 @@ const ReportSchema = z.object({
     description: z.string().optional(),
 });
 
-export const blockUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const blockUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const blockerId = req.userId!;
         const { blockedId } = BlockSchema.parse(req.body);
 
         if (blockerId === blockedId) {
-            res.status(400).json({ error: 'You cannot block yourself' });
-            return;
+            throw new BadRequestError('You cannot block yourself');
         }
 
         await prisma.block.upsert({
-            where: {
-                blockerId_blockedId: { blockerId, blockedId },
-            },
+            where: { blockerId_blockedId: { blockerId, blockedId } },
             update: {},
             create: { blockerId, blockedId },
         });
@@ -45,43 +43,28 @@ export const blockUser = async (req: AuthRequest, res: Response): Promise<void> 
             },
         });
 
-        res.status(200).json({ message: 'User blocked successfully' });
+        sendSuccess(res, null, 'User blocked successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const reportUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const reportUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const reporterId = req.userId!;
         const { reportedId, reason, description } = ReportSchema.parse(req.body);
 
         await prisma.report.create({
-            data: {
-                reporterId,
-                reportedId,
-                reason,
-                description,
-            },
+            data: { reporterId, reportedId, reason, description },
         });
 
-        res.status(200).json({ message: 'Report submitted successfully' });
+        sendSuccess(res, null, 'Report submitted successfully');
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            res.status(400).json({ error: error.flatten() });
-            return;
-        }
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const getBlockedUsers = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getBlockedUsers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
         const blocks = await prisma.block.findMany({
@@ -94,33 +77,30 @@ export const getBlockedUsers = async (req: AuthRequest, res: Response): Promise<
             include: { images: { take: 1 } },
         });
 
-        res.status(200).json({
+        sendSuccess(res, {
             blockedUsers: profiles.map(p => ({
                 id: p.userId,
                 name: p.name,
                 image: p.images[0]?.url || null,
             })),
-        });
+        }, 'Blocked users fetched successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
 
-export const unblockUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const unblockUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const blockerId = req.userId!;
         const blockedId = req.params.userId as string;
 
         await prisma.block.delete({
-            where: {
-                blockerId_blockedId: { blockerId, blockedId },
-            },
+            where: { blockerId_blockedId: { blockerId, blockedId } },
         });
 
-        res.status(200).json({ message: 'User unblocked successfully' });
+        sendSuccess(res, null, 'User unblocked successfully');
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        next(error);
     }
 };
+
