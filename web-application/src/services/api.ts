@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { API_CONFIG, STORAGE_KEYS } from './apiConfig';
-import { store } from '../store';
-import { logout } from '../store/slices/authSlice';
+
 
 const api = axios.create({
     baseURL: API_CONFIG.BASE_URL,
@@ -11,14 +10,22 @@ const api = axios.create({
     },
 });
 
+let reduxStore: any;
+
+export const setupInterceptors = (store: any) => {
+    reduxStore = store;
+};
+
 // Request interceptor for adding auth token
 api.interceptors.request.use(
     (config) => {
-        const state = store.getState();
-        const token = state.auth.token;
+        if (reduxStore) {
+            const state = reduxStore.getState();
+            const token = state.auth.token;
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -31,12 +38,29 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            store.dispatch(logout());
+        if (error.response?.status === 401 && reduxStore) {
+            reduxStore.dispatch({ type: 'auth/forceLogout' });
             // Redirect to login could be handled here or in a hook
         }
         return Promise.reject(error);
     }
 );
+
+export function apiGet(url: string, config?: any) {
+    return api.get(url, config);
+}
+export function apiPost(url: string, data?: any, config?: any) {
+    return api.post(url, data, config);
+}
+export function apiPut(url: string, data?: any, config?: any) {
+    return api.put(url, data, config);
+}
+export function apiPatch(url: string, data?: any, config?: any) {
+    return api.patch(url, data, config);
+}
+export function apiDelete(url: string, id?: string, config?: any) {
+    const reqConfig = id ? { data: { id }, ...config } : config;
+    return api.delete(url, reqConfig);
+}
 
 export default api;

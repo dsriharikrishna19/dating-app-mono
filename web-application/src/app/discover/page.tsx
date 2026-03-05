@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserCard } from '@/components/dating/UserCard';
-import { userService, matchService } from '@/services/userService';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import { getDiscoverUsers } from '@/store/slices/userSlice';
+import { likeUser, passUser } from '@/store/slices/matchSlice';
 import { Heart, X, RotateCcw, Star } from 'lucide-react';
 
 export default function DiscoveryPage() {
-    const [users, setUsers] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch<AppDispatch>();
+    const { discoverUsers: users, loading } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
         loadUsers();
@@ -16,35 +19,30 @@ export default function DiscoveryPage() {
 
     const loadUsers = async () => {
         try {
-            setLoading(true);
-            const data = await userService.getDiscoverUsers();
-            setUsers(data);
+            await dispatch(getDiscoverUsers()).unwrap();
         } catch (err) {
             console.error('Failed to load discovery users', err);
-        } finally {
-            setLoading(false);
         }
     };
 
     const handleSwipe = async (direction: 'left' | 'right', targetUser: any) => {
-        // Optimistic UI update
-        setUsers(prev => prev.filter(u => u.id !== targetUser.id));
-
         try {
             if (direction === 'right') {
-                const response = await matchService.like(targetUser.id);
+                const response = await dispatch(likeUser(targetUser.id)).unwrap();
                 if (response.isMatch) {
                     alert('It is a match! 🎉');
                 }
             } else {
-                await matchService.pass(targetUser.id);
+                await dispatch(passUser(targetUser.id)).unwrap();
             }
+            // Trigger refresh or update state here if needed
+            // Currently relies on the optimistic UI or backend state sync
         } catch (err) {
             console.error(`Failed to ${direction === 'right' ? 'like' : 'pass'} user`, err);
         }
     };
 
-    if (loading) {
+    if (loading && users.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -57,7 +55,7 @@ export default function DiscoveryPage() {
             <div className="relative w-full max-w-[400px] aspect-[3/4] mb-8">
                 <AnimatePresence>
                     {users.length > 0 ? (
-                        users.map((user, index) => (
+                        users.map((user: any, index: number) => (
                             <UserCard
                                 key={user.id}
                                 user={user}

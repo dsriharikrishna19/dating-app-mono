@@ -6,9 +6,8 @@ import { motion } from 'framer-motion';
 import { registerSchema, type RegisterInput } from '@/schemas/authSchema';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { authService } from '@/services/authService';
 import { useAppDispatch } from '@/store/hooks';
-import { setLoading, setError } from '@/store/slices/authSlice';
+import { registerUser, clearError } from '@/store/slices/authSlice';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -21,17 +20,12 @@ export default function RegisterPage() {
     });
 
     const onSubmit = async (data: RegisterInput) => {
-        try {
-            dispatch(setLoading(true));
-            dispatch(setError(null));
-            await authService.register(data);
+        dispatch(clearError());
+        const resultAction = await dispatch(registerUser(data));
+
+        if (registerUser.fulfilled.match(resultAction)) {
             localStorage.setItem('temp_phone', data.phoneNumber);
             router.push('/auth/verify-otp');
-        } catch (err: any) {
-            dispatch(setError(err.response?.data?.message || 'Registration failed'));
-            console.error(err);
-        } finally {
-            dispatch(setLoading(false));
         }
     };
 

@@ -7,9 +7,8 @@ import { motion } from 'framer-motion';
 import { verifyOtpSchema, type VerifyOtpInput } from '@/schemas/authSchema';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { authService } from '@/services/authService';
 import { useAppDispatch } from '@/store/hooks';
-import { setToken, setLoading, setError } from '@/store/slices/authSlice';
+import { verifyOtp, clearError } from '@/store/slices/authSlice';
 import { useRouter } from 'next/navigation';
 
 export default function VerifyOtpPage() {
@@ -33,27 +32,19 @@ export default function VerifyOtpPage() {
     const onSubmit = async (data: VerifyOtpInput) => {
         if (!phoneNumber) return;
 
-        try {
-            dispatch(setLoading(true));
-            dispatch(setError(null));
-            const response = await authService.verifyOtp(phoneNumber, data.otp);
+        dispatch(clearError());
+        const resultAction = await dispatch(verifyOtp({ phoneNumber, otp: data.otp }));
 
-            if (response.token) {
-                dispatch(setToken(response.token));
-                localStorage.removeItem('temp_phone');
+        if (verifyOtp.fulfilled.match(resultAction)) {
+            localStorage.removeItem('temp_phone');
+            const responsePayload = resultAction.payload;
 
-                // If user is not onboarded, go to onboarding, else to discover
-                if (response.user?.onboarded) {
-                    router.push('/discover');
-                } else {
-                    router.push('/auth/onboarding');
-                }
+            // If user is not onboarded, go to onboarding, else to discover
+            if (responsePayload.user?.onboarded) {
+                router.push('/discover');
+            } else {
+                router.push('/auth/onboarding');
             }
-        } catch (err: any) {
-            dispatch(setError(err.response?.data?.message || 'Verification failed'));
-            console.error(err);
-        } finally {
-            dispatch(setLoading(false));
         }
     };
 

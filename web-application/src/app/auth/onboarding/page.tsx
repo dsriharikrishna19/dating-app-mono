@@ -7,7 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { userService } from '@/services/userService';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { onboardUser } from '@/store/slices/userSlice';
 import { useRouter } from 'next/navigation';
 
 const onboardingSchema = z.object({
@@ -23,6 +25,7 @@ export default function OnboardingPage() {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
 
     const { register, handleSubmit, formState: { errors }, trigger, watch } = useForm<OnboardingData>({
         resolver: zodResolver(onboardingSchema),
@@ -40,7 +43,7 @@ export default function OnboardingPage() {
     const onSubmit = async (data: OnboardingData) => {
         try {
             setLoading(true);
-            await userService.onboard(data);
+            await dispatch(onboardUser(data)).unwrap();
             router.push('/discover');
         } catch (err) {
             console.error('Onboarding failed', err);
@@ -99,8 +102,8 @@ export default function OnboardingPage() {
                                                 type="button"
                                                 onClick={() => register('gender').onChange({ target: { value: g, name: 'gender' } })}
                                                 className={`py-3 rounded-2xl border transition-all ${watch('gender') === g
-                                                        ? 'bg-primary border-primary text-white'
-                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                                                    ? 'bg-primary border-primary text-white'
+                                                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
                                                     }`}
                                             >
                                                 {g}

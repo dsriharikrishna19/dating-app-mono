@@ -6,9 +6,8 @@ import { motion } from 'framer-motion';
 import { loginSchema, type LoginInput } from '@/schemas/authSchema';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { authService } from '@/services/authService';
 import { useAppDispatch } from '@/store/hooks';
-import { setLoading, setError } from '@/store/slices/authSlice';
+import { loginUser, clearError } from '@/store/slices/authSlice';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -21,27 +20,22 @@ export default function LoginPage() {
     });
 
     const onSubmit = async (data: LoginInput) => {
-        try {
-            dispatch(setLoading(true));
-            dispatch(setError(null));
-            await authService.login(data.phoneNumber);
+        dispatch(clearError());
+        const resultAction = await dispatch(loginUser(data.phoneNumber));
+
+        if (loginUser.fulfilled.match(resultAction)) {
             // Store phone number for OTP verification (could use local state or redux)
             localStorage.setItem('temp_phone', data.phoneNumber);
             router.push('/auth/verify-otp');
-        } catch (err: any) {
-            dispatch(setError(err.response?.data?.message || 'Login failed'));
-            console.error(err);
-        } finally {
-            dispatch(setLoading(false));
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="min-h-screen flex items-center justify-center px-4 py-6">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass-card w-full max-w-md p-8 md:p-10"
+                className="glass-card w-full max-w-md p-8"
             >
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
