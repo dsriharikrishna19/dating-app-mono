@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers/Providers";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Aura | Premium Dating Experience",
-  description: "Find meaningful connections with the most thoughtfully designed dating platform.",
+  title: "Spark - Find Your Connection",
+  description: "Modern dating platform for genuine connections",
 };
 
 export default function RootLayout({
@@ -16,11 +15,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="antialiased font-sans">
         <Providers>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-grow pt-20">
+              {children}
+            </main>
+          </div>
         </Providers>
       </body>
     </html>

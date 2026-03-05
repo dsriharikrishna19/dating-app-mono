@@ -10,6 +10,8 @@ import discoveryRoutes from './routes/discovery.routes.js';
 import chatRoutes from './routes/chat.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import safetyRoutes from './routes/safety.routes.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.config.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 
 const app = express();
@@ -29,6 +31,9 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/safety', safetyRoutes);
 
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Error handler must be last
 app.use(errorHandler);
 
@@ -39,5 +44,5 @@ app.get('/health', (req: Request, res: Response) => {
 // Socket.io initialization is now handled in lib/socket.js
 
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port http://localhost:${PORT}`);
 });
