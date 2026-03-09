@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,9 +11,11 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { onboardUser } from '@/store/slices/userSlice';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
 
 const onboardingSchema = z.object({
     name: z.string().min(2, 'Name is required'),
+    birthDate: z.string().min(1, 'Birth date is required'),
     gender: z.string().min(1, 'Please select a gender'),
     bio: z.string().min(10, 'Bio should be at least 10 characters'),
     interests: z.string().min(1, 'Add at least one interest'),
@@ -24,16 +26,24 @@ type OnboardingData = z.infer<typeof onboardingSchema>;
 export default function OnboardingPage() {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
 
-    const { register, handleSubmit, formState: { errors }, trigger, watch } = useForm<OnboardingData>({
+    const { register, handleSubmit, formState: { errors }, trigger, watch, setValue } = useForm<OnboardingData>({
         resolver: zodResolver(onboardingSchema),
     });
 
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.replace('/auth/login');
+        }
+    }, [isAuthenticated, router]);
+
     const nextStep = async () => {
         let fields: (keyof OnboardingData)[] = [];
-        if (step === 1) fields = ['name', 'gender'];
+        if (step === 1) fields = ['name', 'birthDate', 'gender'];
         if (step === 2) fields = ['bio', 'interests'];
 
         const isValid = await trigger(fields);
@@ -43,10 +53,25 @@ export default function OnboardingPage() {
     const onSubmit = async (data: OnboardingData) => {
         try {
             setLoading(true);
-            await dispatch(onboardUser(data)).unwrap();
-            router.push('/discover');
-        } catch (err) {
-            console.error('Onboarding failed', err);
+            setSubmitError(null);
+
+            const payload = {
+                name: data.name,
+                birthDate: data.birthDate,
+                gender: data.gender,
+                bio: data.bio,
+                interests: data.interests
+                    .split(',')
+                    .map((value) => value.trim())
+                    .filter(Boolean),
+            };
+
+            await dispatch(onboardUser(payload)).unwrap();
+            router.push('/home');
+        } catch (error) {
+            const message = typeof error === 'string' ? error : 'Onboarding failed';
+            setSubmitError(message);
+            console.error('Onboarding failed', message);
         } finally {
             setLoading(false);
         }
@@ -93,20 +118,32 @@ export default function OnboardingPage() {
                                     {...register('name')}
                                 />
 
+                                <Input
+                                    type="date"
+                                    label="Birth Date"
+                                    error={errors.birthDate?.message}
+                                    {...register('birthDate')}
+                                />
+
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-400 ml-1">Gender</label>
                                     <div className="grid grid-cols-2 gap-4">
-                                        {['Male', 'Female', 'Other'].map((g) => (
+                                        {[
+                                            { label: 'Male', value: 'MALE' },
+                                            { label: 'Female', value: 'FEMALE' },
+                                            { label: 'Non Binary', value: 'NON_BINARY' },
+                                            { label: 'Other', value: 'OTHER' },
+                                        ].map((g) => (
                                             <button
-                                                key={g}
+                                                key={g.value}
                                                 type="button"
-                                                onClick={() => register('gender').onChange({ target: { value: g, name: 'gender' } })}
-                                                className={`py-3 rounded-2xl border transition-all ${watch('gender') === g
+                                                onClick={() => setValue('gender', g.value, { shouldDirty: true, shouldValidate: true })}
+                                                className={`py-3 rounded-2xl border transition-all ${watch('gender') === g.value
                                                     ? 'bg-primary border-primary text-white'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
                                                     }`}
                                             >
-                                                {g}
+                                                {g.label}
                                             </button>
                                         ))}
                                     </div>
@@ -184,6 +221,10 @@ export default function OnboardingPage() {
                             </Button>
                         )}
                     </div>
+
+                    {submitError && (
+                        <p className="mt-4 text-sm text-primary">{submitError}</p>
+                    )}
                 </form>
             </motion.div>
         </div>

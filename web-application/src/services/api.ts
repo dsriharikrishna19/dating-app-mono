@@ -46,19 +46,19 @@ api.interceptors.response.use(
     }
 );
 
-export function apiGet(url: string, config?: any) {
+export function apiGet<T = any>(url: string, config?: any) {
     return api.get(url, config);
 }
-export function apiPost(url: string, data?: any, config?: any) {
+export function apiPost<T = any>(url: string, data?: any, config?: any) {
     return api.post(url, data, config);
 }
-export function apiPut(url: string, data?: any, config?: any) {
+export function apiPut<T = any>(url: string, data?: any, config?: any) {
     return api.put(url, data, config);
 }
-export function apiPatch(url: string, data?: any, config?: any) {
+export function apiPatch<T = any>(url: string, data?: any, config?: any) {
     return api.patch(url, data, config);
 }
-export function apiDelete(url: string, id?: string, config?: any) {
+export function apiDelete<T = any>(url: string, id?: string, config?: any) {
     const reqConfig = id ? { data: { id }, ...config } : config;
     return api.delete(url, reqConfig);
 }

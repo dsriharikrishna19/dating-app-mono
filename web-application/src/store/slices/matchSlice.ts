@@ -3,6 +3,12 @@ import { apiPost } from '@/services/api';
 import { MATCH_ENDPOINTS } from '@/services/endpoints/match.endpoints';
 import { ERROR_MESSAGES } from '@/constants/messages';
 
+interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data: T;
+}
+
 interface MatchState {
     matches: any[];
     loading: boolean;
@@ -17,8 +23,11 @@ const initialState: MatchState = {
 
 export const likeUser = createAsyncThunk('match/like', async (targetUserId: string, { rejectWithValue }) => {
     try {
-        const response = await apiPost(MATCH_ENDPOINTS.LIKE(targetUserId));
-        return response.data;
+        const response = await apiPost<ApiResponse<{ match: boolean; matchId: string | null }>>(MATCH_ENDPOINTS.SWIPE, {
+            targetUserId,
+            action: 'LIKE',
+        });
+        return response.data.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.MATCH.LIKE_FAILED);
     }
@@ -26,8 +35,11 @@ export const likeUser = createAsyncThunk('match/like', async (targetUserId: stri
 
 export const passUser = createAsyncThunk('match/pass', async (targetUserId: string, { rejectWithValue }) => {
     try {
-        const response = await apiPost(MATCH_ENDPOINTS.PASS(targetUserId));
-        return response.data;
+        const response = await apiPost<ApiResponse<{ match: boolean; matchId: string | null }>>(MATCH_ENDPOINTS.SWIPE, {
+            targetUserId,
+            action: 'NOPE',
+        });
+        return response.data.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.MATCH.PASS_FAILED);
     }

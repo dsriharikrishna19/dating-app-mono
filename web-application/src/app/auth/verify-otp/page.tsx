@@ -37,11 +37,11 @@ export default function VerifyOtpPage() {
 
         if (verifyOtp.fulfilled.match(resultAction)) {
             localStorage.removeItem('temp_phone');
-            const responsePayload = resultAction.payload;
+            const responsePayload = resultAction.payload.data;
 
             // If user is not onboarded, go to onboarding, else to discover
             if (responsePayload.user?.onboarded) {
-                router.push('/discover');
+                router.push('/home');
             } else {
                 router.push('/auth/onboarding');
             }
@@ -57,14 +57,14 @@ export default function VerifyOtpPage() {
             >
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-white mb-2">Verify OTP</h2>
-                    <p className="text-slate-400">Enter the 4-digit code sent to {phoneNumber}</p>
+                    <p className="text-slate-400">Enter the 6-digit code sent to {phoneNumber}</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <Input
                         label="OTP Code"
-                        placeholder="0000"
-                        maxLength={4}
+                        placeholder="000000"
+                        maxLength={6}
                         className="text-center text-3xl tracking-[1rem] font-black"
                         error={errors.otp?.message}
                         {...register('otp')}

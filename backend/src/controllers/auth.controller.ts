@@ -37,7 +37,13 @@ export const register = async (req: Request, res: Response, next: NextFunction):
             data: { phoneNumber },
         });
 
-        sendSuccess(res, newUser, 'User registered successfully. Please verify OTP.', 201);
+        // Mock OTP sending for first-time verification during registration.
+        console.log(`OTP for ${phoneNumber}: ${OTP_MOCK}`);
+
+        sendSuccess(res, {
+            phoneNumber: newUser.phoneNumber,
+            requiresVerification: true,
+        }, 'User registered successfully. Please verify OTP.', 201);
     } catch (error) {
         next(error);
     }
@@ -55,10 +61,27 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             throw new NotFoundError('User not found');
         }
 
-        // Mock OTP sending
-        console.log(`OTP for ${phoneNumber}: ${OTP_MOCK}`);
+        // Only unverified users should go through OTP verification flow.
+        if (!user.isVerified) {
+            console.log(`OTP for ${phoneNumber}: ${OTP_MOCK}`);
+            sendSuccess(res, {
+                phoneNumber,
+                requiresVerification: true,
+            }, 'Please verify OTP to continue');
+            return;
+        }
 
-        sendSuccess(res, { phoneNumber }, 'OTP sent successfully');
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+
+        sendSuccess(res, {
+            token,
+            user: {
+                id: user.id,
+                phoneNumber: user.phoneNumber,
+                onboarded: user.onboarded,
+            },
+            requiresVerification: false,
+        }, 'Login successful');
     } catch (error) {
         next(error);
     }

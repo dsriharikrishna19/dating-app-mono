@@ -43,7 +43,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-dark">
+    <div className="flex flex-col gap-6 min-h-screen bg-background-dark">
       <Hero />
       <Stats />
       <Features ref={featuresRef} />

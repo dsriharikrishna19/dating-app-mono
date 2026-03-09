@@ -24,8 +24,18 @@ export default function RegisterPage() {
         const resultAction = await dispatch(registerUser(data));
 
         if (registerUser.fulfilled.match(resultAction)) {
-            localStorage.setItem('temp_phone', data.phoneNumber);
-            router.push('/auth/verify-otp');
+            const responseData = resultAction.payload.data;
+            if (responseData?.requiresVerification) {
+                localStorage.setItem('temp_phone', responseData.phoneNumber || data.phoneNumber);
+                router.push('/auth/verify-otp');
+                return;
+            }
+
+            if (responseData?.user?.onboarded) {
+                router.push('/home');
+            } else {
+                router.push('/auth/onboarding');
+            }
         }
     };
 

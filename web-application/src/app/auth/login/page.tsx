@@ -24,9 +24,19 @@ export default function LoginPage() {
         const resultAction = await dispatch(loginUser(data.phoneNumber));
 
         if (loginUser.fulfilled.match(resultAction)) {
-            // Store phone number for OTP verification (could use local state or redux)
-            localStorage.setItem('temp_phone', data.phoneNumber);
-            router.push('/auth/verify-otp');
+            const responseData = resultAction.payload.data;
+
+            if (responseData?.requiresVerification) {
+                localStorage.setItem('temp_phone', data.phoneNumber);
+                router.push('/auth/verify-otp');
+                return;
+            }
+
+            if (responseData?.user?.onboarded) {
+                router.push('/home');
+            } else {
+                router.push('/auth/onboarding');
+            }
         }
     };
 
@@ -51,12 +61,12 @@ export default function LoginPage() {
                     />
 
                     <Button type="submit" className="w-full" size="lg">
-                        Send OTP
+                        Continue
                     </Button>
                 </form>
 
                 <div className="mt-8 text-center text-sm text-slate-400">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <Link href="/auth/register" className="text-primary font-bold hover:underline">
                         Register Now
                     </Link>

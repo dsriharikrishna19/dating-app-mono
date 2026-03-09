@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "@/components/providers/Providers";
-import Navbar from "@/components/layout/Navbar";
+import NavbarSwitcher from "@/components/layout/NavbarSwitcher";
 
 export const metadata: Metadata = {
   title: "Spark - Find Your Connection",
@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="antialiased font-sans">
         <Providers>
           <div className="min-h-screen flex flex-col">
-            <Navbar />
+            <NavbarSwitcher />
             <main className="flex-grow">
               {children}
             </main>

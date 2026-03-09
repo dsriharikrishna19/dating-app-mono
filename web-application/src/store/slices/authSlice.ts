@@ -1,7 +1,24 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiPost } from '@/services/api';
 import { AUTH_ENDPOINTS } from '@/services/endpoints/auth.endpoints';
 import { ERROR_MESSAGES } from '@/constants/messages';
+
+interface AuthApiData {
+    token?: string;
+    user?: {
+        id: string;
+        phoneNumber: string;
+        onboarded: boolean;
+    };
+    requiresVerification?: boolean;
+    phoneNumber?: string;
+}
+
+interface AuthApiResponse {
+    success: boolean;
+    message: string;
+    data: AuthApiData;
+}
 
 interface AuthState {
     token: string | null;
@@ -18,7 +35,7 @@ const initialState: AuthState = {
 };
 
 // Async Thunks
-export const registerUser = createAsyncThunk('auth/register', async (data: any, { rejectWithValue }) => {
+export const registerUser = createAsyncThunk<AuthApiResponse, any>('auth/register', async (data, { rejectWithValue }) => {
     try {
         const response = await apiPost(AUTH_ENDPOINTS.REGISTER, data);
         return response.data;
@@ -27,7 +44,7 @@ export const registerUser = createAsyncThunk('auth/register', async (data: any, 
     }
 });
 
-export const loginUser = createAsyncThunk('auth/login', async (phoneNumber: string, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk<AuthApiResponse, string>('auth/login', async (phoneNumber, { rejectWithValue }) => {
     try {
         const response = await apiPost(AUTH_ENDPOINTS.LOGIN, { phoneNumber });
         return response.data;
@@ -36,7 +53,7 @@ export const loginUser = createAsyncThunk('auth/login', async (phoneNumber: stri
     }
 });
 
-export const verifyOtp = createAsyncThunk('auth/verifyOtp', async (data: { phoneNumber: string; otp: string }, { rejectWithValue }) => {
+export const verifyOtp = createAsyncThunk<AuthApiResponse, { phoneNumber: string; otp: string }>('auth/verifyOtp', async (data, { rejectWithValue }) => {
     try {
         const response = await apiPost(AUTH_ENDPOINTS.VERIFY_OTP, data);
         return response.data;
@@ -74,15 +91,26 @@ const authSlice = createSlice({
 
         // Login
         builder.addCase(loginUser.pending, (state) => { state.loading = true; state.error = null; })
-            .addCase(loginUser.fulfilled, (state) => { state.loading = false; })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.loading = false;
+                const token = action.payload.data?.token;
+                if (token) {
+                    state.token = token;
+                    state.isAuthenticated = true;
+                } else {
+                    state.token = null;
+                    state.isAuthenticated = false;
+                }
+            })
             .addCase(loginUser.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; });
 
         // Verify OTP
         builder.addCase(verifyOtp.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(verifyOtp.fulfilled, (state, action) => {
                 state.loading = false;
-                if (action.payload.token) {
-                    state.token = action.payload.token;
+                const token = action.payload.data?.token;
+                if (token) {
+                    state.token = token;
                     state.isAuthenticated = true;
                 }
             })

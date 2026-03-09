@@ -3,6 +3,26 @@ import { apiGet, apiPut, apiPost } from '@/services/api';
 import { USER_ENDPOINTS } from '@/services/endpoints/user.endpoints';
 import { ERROR_MESSAGES } from '@/constants/messages';
 
+interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data: T;
+}
+
+interface ApiErrorResponse {
+    message?: string;
+    error?: string;
+}
+
+const getApiErrorMessage = (error: unknown, fallback: string): string => {
+    if (typeof error !== 'object' || error === null) {
+        return fallback;
+    }
+
+    const maybeError = error as { response?: { data?: ApiErrorResponse } };
+    return maybeError.response?.data?.message ?? maybeError.response?.data?.error ?? fallback;
+};
+
 interface UserState {
     profile: any | null;
     discoverUsers: any[];
@@ -19,8 +39,8 @@ const initialState: UserState = {
 
 export const getDiscoverUsers = createAsyncThunk('user/getDiscoverUsers', async (_, { rejectWithValue }) => {
     try {
-        const response = await apiGet(USER_ENDPOINTS.DISCOVERY);
-        return response.data;
+        const response = await apiGet<ApiResponse<any[]>>(USER_ENDPOINTS.DISCOVERY);
+        return response.data.data || [];
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.DISCOVERY.FETCH_FAILED);
     }
@@ -28,8 +48,8 @@ export const getDiscoverUsers = createAsyncThunk('user/getDiscoverUsers', async 
 
 export const updateProfile = createAsyncThunk('user/updateProfile', async (data: any, { rejectWithValue }) => {
     try {
-        const response = await apiPut(USER_ENDPOINTS.PROFILE, data);
-        return response.data;
+        const response = await apiPut<ApiResponse<any>>(USER_ENDPOINTS.PROFILE, data);
+        return response.data.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.PROFILE.UPDATE_FAILED);
     }
@@ -37,8 +57,8 @@ export const updateProfile = createAsyncThunk('user/updateProfile', async (data:
 
 export const getProfile = createAsyncThunk('user/getProfile', async (_, { rejectWithValue }) => {
     try {
-        const response = await apiGet(USER_ENDPOINTS.PROFILE);
-        return response.data;
+        const response = await apiGet<ApiResponse<{ user: any; profile: any }>>(USER_ENDPOINTS.PROFILE);
+        return response.data.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.PROFILE.FETCH_FAILED);
     }
@@ -46,21 +66,21 @@ export const getProfile = createAsyncThunk('user/getProfile', async (_, { reject
 
 export const onboardUser = createAsyncThunk('user/onboard', async (data: any, { rejectWithValue }) => {
     try {
-        const response = await apiPost(USER_ENDPOINTS.ONBOARDING, data);
-        return response.data;
-    } catch (err: any) {
-        return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.USER.ONBOARDING_FAILED);
+        const response = await apiPost<ApiResponse<any>>(USER_ENDPOINTS.ONBOARDING, data);
+        return response.data.data;
+    } catch (error: unknown) {
+        return rejectWithValue(getApiErrorMessage(error, ERROR_MESSAGES.USER.ONBOARDING_FAILED));
     }
 });
 
 export const uploadPhoto = createAsyncThunk('user/uploadPhoto', async (formData: FormData, { rejectWithValue }) => {
     try {
-        const response = await apiPost(USER_ENDPOINTS.UPLOAD_PHOTO, formData, {
+        const response = await apiPost<ApiResponse<any>>(USER_ENDPOINTS.UPLOAD_PHOTO, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        return response.data;
+        return response.data.data;
     } catch (err: any) {
         return rejectWithValue(err.response?.data?.message || ERROR_MESSAGES.USER.PHOTO_UPLOAD_FAILED);
     }
@@ -87,7 +107,10 @@ const userSlice = createSlice({
 
         // getProfile
         builder.addCase(getProfile.pending, (state) => { state.loading = true; state.error = null; })
-            .addCase(getProfile.fulfilled, (state, action) => { state.loading = false; state.profile = action.payload; })
+            .addCase(getProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.profile = action.payload?.profile ?? null;
+            })
             .addCase(getProfile.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; });
 
         // onboardUser
