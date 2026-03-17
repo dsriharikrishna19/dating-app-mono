@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: SPACING.md,
+        paddingHorizontal: 0, // Let the Card handle its own width
     },
     nextCard: {
         position: 'absolute',

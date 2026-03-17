@@ -11,6 +11,7 @@ import {
     Image,
     Alert
 } from 'react-native';
+import { userRepository } from '../../repositories/userRepository';
 import * as ImagePicker from 'expo-image-picker';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -86,10 +87,18 @@ export default function OnboardingScreen() {
         }
     };
 
-    const onSubmit = (data: OnboardingFormData) => {
-        // Save all onboarding data to Redux (and persisted storage)
-        dispatch(setOnboardingData(data) as any);
-        router.replace('/pages/home');
+    const onSubmit = async (data: OnboardingFormData) => {
+        try {
+            // Save to Firestore using repository
+            await userRepository.saveUser(data);
+
+            // Save all onboarding data to Redux
+            dispatch(setOnboardingData(data) as any);
+            router.replace('/pages/home');
+        } catch (error) {
+            console.error("Error saving user data:", error);
+            Alert.alert('Registration Failed', 'There was an error saving your profile. Please try again.');
+        }
     };
 
     const nextStep = async () => {

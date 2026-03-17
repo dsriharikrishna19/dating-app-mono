@@ -12,7 +12,7 @@ import {
     Linking
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, Send, MoreVertical, Phone } from 'lucide-react-native';
+import { ChevronLeft, Send, MoreVertical, Phone, Video } from 'lucide-react-native';
 import { SPACING, RADIUS } from '../../theme/spacing';
 import AppText from '../../components/AppText';
 import Avatar from '../../components/Avatar';
@@ -104,11 +104,10 @@ export default function ChatDetailScreen() {
         </View>
     );
 
-    const handleCall = () => {
-        const phoneNumber = user.mobile || '1234567890';
-        Linking.openURL(`tel:${phoneNumber}`).catch(err => {
-            console.error('Error opening dialer', err);
-            Alert.alert('Error', 'Could not open the phone dialer.');
+    const handleCall = (type: 'video' | 'audio') => {
+        router.push({
+            pathname: `/call/${id}`,
+            params: { type }
         });
     };
 
@@ -134,7 +133,10 @@ export default function ChatDetailScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.headerActions}>
-                    <TouchableOpacity style={styles.headerIcon} onPress={handleCall}>
+                    <TouchableOpacity style={styles.headerIcon} onPress={() => handleCall('video')}>
+                        <Video color={theme.text.secondary} size={20} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.headerIcon} onPress={() => handleCall('audio')}>
                         <Phone color={theme.text.secondary} size={20} />
                     </TouchableOpacity>
                     <TouchableOpacity

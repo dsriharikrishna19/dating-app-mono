@@ -25,6 +25,29 @@ export const initSocket = (server: HttpServer) => {
         socket.on('disconnect', () => {
             console.log('User disconnected:', socket.id);
         });
+
+        // WebRTC Signaling
+        socket.on('call-user', ({ to, offer }) => {
+            console.log(`Call from ${userId} to ${to}`);
+            socket.to(to).emit('incoming-call', { from: userId, offer });
+        });
+
+        socket.on('call-accepted', ({ to, answer }) => {
+            console.log(`Call accepted by ${userId} for ${to}`);
+            socket.to(to).emit('call-answered', { from: userId, answer });
+        });
+
+        socket.on('ice-candidate', ({ to, candidate }) => {
+            socket.to(to).emit('ice-candidate', { from: userId, candidate });
+        });
+
+        socket.on('call-rejected', ({ to }) => {
+            socket.to(to).emit('call-rejected', { from: userId });
+        });
+
+        socket.on('end-call', ({ to }) => {
+            socket.to(to).emit('end-call', { from: userId });
+        });
     });
 
     return io;

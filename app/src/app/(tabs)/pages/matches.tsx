@@ -3,7 +3,6 @@ import {
     View,
     StyleSheet,
     FlatList,
-    Image,
     SafeAreaView,
     TouchableOpacity,
     ScrollView,
@@ -125,8 +124,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.lg,
-        paddingVertical: SPACING.md,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.sm,
     },
     title: {
         fontWeight: TYPOGRAPHY.weight.black,
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     searchContainer: {
-        paddingHorizontal: SPACING.lg,
+        paddingHorizontal: SPACING.md,
         paddingBottom: SPACING.md,
     },
     searchBar: {
@@ -168,13 +167,13 @@ const styles = StyleSheet.create({
         maxWidth: 600,
     },
     sectionTitle: {
-        paddingHorizontal: SPACING.lg,
-        marginBottom: SPACING.md,
+        paddingHorizontal: SPACING.md,
+        marginBottom: SPACING.sm,
         color: COLORS.text.primary,
     },
     newMatchesList: {
-        paddingLeft: SPACING.lg,
-        paddingRight: SPACING.md,
+        paddingLeft: SPACING.md,
+        paddingRight: SPACING.sm,
     },
     newMatchItem: {
         alignItems: 'center',

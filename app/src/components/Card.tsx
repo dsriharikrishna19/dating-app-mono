@@ -104,7 +104,7 @@ const Card: React.FC<CardProps> = ({ user }) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: width * 0.94,
+    width: width > 500 ? 380 : width - (SPACING.md * 2),
     height: CARD_HEIGHT,
     borderRadius: RADIUS.xxl,
     overflow: 'hidden',
