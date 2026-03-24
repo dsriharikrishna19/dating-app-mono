@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, Search, Sparkles } from 'lucide-react-native';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { updateProfile } from '../../../store/slices/userSlice';
 
 const INTERESTS = [
   'Photography', 'Travel', 'Music', 'Cooking', 'Art', 'Fitness', 
@@ -10,7 +12,21 @@ const INTERESTS = [
 
 export default function OnboardingStep2() {
   const router = useRouter();
-  const [selected, setSelected] = React.useState(['Photography', 'Travel']);
+  const dispatch = useAppDispatch();
+  const profile = useAppSelector((state) => state.user.profile);
+  
+  const [selected, setSelected] = React.useState<string[]>(
+    profile?.interests?.map(i => i.name) || ['Photography', 'Travel']
+  );
+
+  const handleNext = () => {
+    if (selected.length === 0) return;
+    
+    // Convert string array to Interest objects
+    const interests = selected.map(name => ({ id: name, name }));
+    dispatch(updateProfile({ interests }));
+    router.push('/onboarding/step3');
+  };
 
   const toggleInterest = (interest: string) => {
     if (selected.includes(interest)) {
@@ -21,7 +37,7 @@ export default function OnboardingStep2() {
   };
   
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-dark p-4">
       <Stack.Screen options={{
         headerTitle: '',
         headerTransparent: true,
@@ -72,7 +88,7 @@ export default function OnboardingStep2() {
           <TouchableOpacity 
             className={`w-full h-14 items-center justify-center rounded-2xl shadow-lg mt-12 mb-10 ${selected.length > 0 ? 'bg-primary shadow-primary/20' : 'bg-slate-800 opacity-50'}`}
             disabled={selected.length === 0}
-            onPress={() => router.push('/(auth)/onboarding/step3')}
+            onPress={handleNext}
           >
             <Text className="text-white text-lg font-display-bold">Next</Text>
           </TouchableOpacity>

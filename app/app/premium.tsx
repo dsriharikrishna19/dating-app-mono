@@ -4,6 +4,8 @@ import { Stack, useRouter } from 'expo-router';
 import { X, Check, Star, Zap, Globe, Heart, ShieldCheck } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { useAppDispatch } from '../store/hooks';
+import { setGold } from '../store/slices/userSlice';
 
 const { width } = Dimensions.get('window');
 
@@ -23,7 +25,13 @@ const FEATURES = [
 
 export default function PremiumScreen() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [selectedPlan, setSelectedPlan] = React.useState('6m');
+
+  const handleContinue = () => {
+    dispatch(setGold(true));
+    router.back();
+  };
 
   return (
     <View className="flex-1 bg-background-dark">
@@ -128,6 +136,7 @@ export default function PremiumScreen() {
       {/* Sticky CTA */}
       <View className="px-6 py-8 border-t border-white/5 bg-background-dark/80 backdrop-blur-xl">
         <TouchableOpacity 
+          onPress={handleContinue}
           className="w-full h-16 bg-yellow-500 rounded-2xl items-center justify-center shadow-2xl shadow-yellow-500/30"
           activeOpacity={0.9}
         >

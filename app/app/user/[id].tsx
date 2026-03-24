@@ -3,6 +3,9 @@ import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensio
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Share2, MoreVertical, MapPin, Award, Sparkles, Heart, X, Star, ShieldAlert } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAppDispatch } from '../../store/hooks';
+import { discoveryService } from '../../services/discovery.service';
+import { nextProfile } from '../../store/slices/discoverySlice';
 
 const { width } = Dimensions.get('window');
 
@@ -14,7 +17,23 @@ const GALLERY = [
 
 export default function UserDetailScreen() {
   const router = useRouter();
-  const { id, name, age, distance, image, bio } = useLocalSearchParams();
+  const dispatch = useAppDispatch();
+  const { id, name, age, distance, image, bio, interests: interestsRaw, images: imagesRaw } = useLocalSearchParams();
+
+  const interests = interestsRaw ? JSON.parse(interestsRaw as string) : [];
+  const gallery = imagesRaw ? JSON.parse(imagesRaw as string) : [];
+
+  const handleSwipe = async (type: 'LIKE' | 'DISLIKE' | 'SUPERLIKE') => {
+    try {
+      const direction = type === 'DISLIKE' ? 'LEFT' : 'RIGHT';
+      await discoveryService.swipe(id as string, direction);
+      dispatch(nextProfile());
+      router.back();
+    } catch (err) {
+      console.error('Swipe from detail error:', err);
+      router.back();
+    }
+  };
 
   return (
     <View className="flex-1 bg-background-dark">
@@ -78,9 +97,9 @@ export default function UserDetailScreen() {
           <View>
             <Text className="text-lg font-display-bold text-white mb-4">Interests</Text>
             <View className="flex-row flex-wrap gap-2.5">
-              {['Salsa Dancing', 'Jazz Music', 'Coffee Art', 'Photography', 'Vinyl Records'].map((item) => (
-                <View key={item} className="px-4 py-2 rounded-full bg-slate-800/20 border border-primary/20">
-                  <Text className="text-slate-200 text-xs font-display-semibold">{item}</Text>
+              {interests.map((item: any) => (
+                <View key={item.id} className="px-4 py-2 rounded-full bg-slate-800/20 border border-primary/20">
+                  <Text className="text-slate-200 text-xs font-display-semibold">{item.name}</Text>
                 </View>
               ))}
             </View>
@@ -90,9 +109,9 @@ export default function UserDetailScreen() {
           <View>
             <Text className="text-lg font-display-bold text-white mb-4">Photo Gallery</Text>
             <View className="flex-row gap-2.5">
-              {GALLERY.map((img, i) => (
+              {gallery.map((img: any, i: number) => (
                 <View key={i} className="flex-1 aspect-square rounded-2xl overflow-hidden shadow-sm">
-                  <Image source={{ uri: img }} className="w-full h-full" />
+                  <Image source={{ uri: img.url }} className="w-full h-full" />
                 </View>
               ))}
             </View>
@@ -113,15 +132,24 @@ export default function UserDetailScreen() {
       {/* Floating Action Buttons */}
       <SafeAreaView className="absolute inset-x-0 bottom-4">
         <View className="flex-row items-center justify-center gap-6">
-          <TouchableOpacity className="w-16 h-16 rounded-full bg-slate-800 items-center justify-center border border-slate-700 active:scale-90 shadow-2xl">
+          <TouchableOpacity 
+            onPress={() => handleSwipe('DISLIKE')}
+            className="w-16 h-16 rounded-full bg-slate-800 items-center justify-center border border-slate-700 active:scale-90 shadow-2xl"
+          >
             <X size={32} stroke="#ff4255" strokeWidth={2.5} />
           </TouchableOpacity>
           
-          <TouchableOpacity className="w-14 h-14 rounded-full bg-slate-800 items-center justify-center border border-slate-700 active:scale-90 shadow-2xl">
+          <TouchableOpacity 
+            onPress={() => handleSwipe('SUPERLIKE')}
+            className="w-14 h-14 rounded-full bg-slate-800 items-center justify-center border border-slate-700 active:scale-90 shadow-2xl"
+          >
             <Star size={24} stroke="#a855f7" fill="#a855f7" />
           </TouchableOpacity>
           
-          <TouchableOpacity className="w-16 h-16 rounded-full bg-primary items-center justify-center active:scale-90 shadow-2xl shadow-primary/30">
+          <TouchableOpacity 
+            onPress={() => handleSwipe('LIKE')}
+            className="w-16 h-16 rounded-full bg-primary items-center justify-center active:scale-90 shadow-2xl shadow-primary/30"
+          >
             <Heart size={32} stroke="white" fill="white" />
           </TouchableOpacity>
         </View>

@@ -78,6 +78,7 @@ export default function WelcomeScreen() {
             <TouchableOpacity 
               activeOpacity={0.9}
               className="w-full h-14 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20"
+              onPress={() => router.push('/onboarding/step1')}
             >
               <Text className="text-white text-[16px] font-display-bold tracking-wide">Create Account</Text>
             </TouchableOpacity>
@@ -108,7 +109,7 @@ export default function WelcomeScreen() {
 
             <TouchableOpacity 
               activeOpacity={0.7}
-              onPress={() => router.push('/(auth)/phone-entry')}
+              onPress={() => router.push('/phone-entry')}
               className="w-full flex-row items-center justify-center gap-2 py-3"
             >
               <Smartphone size={20} stroke="#64748b" />

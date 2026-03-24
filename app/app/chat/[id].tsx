@@ -4,16 +4,52 @@ import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Phone, Video, Send, Plus, Smile } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setMessages, addMessage, setActiveMatch, Message } from '../../store/slices/chatSlice';
+import { chatService } from '../../services/chat.service';
+import { RootState } from '../../store/store';
+
 export default function ChatDetailScreen() {
   const router = useRouter();
-  const { name, id } = useLocalSearchParams();
-  const [message, setMessage] = React.useState('');
+  const { name, id: matchId } = useLocalSearchParams<{ name: string; id: string }>();
+  const dispatch = useAppDispatch();
+  const [messageText, setMessageText] = React.useState('');
+  
+  const messages = useAppSelector((state: RootState) => state.chat.messages[matchId as string] || []);
+  const currentUser = useAppSelector((state: RootState) => state.auth.user);
 
-  const MESSAGES = [
-    { id: 1, text: "Hey! I saw you're into jazz too. Ever been to Blue Note?", sender: 'them', time: '10:30 AM' },
-    { id: 2, text: "The one in Greenwich Village? Yeah, I love that place!", sender: 'me', time: '10:32 AM' },
-    { id: 3, text: "That sounds like a great idea! Let's do it... 🎷", sender: 'them', time: '10:35 AM' },
-  ];
+  React.useEffect(() => {
+    if (matchId) {
+      dispatch(setActiveMatch(matchId as string));
+      const fetchMessages = async () => {
+        try {
+          const res = await chatService.getMessages(matchId as string);
+          dispatch(setMessages({ matchId: matchId as string, messages: res.data }));
+        } catch (err) {
+          console.error('Fetch Messages Error:', err);
+        }
+      };
+      fetchMessages();
+    }
+    
+    return () => {
+      dispatch(setActiveMatch(null));
+    };
+  }, [matchId]);
+
+  const handleSend = async () => {
+    if (!messageText.trim() || !matchId) return;
+    
+    const text = messageText.trim();
+    setMessageText('');
+    
+    try {
+      const res = await chatService.sendMessage(matchId as string, text);
+      dispatch(addMessage({ matchId: matchId as string, message: res.data }));
+    } catch (err) {
+      console.error('Send Message Error:', err);
+    }
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -50,14 +86,19 @@ export default function ChatDetailScreen() {
           <Text className="text-slate-500 font-display text-sm mt-1">Matched 2 days ago</Text>
         </View>
 
-        {MESSAGES.map((msg) => (
-          <View key={msg.id} className={`mb-6 flex-row ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
-            <View className={`max-w-[80%] px-4 py-3 rounded-2xl ${msg.sender === 'me' ? 'bg-primary' : 'bg-slate-800'}`}>
-              <Text className="text-white font-display text-base">{msg.text}</Text>
-              <Text className={`text-[10px] mt-1 ${msg.sender === 'me' ? 'text-white/70' : 'text-slate-500'}`}>{msg.time}</Text>
+        {messages.map((msg: Message) => {
+          const isMe = msg.senderId === currentUser?.id;
+          return (
+            <View key={msg.id} className={`mb-6 flex-row ${isMe ? 'justify-end' : 'justify-start'}`}>
+              <View className={`max-w-[80%] px-4 py-3 rounded-2xl ${isMe ? 'bg-primary' : 'bg-slate-800'}`}>
+                <Text className="text-white font-display text-base">{msg.text}</Text>
+                <Text className={`text-[10px] mt-1 ${isMe ? 'text-white/70' : 'text-slate-500'}`}>
+                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
 
       {/* Input Area */}
@@ -73,16 +114,16 @@ export default function ChatDetailScreen() {
               placeholder="Type a message..."
               placeholderTextColor="#64748b"
               multiline
-              value={message}
-              onChangeText={setMessage}
+              value={messageText}
+              onChangeText={setMessageText}
             />
             <TouchableOpacity><Smile size={20} stroke="#94a3b8" /></TouchableOpacity>
           </View>
-
           <TouchableOpacity 
-            className={`size-12 rounded-full items-center justify-center ${message.trim() ? 'bg-primary' : 'bg-slate-800'}`}
+            onPress={handleSend}
+            className={`size-12 rounded-full items-center justify-center ${messageText.trim() ? 'bg-primary' : 'bg-slate-800'}`}
           >
-            <Send size={20} stroke={message.trim() ? 'white' : '#64748b'} />
+            <Send size={20} stroke={messageText.trim() ? 'white' : '#64748b'} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>

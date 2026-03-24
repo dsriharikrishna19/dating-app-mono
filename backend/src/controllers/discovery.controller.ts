@@ -11,8 +11,8 @@ interface AuthRequest extends Request {
 }
 
 const SwipeSchema = z.object({
-    targetUserId: z.string(),
-    action: z.enum(['LIKE', 'NOPE']),
+    profileId: z.string(),
+    direction: z.enum(['LEFT', 'RIGHT', 'SUPERLIKE']),
 });
 
 const FiltersSchema = z.object({
@@ -111,14 +111,14 @@ export const getFeed = async (req: AuthRequest, res: Response, next: NextFunctio
 export const swipe = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.userId!;
-        const { targetUserId, action } = SwipeSchema.parse(req.body);
+        const { profileId, direction } = SwipeSchema.parse(req.body);
 
-        const result = await MatchService.handleSwipe(userId, targetUserId, action);
+        const result = await MatchService.handleSwipe(userId, profileId, direction);
 
         sendSuccess(res, {
             match: result?.status === 'MATCHED',
             matchId: result?.status === 'MATCHED' ? result.id : null,
-        }, action === 'LIKE' ? 'User liked' : 'User passed');
+        }, direction === 'LEFT' ? 'User passed' : 'User liked');
     } catch (error) {
         next(error);
     }

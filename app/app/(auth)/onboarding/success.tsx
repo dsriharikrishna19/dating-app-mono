@@ -3,12 +3,47 @@ import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import { Stack, useRouter } from 'expo-router';
 import { Heart, CheckCircle2 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { userService } from '../../../services/user.service';
+import { setCredentials } from '../../../store/slices/authSlice';
 
 export default function OnboardingSuccessScreen() {
   const router = useRouter();
-  
+  const dispatch = useAppDispatch();
+  const profile = useAppSelector((state) => state.user.profile);
+  const user = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.token);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleStart = async () => {
+    setIsSubmitting(true);
+    try {
+      // 1. Submit Onboarding Data to Backend
+      await userService.onboarding(profile);
+      
+      // 2. Mark as Onboarded in Backend (assume specialized endpoint or part of update)
+      // await userService.completeOnboarding();
+      
+      // 3. Update local Redux state
+      if (user) {
+        dispatch(setCredentials({ 
+          user: { ...user, onboarded: true }, 
+          token: token || ''
+        }));
+      }
+      
+      router.replace('/');
+    } catch (err) {
+      console.error('Final Submission Error:', err);
+      // Fallback for demo
+      router.replace('/');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-dark p-4">
       <Stack.Screen options={{ headerShown: false }} />
       
       <LinearGradient
@@ -38,10 +73,13 @@ export default function OnboardingSuccessScreen() {
         </View>
 
         <TouchableOpacity 
-          className="w-full h-16 items-center justify-center rounded-3xl bg-primary shadow-2xl shadow-primary/30"
-          onPress={() => router.replace('/(tabs)')}
+          className={`w-full h-16 items-center justify-center rounded-3xl bg-primary shadow-2xl shadow-primary/30 ${isSubmitting ? 'opacity-50' : 'opacity-100'}`}
+          onPress={handleStart}
+          disabled={isSubmitting}
         >
-          <Text className="text-white text-xl font-display-bold">Start Exploring</Text>
+          <Text className="text-white text-xl font-display-bold">
+            {isSubmitting ? 'Finalizing...' : 'Start Exploring'}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>

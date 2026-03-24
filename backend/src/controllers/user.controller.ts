@@ -20,6 +20,7 @@ const OnboardingSchema = z.object({
         city: z.string(),
     }).optional(),
     interests: z.array(z.string()).optional(),
+    images: z.array(z.string()).optional(),
 });
 
 const UpdateProfileSchema = OnboardingSchema.partial();
@@ -64,7 +65,7 @@ export const onboarding = async (req: AuthRequest, res: Response, next: NextFunc
         const userId = req.userId!;
         const data = OnboardingSchema.parse(req.body);
 
-        const { interests, location, ...profileData } = data;
+        const { interests, location, images, ...profileData } = data;
 
         // Create or update profile
         const profile = await prisma.profile.upsert({
@@ -73,10 +74,14 @@ export const onboarding = async (req: AuthRequest, res: Response, next: NextFunc
                 ...profileData,
                 location: location ? JSON.stringify(location) : undefined,
                 interests: interests ? {
+                    set: [], // Clear existing
                     connectOrCreate: interests.map((name) => ({
                         where: { name },
                         create: { name },
                     })),
+                } : undefined,
+                images: images ? {
+                    create: images.map((url) => ({ url })),
                 } : undefined,
             },
             create: {
@@ -89,6 +94,13 @@ export const onboarding = async (req: AuthRequest, res: Response, next: NextFunc
                         create: { name },
                     })),
                 } : undefined,
+                images: images ? {
+                    create: images.map((url) => ({ url })),
+                } : undefined,
+            },
+            include: {
+                images: true,
+                interests: true,
             },
         });
 
@@ -112,7 +124,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
         const userId = req.userId!;
         const data = UpdateProfileSchema.parse(req.body);
 
-        const { interests, location, ...profileData } = data;
+        const { interests, location, images, ...profileData } = data;
 
         const profile = await prisma.profile.update({
             where: { userId },
@@ -126,6 +138,13 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
                         create: { name },
                     })),
                 } : undefined,
+                images: images ? {
+                    create: images.map((url) => ({ url })),
+                } : undefined,
+            },
+            include: {
+                images: true,
+                interests: true,
             },
         });
 
@@ -171,4 +190,3 @@ export const deleteImage = async (req: AuthRequest, res: Response, next: NextFun
         next(error);
     }
 };
-

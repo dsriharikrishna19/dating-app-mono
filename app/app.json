@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "friendly-buddy",
-    "slug": "friendly-buddy",
+    "slug": "friendly-buddy-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,11 +22,10 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "package": "com.sriharikrishna.friendlybuddyapp"
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -35,6 +34,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ee269285-3ec4-4f5a-80dd-5f3eefd972a9"
+      }
     }
   }
 }

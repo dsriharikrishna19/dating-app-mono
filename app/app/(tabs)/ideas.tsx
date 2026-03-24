@@ -33,6 +33,12 @@ const IDEAS = [
 ];
 
 export default function IdeasScreen() {
+  const [isShared, setIsShared] = React.useState(false);
+
+  const handleShare = () => {
+    setIsShared(true);
+    setTimeout(() => setIsShared(false), 3000);
+  };
   return (
     <View className="flex-1 bg-background-dark">
       <SafeAreaView className="flex-1">
@@ -73,8 +79,13 @@ export default function IdeasScreen() {
                       <Text className="text-white text-[10px] font-display-bold">+42</Text>
                     </View>
                   </View>
-                  <TouchableOpacity className="bg-white px-6 py-3 rounded-2xl shadow-md">
-                    <Text className="text-[#ff4255] font-display-bold">Share Yours</Text>
+                  <TouchableOpacity 
+                    onPress={handleShare}
+                    className={`${isShared ? 'bg-green-500' : 'bg-white'} px-6 py-3 rounded-2xl shadow-md`}
+                  >
+                    <Text className={`${isShared ? 'text-white' : 'text-[#ff4255]'} font-display-bold`}>
+                      {isShared ? 'Shared! ✓' : 'Share Yours'}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </LinearGradient>

@@ -3,23 +3,78 @@ import { View, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ScrollVi
 import { Stack, useRouter } from 'expo-router';
 import { Heart, X, Star, MapPin, Globe, Award, SlidersHorizontal } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setProfiles, nextProfile, setExhausted, updateFilters } from '../../store/slices/discoverySlice';
+import { discoveryService } from '../../services/discovery.service';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ExploreScreen() {
   const router = useRouter();
-  const [showMatch, setShowMatch] = React.useState(false);
-  const [showFilters, setShowFilters] = React.useState(false);
-  const [isExhausted, setIsExhausted] = React.useState(false);
+  const dispatch = useAppDispatch();
+  
+  const { profiles, currentIndex, exhausted, isLoading, filters } = useAppSelector((state) => state.discovery);
+  const currentUser = useAppSelector((state) => state.auth.user);
 
-  const onLike = () => {
-    // Simulate a match
-    setShowMatch(true);
+  const [showMatch, setShowMatch] = React.useState(false);
+  const [matchedProfile, setMatchedProfile] = React.useState<any>(null);
+  const [showFilters, setShowFilters] = React.useState(false);
+
+  const currentProfile = profiles[currentIndex];
+
+  React.useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await discoveryService.getProfiles();
+        dispatch(setProfiles(response.data));
+      } catch (err) {
+        console.error('Fetch Profiles Error:', err);
+        // Fallback demo profiles if backend fails
+        dispatch(setProfiles([
+          {
+            id: 'elena-123',
+            name: 'Elena',
+            age: 26,
+            distance: '3 miles away',
+            bio: 'Graphic designer by day, amateur salsa dancer by night. Looking for someone to explore hidden jazz bars with. 🎷✨',
+            images: [{ id: 'img1', url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDpthbiXRIkyF3nsfPmoHOqTw-oGkk0n6FuWR2J2rAVOdiXkcMDdAbdsKrDKgIS0zT-b2HZDIgUBEclP14ovG-idvu4SOOEASNwfXqChZfyPkHJsvTg30cU4MNeV6YCqYv403C8bOECCeXxN-tWeDmUmv8lSO-ulSdRP0aeqQW7ZHT4y28ooKkRJg0GNOGQhRr0Q8ASf7OFVEXqhIMehvvit-SyOqwuQsBbT_sr-GHK3wtrF50AriatD5-FrhW92QjrbAPh1InES98', isPrimary: true }],
+            interests: [{ id: 'i1', name: 'Salsa Dancing' }, { id: 'i2', name: 'Jazz Music' }, { id: 'i3', name: 'Coffee Art' }]
+          }
+        ]));
+      }
+    };
+
+    if (profiles.length === 0) {
+      fetchProfiles();
+    }
+  }, []);
+
+  const onLike = async () => {
+    if (!currentProfile) return;
+    
+    try {
+      const response = await discoveryService.swipe(currentProfile.id, 'RIGHT');
+      if (response.data.isMatch) {
+        setMatchedProfile(currentProfile);
+        setShowMatch(true);
+      }
+      dispatch(nextProfile());
+    } catch (err) {
+      console.error('Like Error:', err);
+      dispatch(nextProfile());
+    }
   };
 
-  const onDislike = () => {
-    // Simulate exhaustion for demo
-    setIsExhausted(true);
+  const onDislike = async () => {
+    if (!currentProfile) return;
+    
+    try {
+      await discoveryService.swipe(currentProfile.id, 'LEFT');
+      dispatch(nextProfile());
+    } catch (err) {
+      console.error('Dislike Error:', err);
+      dispatch(nextProfile());
+    }
   };
 
   return (
@@ -40,7 +95,7 @@ export default function ExploreScreen() {
           </TouchableOpacity>
         </View>
 
-        {isExhausted ? (
+        {exhausted || !currentProfile ? (
           <View className="flex-1 items-center justify-center px-10">
             <View className="size-24 rounded-full bg-slate-800 items-center justify-center mb-6">
               <Globe size={40} stroke="#64748b" />
@@ -50,7 +105,7 @@ export default function ExploreScreen() {
               You've seen everyone nearby. Try expanding your search area or checking back later.
             </Text>
             <TouchableOpacity 
-              onPress={() => setIsExhausted(false)}
+              onPress={() => dispatch(setExhausted(false))}
               className="bg-primary px-8 py-4 rounded-2xl shadow-lg shadow-primary/20"
             >
               <Text className="text-white font-display-bold">Expand Search Range</Text>
@@ -65,12 +120,13 @@ export default function ExploreScreen() {
               onPress={() => router.push({
                 pathname: '/user/[id]',
                 params: {
-                  id: 'elena-123',
-                  name: 'Elena',
-                  age: '26',
-                  distance: 'Downtown, 3 miles away',
-                  image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDpthbiXRIkyF3nsfPmoHOqTw-oGkk0n6FuWR2J2rAVOdiXkcMDdAbdsKrDKgIS0zT-b2HZDIgUBEclP14ovG-idvu4SOOEASNwfXqChZfyPkHJsvTg30cU4MNeV6YCqYv403C8bOECCeXxN-tWeDmUmv8lSO-ulSdRP0aeqQW7ZHT4y28ooKkRJg0GNOGQhRr0Q8ASf7OFVEXqhIMehvvit-SyOqwuQsBbT_sr-GHK3wtrF50AriatD5-FrhW92QjrbAPh1InES98',
-                  bio: 'Graphic designer by day, amateur salsa dancer by night. Looking for someone to explore hidden jazz bars with. 🎷✨'
+                  id: currentProfile.id,
+                  name: currentProfile.name,
+                  age: currentProfile.age.toString(),
+                  image: currentProfile.images[0]?.url,
+                  bio: currentProfile.bio,
+                  interests: JSON.stringify(currentProfile.interests),
+                  images: JSON.stringify(currentProfile.images),
                 }
               })}
             >
@@ -79,7 +135,7 @@ export default function ExploreScreen() {
                 className="rounded-[32px] overflow-hidden shadow-2xl relative"
               >
               <Image 
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDpthbiXRIkyF3nsfPmoHOqTw-oGkk0n6FuWR2J2rAVOdiXkcMDdAbdsKrDKgIS0zT-b2HZDIgUBEclP14ovG-idvu4SOOEASNwfXqChZfyPkHJsvTg30cU4MNeV6YCqYv403C8bOECCeXxN-tWeDmUmv8lSO-ulSdRP0aeqQW7ZHT4y28ooKkRJg0GNOGQhRr0Q8ASf7OFVEXqhIMehvvit-SyOqwuQsBbT_sr-GHK3wtrF50AriatD5-FrhW92QjrbAPh1InES98' }}
+                source={{ uri: currentProfile.images[0]?.url }}
                 className="absolute inset-0"
                 resizeMode="cover"
               />
@@ -92,26 +148,26 @@ export default function ExploreScreen() {
 
               <View className="absolute inset-x-0 bottom-0 p-6">
                 <View className="flex-row items-baseline gap-2 mb-1">
-                  <Text className="text-3xl font-display-bold text-white">Elena, 26</Text>
+                  <Text className="text-3xl font-display-bold text-white">{currentProfile.name}, {currentProfile.age}</Text>
                   <Award size={18} stroke="#60a5fa" fill="#60a5fa" />
                 </View>
                 
                 <View className="flex-row items-center gap-2 mb-4">
                   <MapPin size={14} stroke="#ff4255" fill="#ff4255" />
-                  <Text className="text-slate-200 text-sm font-display">Downtown, 3 miles away</Text>
+                  <Text className="text-slate-200 text-sm font-display">{currentProfile.distance}</Text>
                 </View>
 
                 <Text className="text-slate-200 text-base mb-4 leading-relaxed font-display" numberOfLines={2}>
-                  Graphic designer by day, amateur salsa dancer by night. Looking for someone to explore hidden jazz bars with. 🎷✨
+                  {currentProfile.bio}
                 </Text>
 
                 <View className="flex-row flex-wrap gap-2">
-                  {['Salsa Dancing', 'Jazz Music', 'Coffee Art'].map((interest) => (
+                  {currentProfile.interests?.map((interest: any) => (
                     <View 
-                      key={interest} 
+                      key={interest.name} 
                       className="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md"
                     >
-                      <Text className="text-white text-xs font-display-medium">{interest}</Text>
+                      <Text className="text-white text-xs font-display-medium">{interest.name}</Text>
                     </View>
                   ))}
                 </View>
@@ -163,13 +219,13 @@ export default function ExploreScreen() {
 
               <View className="flex-row items-center gap-6 mb-12">
                 <View className="size-32 rounded-full border-4 border-white overflow-hidden shadow-2xl">
-                  <Image source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAp5FsmI7jbP62GC8yB1fP640jGcxcTT7eHwcEHqDjplR6-9mVhYB_pepGfOnVGAFKKUZsC_cOLrWvwjzEz9ggpqiuS4ACYayOC5TqpHtZe-gyws1l4Ek-seZf97RHt1nq8N4_B6dfS1eY8HnzD-6QRm6HiAovKScysFgkh5_0SIsgxwHUEyWEyNJ70flg7fMALN9ht7bqVFzeK6yen_kmCnjRxyYVfRmVMHwZ0Jy-aBYcvxTvR6WPCVmp6Yz_1AKDagnuf1eQd9sc' }} className="w-full h-full" />
+                  <Image source={{ uri: matchedProfile?.images[0]?.url }} className="w-full h-full" />
                 </View>
                 <View className="size-10 bg-white rounded-full items-center justify-center shadow-lg">
                   <Heart size={20} stroke="#ff4255" fill="#ff4255" />
                 </View>
                 <View className="size-32 rounded-full border-4 border-white overflow-hidden shadow-2xl">
-                  <Image source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDONL268h7sGiMFa1oWozc2n0SZ15WnqY8X7NdglKZKahXAgyCLHJA4memYxvyh-KNip4FFBZdsEQ5sP8mEF8WHfE92WPJsbiltYJNvqpI-cfJuLojhmnPlhxsmbtx-2xbmmxAEGe5h5N8QH-sjQU0yqNLl-ISrBKUHhCCNO8awI8dkQeTgzYvXWyR6xZIuWTFPLNTJBnx7hFW8f-nGzUDCws3mBnDn_905_EB8hssivVY9BlyxDAzkQX9Z8HybAI81fpwFydTMv_M' }} className="w-full h-full" />
+                  <Image source={{ uri: currentUser?.profile?.images[0]?.url }} className="w-full h-full" />
                 </View>
               </View>
 
@@ -243,9 +299,10 @@ export default function ExploreScreen() {
                     {['Men', 'Women', 'Everyone'].map((opt) => (
                       <TouchableOpacity 
                         key={opt}
-                        className={`flex-1 py-4 rounded-2xl border items-center justify-center ${opt === 'Women' ? 'bg-primary border-primary' : 'bg-slate-800 border-slate-700'}`}
+                        onPress={() => dispatch(updateFilters({ gender: opt === 'Everyone' ? undefined : opt }))}
+                        className={`flex-1 py-4 rounded-2xl border items-center justify-center ${(filters.gender === opt || (opt === 'Everyone' && !filters.gender)) ? 'bg-primary border-primary' : 'bg-slate-800 border-slate-700'}`}
                       >
-                        <Text className={`font-display-bold ${opt === 'Women' ? 'text-white' : 'text-slate-400'}`}>{opt}</Text>
+                        <Text className={`font-display-bold ${(filters.gender === opt || (opt === 'Everyone' && !filters.gender)) ? 'text-white' : 'text-slate-400'}`}>{opt}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>

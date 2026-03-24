@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, Share2, Settings, MapPin, Award, Edit3, MoreHorizontal, Sparkles, Heart, Star, Zap } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { updateProfile } from '../../store/slices/userSlice';
+import { userService } from '../../services/user.service';
 
 const { width } = Dimensions.get('window');
 
@@ -14,6 +17,35 @@ const GALLERY = [
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const profile = useAppSelector((state) => state.user.profile);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editedBio, setEditedBio] = React.useState(profile?.bio || '');
+  
+  if (!profile) {
+    return (
+      <View className="flex-1 bg-background-dark items-center justify-center">
+        <Text className="text-white font-display">Loading profile...</Text>
+      </View>
+    );
+  }
+
+  const calculateAge = (birthday?: string) => {
+    if (!birthday) return 24;
+    const ageDifMs = Date.now() - new Date(birthday).getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+  const handleSaveBio = async () => {
+    try {
+      await userService.updateProfile({ bio: editedBio });
+      dispatch(updateProfile({ bio: editedBio }));
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Save Bio Error:', err);
+    }
+  };
 
   return (
     <View className="flex-1 bg-background-dark">
@@ -55,7 +87,7 @@ export default function ProfileScreen() {
           <View className="relative">
             <View className="size-36 rounded-full border-4 border-background-dark overflow-hidden shadow-2xl">
               <Image 
-                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAp5FsmI7jbP62GC8yB1fP640jGcxcTT7eHwcEHqDjplR6-9mVhYB_pepGfOnVGAFKKUZsC_cOLrWvwjzEz9ggpqiuS4ACYayOC5TqpHtZe-gyws1l4Ek-seZf97RHt1nq8N4_B6dfS1eY8HnzD-6QRm6HiAovKScysFgkh5_0SIsgxwHUEyWEyNJ70flg7fMALN9ht7bqVFzeK6yen_kmCnjRxyYVfRmVMHwZ0Jy-aBYcvxTvR6WPCVmp6Yz_1AKDagnuf1eQd9sc' }}
+                source={{ uri: profile.images[0]?.url || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2' }}
                 className="w-full h-full"
               />
             </View>
@@ -64,12 +96,18 @@ export default function ProfileScreen() {
 
           <View className="mt-4 items-center">
             <View className="flex-row items-center gap-2">
-              <Text className="text-3xl font-display-extrabold text-white">Sophie, 24</Text>
-              <Award size={20} stroke="#60a5fa" fill="#60a5fa" />
+              <Text className="text-3xl font-display-extrabold text-white">{profile.name}, {calculateAge(profile.birthDate)}</Text>
+              {profile.isGold ? (
+                 <View className="bg-yellow-500 px-2 py-0.5 rounded-md">
+                   <Text className="text-slate-900 text-[10px] font-display-black uppercase">Gold</Text>
+                 </View>
+              ) : (
+                 <Award size={20} stroke="#60a5fa" fill="#60a5fa" />
+              )}
             </View>
             <View className="flex-row items-center gap-1 mt-1">
               <MapPin size={14} stroke="#94a3b8" />
-              <Text className="text-slate-400 font-display">San Francisco, CA</Text>
+              <Text className="text-slate-400 font-display">New York, NY</Text>
             </View>
           </View>
 
@@ -114,17 +152,21 @@ export default function ProfileScreen() {
           className="mx-4 mt-6 h-32 rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20"
         >
           <LinearGradient
-            colors={['#EAB308', '#A855F7']}
+            colors={profile.isGold ? ['#1E293B', '#334155'] : ['#EAB308', '#A855F7']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             className="flex-1 p-6 flex-row items-center justify-between"
           >
             <View className="flex-1">
               <View className="flex-row items-center gap-2 mb-2">
-                <Star size={18} stroke="white" fill="white" />
-                <Text className="text-white font-display-extrabold text-xl">HeartBeat Gold</Text>
+                <Star size={18} stroke="white" fill={profile.isGold ? "transparent" : "white"} />
+                <Text className="text-white font-display-extrabold text-xl">
+                  {profile.isGold ? 'HeartBeat Gold Member' : 'HeartBeat Gold'}
+                </Text>
               </View>
-              <Text className="text-white/90 font-display-medium text-sm">See who likes you and get unlimited likes!</Text>
+              <Text className="text-white/90 font-display-medium text-sm">
+                {profile.isGold ? 'Manage your gold subscription features' : 'See who likes you and get unlimited likes!'}
+              </Text>
             </View>
             <View className="size-16 rounded-2xl bg-white/20 items-center justify-center border border-white/30 backdrop-blur-md">
               <Zap size={32} stroke="white" fill="white" />
@@ -136,14 +178,35 @@ export default function ProfileScreen() {
         <View className="px-6 py-10 gap-10">
           {/* About */}
           <View>
-            <View className="flex-row items-center gap-2 mb-4">
-              <Sparkles size={18} stroke="#ff4255" />
-              <Text className="text-lg font-display-bold text-white">About Me</Text>
+            <View className="flex-row items-center justify-between mb-4">
+              <View className="flex-row items-center gap-2">
+                <Sparkles size={18} stroke="#ff4255" />
+                <Text className="text-lg font-display-bold text-white">About Me</Text>
+              </View>
+              <TouchableOpacity onPress={() => {
+                if (isEditing) handleSaveBio();
+                else setIsEditing(true);
+              }}>
+                <Text className="text-primary font-display-bold text-sm">
+                  {isEditing ? 'Save' : 'Edit'}
+                </Text>
+              </TouchableOpacity>
             </View>
             <View className="p-4 rounded-2xl bg-slate-800/10 border border-white/5">
-              <Text className="text-slate-300 leading-relaxed font-display">
-                Adventure seeker and coffee enthusiast. Looking for someone to explore hidden gems in the city with. When I'm not coding, you can find me at the local pottery studio or hiking near Land's End. ☕️⛰️
-              </Text>
+              {isEditing ? (
+                <TextInput
+                  value={editedBio}
+                  onChangeText={setEditedBio}
+                  multiline
+                  className="text-slate-300 leading-relaxed font-display"
+                  placeholder="Tell us about yourself..."
+                  placeholderTextColor="#64748b"
+                />
+              ) : (
+                <Text className="text-slate-300 leading-relaxed font-display">
+                  {profile.bio || "No bio yet. Tell the world about yourself!"}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -151,9 +214,9 @@ export default function ProfileScreen() {
           <View>
             <Text className="text-lg font-display-bold text-white mb-4">Interests</Text>
             <View className="flex-row flex-wrap gap-2.5">
-              {['Yoga', 'Wine Tasting', 'Dogs', 'Photography', 'Skiing', 'Baking'].map((item) => (
-                <View key={item} className="px-4 py-2 rounded-full bg-slate-800/10 border border-primary/20">
-                  <Text className="text-slate-200 text-xs font-display-semibold">{item}</Text>
+              {profile.interests.map((item) => (
+                <View key={item.id} className="px-4 py-2 rounded-full bg-slate-800/10 border border-primary/20">
+                  <Text className="text-slate-200 text-xs font-display-semibold">{item.name}</Text>
                 </View>
               ))}
             </View>
@@ -166,14 +229,16 @@ export default function ProfileScreen() {
               <Text className="text-primary text-sm font-display-bold">View All</Text>
             </View>
             <View className="flex-row gap-2.5">
-              {GALLERY.map((img, i) => (
+              {profile.images.slice(0, 3).map((img, i) => (
                 <View key={i} className="flex-1 aspect-square rounded-2xl overflow-hidden shadow-sm">
-                  <Image source={{ uri: img }} className="w-full h-full" />
+                  <Image source={{ uri: img.url }} className="w-full h-full" />
                 </View>
               ))}
-              <TouchableOpacity className="flex-1 aspect-square rounded-2xl bg-primary/20 border border-primary/40 items-center justify-center">
-                <Text className="text-primary font-display-bold text-lg">+7</Text>
-              </TouchableOpacity>
+              {profile.images.length > 3 && (
+                <TouchableOpacity className="flex-1 aspect-square rounded-2xl bg-primary/20 border border-primary/40 items-center justify-center">
+                  <Text className="text-primary font-display-bold text-lg">+{profile.images.length - 3}</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

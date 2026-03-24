@@ -2,12 +2,25 @@ import React from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, Bell, MapPin, ShieldCheck } from 'lucide-react-native';
+import { useAppDispatch } from '../../../store/hooks';
+import { updateNotification, updateVisibility } from '../../../store/slices/settingsSlice';
 
 export default function OnboardingStep4() {
   const router = useRouter();
-  
+  const dispatch = useAppDispatch();
+
+  const allowLocation = () => {
+    dispatch(updateVisibility({ profileVisible: true }));
+    // In real app, call requestForegroundPermissionsAsync()
+  };
+
+  const allowNotifications = () => {
+    dispatch(updateNotification({ matches: true, messages: true }));
+    // In real app, call requestPermissionsAsync()
+  };
+
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-dark p-4">
       <Stack.Screen options={{
         headerTitle: '',
         headerTransparent: true,
@@ -42,7 +55,10 @@ export default function OnboardingStep4() {
               <Text className="text-white text-lg font-display-bold mb-1">Location Access</Text>
               <Text className="text-slate-500 text-sm font-display">To find people nearby</Text>
             </View>
-            <TouchableOpacity className="bg-primary px-5 py-2.5 rounded-xl">
+            <TouchableOpacity 
+              onPress={allowNotifications}
+              className="bg-primary px-5 py-2.5 rounded-xl"
+            >
               <Text className="text-white font-display-bold text-xs">Allow</Text>
             </TouchableOpacity>
           </View>
@@ -55,7 +71,10 @@ export default function OnboardingStep4() {
               <Text className="text-white text-lg font-display-bold mb-1">Notifications</Text>
               <Text className="text-slate-500 text-sm font-display">Get told about matches</Text>
             </View>
-            <TouchableOpacity className="bg-primary px-5 py-2.5 rounded-xl">
+            <TouchableOpacity 
+              onPress={allowLocation}
+              className="bg-primary px-5 py-2.5 rounded-xl"
+            >
               <Text className="text-white font-display-bold text-xs">Allow</Text>
             </TouchableOpacity>
           </View>
@@ -63,7 +82,7 @@ export default function OnboardingStep4() {
 
         <TouchableOpacity 
           className="w-full h-14 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20 mt-auto mb-10"
-          onPress={() => router.push('/(auth)/onboarding/success')}
+          onPress={() => router.push('/onboarding/success')}
         >
           <Text className="text-white text-lg font-display-bold">All Set!</Text>
         </TouchableOpacity>

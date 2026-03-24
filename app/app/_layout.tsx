@@ -1,4 +1,3 @@
-import "../global.css";
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { 
   useFonts,
@@ -12,6 +11,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { Provider } from 'react-redux';
+import { store, persistor } from '../store/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { useRouter, useSegments } from 'expo-router';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setHasCheckedAuth } from '../store/slices/authSlice';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
@@ -22,7 +27,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(auth)/welcome',
+  initialRouteName: 'welcome',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -37,7 +42,6 @@ export default function RootLayout() {
     PlusJakartaSans_800ExtraBold,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -52,11 +56,42 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RootLayoutNav />
+      </PersistGate>
+    </Provider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { isAuthenticated, hasCheckedAuth } = useAppSelector((state) => state.auth);
+  const segments = useSegments();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    // Check for tokens or existing session here if needed
+    dispatch(setHasCheckedAuth(true));
+  }, []);
+
+  useEffect(() => {
+    if (!hasCheckedAuth) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (!isAuthenticated && !inAuthGroup) {
+      router.replace('/welcome');
+    } else if (isAuthenticated && inAuthGroup) {
+      router.replace('/');
+    }
+  }, [isAuthenticated, segments, hasCheckedAuth]);
+
+  if (!hasCheckedAuth) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

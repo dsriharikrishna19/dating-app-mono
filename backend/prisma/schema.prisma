@@ -40,6 +40,7 @@ model Profile {
   notificationPromos   Boolean  @default(false)
   profileVisible       Boolean  @default(true)
   ghostMode           Boolean  @default(false)
+  isGold              Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

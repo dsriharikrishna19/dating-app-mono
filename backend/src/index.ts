@@ -10,6 +10,7 @@ import discoveryRoutes from './routes/discovery.routes.js';
 import chatRoutes from './routes/chat.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import safetyRoutes from './routes/safety.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.config.js';
 import { errorHandler } from './middlewares/error.middleware.js';
@@ -30,6 +31,7 @@ app.use('/api/discovery', discoveryRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/safety', safetyRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

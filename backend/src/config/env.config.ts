@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const ENV_CONFIG = {
-    PORT: Number(process.env.PORT) || 8000,
+    PORT: Number(process.env.PORT) || 8001,
     HOST: process.env.HOST || '0.0.0.0',
     NODE_ENV: process.env.NODE_ENV || 'development',
     JWT_SECRET: process.env.SECRET_KEY || 'supersecretkey123',

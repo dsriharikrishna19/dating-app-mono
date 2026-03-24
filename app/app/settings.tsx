@@ -2,11 +2,36 @@ import React from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Switch, Platform } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, Bell, Lock, Eye, Sparkles, HelpCircle, Info, LogOut, ChevronRight, MapPin } from 'lucide-react-native';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { updateNotification, updateVisibility } from '../store/slices/settingsSlice';
+import { logout } from '../store/slices/authSlice';
+import { clearProfile } from '../store/slices/userSlice';
+import { resetDiscovery } from '../store/slices/discoverySlice';
+import { clearChat } from '../store/slices/chatSlice';
+import { userService } from '../services/user.service';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [notifications, setNotifications] = React.useState(true);
-  const [incognito, setIncognito] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const { notifications, visibility } = useAppSelector((state) => state.settings);
+  const user = useAppSelector((state) => state.user.profile);
+
+  const handleToggleNotifications = (value: boolean) => {
+    // Assuming we toggle all for now or the main ones
+    dispatch(updateNotification({ messages: value, matches: value }));
+  };
+
+  const handleToggleIncognito = (value: boolean) => {
+    dispatch(updateVisibility({ ghostMode: value }));
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(clearProfile());
+    dispatch(resetDiscovery());
+    dispatch(clearChat());
+    router.replace('/phone-entry');
+  };
 
   return (
     <View className="flex-1 bg-background-dark">
@@ -35,8 +60,8 @@ export default function SettingsScreen() {
                   <Text className="text-white font-display-semibold">Location</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-slate-400 text-sm">New York, NY</Text>
-                  <ChevronRight size={16} stroke="#64748b" />
+                   <Text className="text-slate-400 text-sm">{user?.location || 'New York, NY'}</Text>
+                   <ChevronRight size={16} stroke="#64748b" />
                 </View>
               </TouchableOpacity>
               
@@ -63,8 +88,8 @@ export default function SettingsScreen() {
                   <Text className="text-white font-display-semibold">Notifications</Text>
                 </View>
                 <Switch 
-                  value={notifications} 
-                  onValueChange={setNotifications}
+                  value={notifications.messages} 
+                  onValueChange={handleToggleNotifications}
                   trackColor={{ false: '#334155', true: '#ff4255' }}
                 />
               </View>
@@ -75,8 +100,8 @@ export default function SettingsScreen() {
                   <Text className="text-white font-display-semibold">Incognito Mode</Text>
                 </View>
                 <Switch 
-                  value={incognito} 
-                  onValueChange={setIncognito}
+                  value={visibility.ghostMode} 
+                  onValueChange={handleToggleIncognito}
                   trackColor={{ false: '#334155', true: '#ff4255' }}
                 />
               </View>
@@ -114,7 +139,10 @@ export default function SettingsScreen() {
           </View>
 
           {/* Logout */}
-          <TouchableOpacity className="mt-4 flex-row items-center justify-center gap-3 p-5 bg-slate-800/20 rounded-3xl border border-primary/20">
+          <TouchableOpacity 
+            onPress={handleLogout}
+            className="mt-4 flex-row items-center justify-center gap-3 p-5 bg-slate-800/20 rounded-3xl border border-primary/20"
+          >
             <LogOut size={20} stroke="#ff4255" />
             <Text className="text-[#ff4255] font-display-bold">Sign Out</Text>
           </TouchableOpacity>
