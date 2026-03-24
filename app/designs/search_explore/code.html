@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explore - Dating App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A", // Overriding per user request for the specific dark shade
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 66, 85, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+<!-- Top Header & Search -->
+<header class="sticky top-0 z-30 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 pt-6 pb-2">
+<div class="flex items-center justify-between mb-4">
+<h1 class="text-2xl font-bold tracking-tight">Explore</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<div class="relative flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Search profiles..." type="text"/>
+</div>
+<button class="bg-primary text-white p-3 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</header>
+<!-- Filter Chips -->
+<section class="px-4 py-4">
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex items-center gap-1 shrink-0 px-4 py-2 bg-primary text-white rounded-full text-sm font-medium">
+                Age: 21-28 <span class="material-symbols-outlined text-xs">close</span>
+</button>
+<button class="flex items-center gap-1 shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700">
+                Distance <span class="material-symbols-outlined text-xs">expand_more</span>
+</button>
+<button class="flex items-center gap-1 shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700">
+                Interests <span class="material-symbols-outlined text-xs">expand_more</span>
+</button>
+<button class="flex items-center gap-1 shrink-0 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700">
+                Verified <span class="material-symbols-outlined text-xs">expand_more</span>
+</button>
+</div>
+</section>
+<!-- Profile Grid -->
+<main class="px-4 pb-24">
+<div class="grid grid-cols-2 gap-4">
+<!-- Card 1 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Stylish woman in sunset lighting posing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkLX0qTcztW2oMetiAuv4CiuxxBVdnP4pf97oPFzS0V1GFx5lwr-sAxqCxEwQ7yfWe9TO81hEcFMSa0dZvqVusRie0b2JL9_XyWj8Ec0bCA6XyF9uXHtQziN6WseV98G7irRKhqvwkMFQtMk1Alx7fecIF0HZF20y3MvXzFRopi-df-o5IOqd3g6AMB4l5uWbq_NhsAksuPbAdQWrb_VXLr7wDd0a76Tw2SiBhFQuQYoXGki-YMSdjFROwrVjulv-pJXcsz8_cZUw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Elena, 24</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>2.4 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<!-- Card 2 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Young man smiling in urban setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBL4eoRvuXNeF8wT0MKxO77xpT5DqUWBJg4O9BXOR7HzRE7nmD9G-8ksXQCQCi_08hgCpM3heTtE_GGB5PUZ3uL0aXhJW448y7Z2DXPshIoDrutdgwr66hVoVTRO2d9b5bO-Yo4-mY9O_5-xsphGrGFA7lZ-0SUu4TGhK7TpPFf5KrvzzE2HrmcwNXelyGYaUtiZ_ywVClMW1NqtEUDRUu5OPtHoFvfvoRN1tOb4NcOFilgnRw1nS3ttRGRNczUKXjilYUVhUmNVc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Marcus, 27</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>5 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<!-- Card 3 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Portrait of a young woman with highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgsBxizusoxzos_adwWjCvRS4dIiE7vkrJ6xugWQqnMNoMvAPUQNI9fMRQRQmU8C_hu_0mpbZb7Up4D2czNh2J7pU2xK5O5Vx5ncRXgncPUh-eM3kgpr6ZhD8TREb4QtglPulRnucDOeQQ4EYqV6u7on35Qgd7add74qbLCpX-N6PhbamGwfiM6cgpIvV-V9-1ObMVeOVN_DtpFURDZLtoRyhG010mn3Z8jn0IAcWnRI1ftHdeHDBPH8Y8FnEt8j2n86tMlnRD6jc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Sophie, 22</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>1.8 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<!-- Card 4 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Man with beard looking at camera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgd16NJeQyrFvsU-fVaRy4YRVz_h1yXWIMaZWRjYbD7motpdevJaLZaiGUrYnSJqEgb5bLcxyfP64GC-GudRbYa5CaUvd_uiIjpFkHznP0S4gTDoSHrTVhYvPNMsHD_TPkoUnb9P1yYSkkkuvTz0cfW9zH9_6yGbEFLh_hExNKMsd9Vyn13Beotc5Hx7KS5ekdDUH4BdlWOFC5gQY9qaIiS4eyPAeS3XxJdVXQd1Sut2rF9PGfpW1wF4jcUoUVTTe0E7kUM_yHLY8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Julian, 29</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>12 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<!-- Card 5 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Cheerful woman laughing outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCWqpL4bP-JjvGf9B70I7wKlfrAHRM_xFMj_S-FJbSj80-3R-uAeORQbJqXZKHNCXhtMjqFIL55KZIeXW0tPK10W2ZMW1W2shC3I_6JYTLuR2pJc5-QweQ2eXZTLs0RV-qzoNoBfMtf0jSudD6QTLi_omwM0tfMrJqOukz2CkpAGAOiN9iCrjTpjun0u0JXP1Vlpiuq3iYIM0K8d43JscrkkCoDZMiXwAp3dJe3F6_gbQuQtCmuw3mGt_GBNa5SRxNHSznmfuz1pc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Aria, 25</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>0.5 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white text-primary">
+<span class="material-symbols-outlined text-lg fill-current">favorite</span>
+</button>
+</div>
+<!-- Card 6 -->
+<div class="relative group aspect-[3/4] rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-800">
+<img alt="Profile photo" class="w-full h-full object-cover" data-alt="Man in smart casual attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7oOMvwiH-BFetX2Sd3shvVJmZvMpeBFGZdcQPsHF1Bm6whZNzRO0awO6JafnYRzc63_6aABcUJD83yBbZP8hUbDLu8C7hRKTnFekwTX-ta523Y1cE2ES8RarLMoAAhhga8f5FHo3afCPH7J6_6sg_uPXyUB711ppksudxdZ69HFGaZpF1KJMWdFF3t6-0uE8St1jRUlzs9Q2Ra62gWX_rE0Y8HqZfd74LGt0BEBxDxnN0lycGdvfHOOHWvcFVM25PQwMXZrJhHwA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 text-white">
+<p class="font-bold text-sm">Leo, 26</p>
+<div class="flex items-center gap-1 text-[10px] opacity-80">
+<span class="material-symbols-outlined text-[12px]">location_on</span>
+<span>3.2 miles away</span>
+</div>
+</div>
+<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 glass-nav z-50">
+<div class="flex items-center justify-around h-20 px-4">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl">style</span>
+<span class="text-[10px] font-medium">Discover</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl">search</span>
+<span class="text-[10px] font-medium">Explore</span>
+</a>
+<div class="relative -mt-10">
+<div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/40 border-4 border-background-dark">
+<span class="material-symbols-outlined text-white text-3xl">add</span>
+</div>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400 relative" href="#">
+<span class="material-symbols-outlined text-2xl">chat_bubble</span>
+<span class="text-[10px] font-medium">Messages</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>

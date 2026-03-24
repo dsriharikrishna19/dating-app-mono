@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#230f11",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 66, 85, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-active {
+            background: rgba(255, 66, 85, 0.15);
+            border: 2px solid #ff4255;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation -->
+<div class="flex items-center p-4 justify-between sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md">
+<div class="text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-white/10 cursor-pointer">
+<span class="material-symbols-outlined">close</span>
+</div>
+<h2 class="text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">HeartBeat Gold</h2>
+</div>
+<!-- Hero Section -->
+<div class="px-4 py-2">
+<div class="relative h-64 w-full rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/40 to-transparent z-10"></div>
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Happy couple laughing together in warm sunset light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAT9DzgyoZdVdf0DPYO49HvDWhA2hhsWXBMEJOMzyp5Rsfoty7MM9Qm-cvgY0_MgVB5tPyDjkCUQPJqNffbT-vj1PobzDMepl65nd62QQzQ-93x5UTHA6yEt5Q9PCK_SrRWvKTNP3rs9UGczjB_0AhLxo97oE3pgJ32JgDz6neSUnq3ITkInaDo6SYRduCYRlN6iSFkrZmom7xUNNPBlYo35k7XwJNDOd9onYy13tDlfDDW7ErougrR7TBC3SY2f37RO2CviZMGUFM"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<span class="px-3 py-1 rounded-full bg-primary text-white text-xs font-bold uppercase tracking-wider mb-2 inline-block">Premium</span>
+<h1 class="text-white text-3xl font-extrabold leading-tight">Unlock Your <br/>Perfect Match</h1>
+</div>
+</div>
+</div>
+<!-- Features List -->
+<div class="px-6 py-8">
+<div class="grid grid-cols-1 gap-4">
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+<div class="size-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div>
+<p class="text-slate-100 font-semibold text-base leading-none">See who likes you</p>
+<p class="text-slate-400 text-sm mt-1">Match instantly with people who already liked you</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+<div class="size-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined">all_inclusive</span>
+</div>
+<div>
+<p class="text-slate-100 font-semibold text-base leading-none">Unlimited likes</p>
+<p class="text-slate-400 text-sm mt-1">Swipe as much as you want, no limits</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+<div class="size-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined">star</span>
+</div>
+<div>
+<p class="text-slate-100 font-semibold text-base leading-none">5 Super Likes per day</p>
+<p class="text-slate-400 text-sm mt-1">Stand out from the crowd with Super Likes</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+<div class="size-10 flex items-center justify-center rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined">settings_backup_restore</span>
+</div>
+<div>
+<p class="text-slate-100 font-semibold text-base leading-none">Rewind last swipe</p>
+<p class="text-slate-400 text-sm mt-1">Accidentally swiped left? Bring them back</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pricing Section -->
+<div class="px-4 pb-8">
+<h3 class="text-slate-400 text-xs font-bold uppercase tracking-[0.2em] text-center mb-6">Choose your plan</h3>
+<div class="grid grid-cols-3 gap-3">
+<!-- 1 Month -->
+<div class="glass p-4 rounded-xl flex flex-col items-center text-center border-white/5">
+<span class="text-slate-100 font-bold text-lg">1</span>
+<span class="text-slate-400 text-[10px] font-medium uppercase mb-2">Month</span>
+<div class="mt-auto">
+<span class="text-slate-100 font-bold">$14.99</span>
+<p class="text-slate-500 text-[9px] mt-1">/mo</p>
+</div>
+</div>
+<!-- 6 Months (Best Value) -->
+<div class="glass-active p-4 rounded-xl flex flex-col items-center text-center relative">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-black px-2 py-0.5 rounded-full whitespace-nowrap uppercase tracking-tighter">Best Value</div>
+<span class="text-slate-100 font-bold text-lg">6</span>
+<span class="text-slate-400 text-[10px] font-medium uppercase mb-2">Months</span>
+<div class="mt-auto">
+<span class="text-slate-100 font-bold">$9.99</span>
+<p class="text-slate-500 text-[9px] mt-1">/mo</p>
+</div>
+</div>
+<!-- 12 Months -->
+<div class="glass p-4 rounded-xl flex flex-col items-center text-center border-white/5">
+<span class="text-slate-100 font-bold text-lg">12</span>
+<span class="text-slate-400 text-[10px] font-medium uppercase mb-2">Months</span>
+<div class="mt-auto">
+<span class="text-slate-100 font-bold">$7.49</span>
+<p class="text-slate-500 text-[9px] mt-1">/mo</p>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-auto px-6 pb-12 pt-4">
+<button class="w-full h-16 rounded-full bg-gradient-to-r from-[#ff4255] via-[#ff42a1] to-[#a855f7] text-white font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                Upgrade Now
+                <span class="material-symbols-outlined">bolt</span>
+</button>
+<p class="text-slate-500 text-[10px] text-center mt-6 px-4 leading-relaxed">
+                By tapping Upgrade Now, your payment will be charged to your App Store account, and your subscription will automatically renew for the same package length at the same price until you cancel in settings.
+            </p>
+</div>
+</div>
+</body></html>

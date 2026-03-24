@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile - Dating App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header Nav -->
+<div class="sticky top-0 z-20 flex items-center bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-slate-800">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-800 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-100">settings</span>
+</div>
+<h2 class="text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">My Profile</h2>
+<div class="flex size-10 items-center justify-center rounded-full hover:bg-slate-800 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-100">share</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto pb-24">
+<!-- Banner & Avatar Section -->
+<div class="relative w-full h-64 bg-slate-800">
+<div class="w-full h-full bg-center bg-cover" data-alt="Golden hour mountain sunset landscape background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDqvhvqFgomEl-scc7NrlFFOmrk54Eg0mvXE7gk1KW86tOrOshjwwonvJjyU1zVw8UF8A7ua66BBm_PdaQ9W8bU3_mOQjNOv_W2cWy7CchrB77Zzh176LctsXiz7QhTBCJ62XCuDvDkvbr_K5B_plvFojNTahH68SifkmSqYQS4UqNkHfESssBxvpjaNZgPzyNuXKvXvC6AMb7kKE_HjkDzU9LTk8rPYhP0bw6pKdtXDyTFF8IOQkKUbGZb2W9WWCfwopeNI2ZVD-U")'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+<!-- Floating Avatar -->
+<div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
+<div class="p-1 bg-background-dark rounded-full">
+<div class="size-32 rounded-full border-4 border-primary bg-center bg-cover ring-4 ring-background-dark" data-alt="Portrait of a smiling young man with brown hair" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAgku-TxEgTWOK54okZpjB0H3y3iyXh_axV1HmfJuI_rXsGXSVU7IYwDNNBRl4Rx9F-1PtafoWFndtOv0b6j_gvm8EyELWH_p4GhvfWFAm55JLc98Yhs_Ex56jnw4AiICKC6PdENcrN5vlsuVm7w-Hoq50e0SsnTWgqjNEgqdFVZ_M0V6KX3RXwQdyubByCdtGWMwW9CinXZNp0Pd_xHg0AXXMItgly8sjUg6cTgYBk7OsgXZMlEr4EedQzQtQ7I6HdfYV0_G4eNLo")'></div>
+</div>
+</div>
+</div>
+<!-- Identity Section -->
+<div class="mt-16 flex flex-col items-center px-6">
+<div class="flex items-center gap-2">
+<h1 class="text-3xl font-extrabold tracking-tight">Marcus, 28</h1>
+<span class="material-symbols-outlined text-blue-400 text-xl fill-1">verified</span>
+</div>
+<p class="text-slate-400 font-medium flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                    Austin, Texas
+                </p>
+<!-- Edit Button with Gradient -->
+<button class="mt-6 flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-orange-500 py-3 text-white font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">edit</span>
+<span>Edit Profile</span>
+</button>
+</div>
+<!-- Bio Section -->
+<div class="mt-10 px-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-3">About Me</h3>
+<p class="text-slate-300 leading-relaxed bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                    Always looking for the next adventure. Coffee enthusiast, occasional marathon runner, and full-time dog dad. Let's find the best tacos in the city together! 🌮🏃‍♂️☕
+                </p>
+</div>
+<!-- Interests Section -->
+<div class="mt-8 px-6">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary mb-3">Interests</h3>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-sm">hiking</span> Hiking
+                    </span>
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-sm">restaurant</span> Foodie
+                    </span>
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-sm">headphones</span> Music
+                    </span>
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-sm">camera_enhance</span> Photography
+                    </span>
+<span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary border border-primary/20">
+<span class="material-symbols-outlined text-sm">flight</span> Travel
+                    </span>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="mt-10 px-6 grid grid-cols-3 gap-3">
+<div class="flex flex-col items-center justify-center rounded-xl bg-slate-800/60 p-4 border border-slate-800">
+<span class="text-xl font-bold">1.4k</span>
+<span class="text-xs text-slate-400 font-medium">Matches</span>
+</div>
+<div class="flex flex-col items-center justify-center rounded-xl bg-slate-800/60 p-4 border border-slate-800">
+<span class="text-xl font-bold">328</span>
+<span class="text-xs text-slate-400 font-medium">Likes</span>
+</div>
+<div class="flex flex-col items-center justify-center rounded-xl bg-slate-800/60 p-4 border border-slate-800">
+<span class="text-xl font-bold">92%</span>
+<span class="text-xs text-slate-400 font-medium">Match Score</span>
+</div>
+</div>
+<!-- Photo Gallery Grid -->
+<div class="mt-10 px-6 mb-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary">Photo Gallery</h3>
+<button class="text-xs font-bold text-slate-400 hover:text-slate-200">View All</button>
+</div>
+<div class="grid grid-cols-3 grid-rows-2 gap-2 h-80">
+<div class="col-span-2 row-span-2 rounded-xl bg-slate-800 bg-center bg-cover overflow-hidden" data-alt="Dramatic waterfall landscape in Iceland" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCp_hoTJznXsKlgmkzC_NX1i89AoqnfxULtGiJX5YChFVDG3CfFQDST9ULyKA9TjUmJxBaWVZcGWHjdrUlsegQJKwkTmSsxWiZspWRIOLaCkt8B2CgHeEK0wNoNbQsZKKg4x5kLIyD2hutB9WS2CWm070OuP9WPLD2h33bC-l4wsh_BKcht4JRkJufv3v1jgYycBOrUM5BSO1b1Q9dFAadEPwiS4XyAo1t54BU_r4AHVoKq5re3Zq5cqeEIOTOS0yXmQgDVqhF6AK0")'></div>
+<div class="rounded-xl bg-slate-800 bg-center bg-cover overflow-hidden" data-alt="Close up lifestyle portrait of man laughing" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD8-cugVMQVcf3dYFHPRAwoWEsJmYbh9gImHYKLlD12W4fmZq-IQ3uqOheYdZc4j3ER9oJUDS-KIB4FHahUQd3kimt1-Q0Wswn9FBbrWV-QM-3ZoXYtFfZxXN6o8Al7JoslCTXDHYI0jWaMzCfzJIV8pOQn2lN8hBC0Tb7VMY2LX_X770wcgR7kL3daW3NAbGf6jO-axCRxQTN3Kd0Wb6XrnFaRksZqSDiJAZiiEG4NrntbIGmGpI48o7VGJSR5Xdnt-cylK5pmVBc")'></div>
+<div class="relative rounded-xl bg-slate-800 bg-center bg-cover overflow-hidden" data-alt="Aesthetic breakfast table with coffee and pancakes" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAWMoVvCHi1cwHxg85Sv1Iyd2uJFCb0DH6T1AzOnnYusFsIAAugMHsLaKFkNjEvoMJkCAm_HyJfn_HaPMhVxuoD41vsEs5vh72KLOXF9MCFcf4e23PnLq_X_Vqr1-nRxDlXXVdKg_bCM3oZdQgPEnOppQJILXHA2ZeoR4hnBmoPw5Kg3WIA8Yj9rSkE5F5ZMTIb8aHlbPg2dYS9MP5h7NWSjSglbNOyR8ANBavhyeVZUE8UxbEDTA3Daa-5i9JkluMKl5egevQBQoQ")'>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<span class="text-white font-bold text-lg">+12</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-30 flex gap-2 border-t border-slate-800 bg-background-dark/95 backdrop-blur-md px-4 pb-6 pt-2">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Explore</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Likes</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Messages</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">account_circle</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Profile</p>
+</a>
+</div>
+</div>
+</body></html>

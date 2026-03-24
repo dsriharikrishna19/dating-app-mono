@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4458",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                        "card-dark": "#1E293B",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-morphism {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen pb-32">
+<!-- Top Navigation -->
+<div class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-gradient-to-b from-black/60 to-transparent">
+<button class="flex size-10 items-center justify-center rounded-full glass-morphism text-white">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="flex size-10 items-center justify-center rounded-full glass-morphism text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- Hero Image Section -->
+<div class="relative h-[60vh] w-full overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Portrait of a smiling woman in a city setting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUOPD3FFtHn-MqdTbO7EwDc4-DQZoh-A_D6kGkxsWHaLtT5Je3rSHi3rmoMVVTHHSBm3AZ6aIEymTGdnhWwoqSKE-LL2dn_28V3JS1usD_VZ1hKYGBE8jv1UklTGkeyM_1IQB8MMYheKRU1xR4VPT63nylZj9m5oFPge9eSz35WYmlP1xhzpLKty6RDRWuSyrMuHI2SC8dVVD_XjKByGg7rOP8ibCYdHp4v3YaHAnwFX6vxpGYVUJY2171mI06NNL3TFx3ltBLFHk');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+<!-- Quick Info Overlay -->
+<div class="absolute bottom-0 left-0 right-0 p-6 flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<h1 class="text-4xl font-extrabold text-white tracking-tight">Elena, 24</h1>
+<div class="bg-primary/90 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
+<span class="material-symbols-outlined text-sm">bolt</span>
+                    94% Match
+                </div>
+</div>
+<div class="flex items-center gap-2 text-slate-200">
+<span class="material-symbols-outlined text-lg">location_on</span>
+<p class="text-lg font-medium">Brooklyn, New York</p>
+</div>
+</div>
+</div>
+<!-- Content Sections -->
+<div class="px-6 py-8 flex flex-col gap-8">
+<!-- About Me -->
+<section class="flex flex-col gap-3">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                About Me
+            </h3>
+<p class="text-slate-600 dark:text-slate-300 leading-relaxed text-base">
+                Architect by day, salsa dancer by night. Looking for someone who can debate the best bagel in NYC and isn't afraid of a spontaneous weekend trip to the Catskills. ☕️🌆
+            </p>
+</section>
+<!-- Interests Grid -->
+<section class="flex flex-col gap-4">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Interests</h3>
+<div class="flex flex-wrap gap-2">
+<div class="px-4 py-2 bg-card-dark rounded-full border border-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">camera</span>
+<span class="text-sm font-semibold">Photography</span>
+</div>
+<div class="px-4 py-2 bg-card-dark rounded-full border border-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">flight</span>
+<span class="text-sm font-semibold">Travel</span>
+</div>
+<div class="px-4 py-2 bg-card-dark rounded-full border border-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">music_note</span>
+<span class="text-sm font-semibold">Jazz Music</span>
+</div>
+<div class="px-4 py-2 bg-card-dark rounded-full border border-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">restaurant</span>
+<span class="text-sm font-semibold">Cooking</span>
+</div>
+<div class="px-4 py-2 bg-card-dark rounded-full border border-slate-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">palette</span>
+<span class="text-sm font-semibold">Design</span>
+</div>
+</div>
+</section>
+<!-- Common Interests Highlight -->
+<section class="bg-primary/10 border border-primary/20 rounded-2xl p-5">
+<div class="flex items-center gap-3 mb-3">
+<div class="flex -space-x-3">
+<div class="size-8 rounded-full border-2 border-background-dark bg-cover bg-center" data-alt="User profile avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDKSUMlxX5NSRdmk5eW6GQ4YB5wP4AxtKqmwQ8Ljl_2jNuQt67I7zG_8ksogijtHhbeD8EG_ejT3Yt6K1rwejBbghC2Su1L7oEBOuzHGvseXAqUQ8h-SUneEILxT1NHnllJjFTzDVadGA5_BvwH3JTZDLk0GBAoOMUujswFD_OdTb-D5dLd7aPZgXCPfy5o3vHc2yJpC16XQoP8ozRC7xz10XtTexX8BzCDfLDiPBTPSE_xydIJjNYhkcepyrD7ClSlLyGbykH932I');"></div>
+<div class="size-8 rounded-full border-2 border-background-dark bg-cover bg-center" data-alt="Recipient profile avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCLfOx9shrKABUaxLRiZ12qhBIjB4ivDPEGiS83pjjDIYdE5JFBIpxbehit8QYexG1flLpVMuotjdK99UAEavlV87sa4ZZcnY-0SARqE2p_7JkaZqrV1vEeq2CQwc99f3VtSJFifaC6yr8HcS4D8K1grQCxCqoUHKH_AbP0nrSk1Ae5FEGMrK3vRTZy4WpN5cT-yXn3hPdf1UbQFW4lJLbOa_fvw-hlEgGlNVUbUSMF_93XQNO0ISqEs_pKvn8eQA1TEbP8bXXYcgc');"></div>
+</div>
+<h3 class="font-bold text-primary">You both love...</h3>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center gap-1">
+<div class="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<span class="text-xs font-medium text-slate-300">Reading</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pets</span>
+</div>
+<span class="text-xs font-medium text-slate-300">Dogs</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="size-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">hiking</span>
+</div>
+<span class="text-xs font-medium text-slate-300">Hiking</span>
+</div>
+</div>
+</section>
+<!-- Location Preview -->
+<section class="flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Location</h3>
+<span class="text-sm font-medium text-slate-400">2 miles away</span>
+</div>
+<div class="w-full h-40 rounded-2xl bg-card-dark border border-slate-700 overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center opacity-60" data-alt="Map view of Brooklyn area" data-location="Brooklyn, New York" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYOpwoR3vQpEPFkLIQuHyITYB1XY7DolquPLmNbT6YDGWB17rNa2wItmo8NvtTS7BvalPbEdIGja9JROtC_gQwqQkAGxVEdwa1lMRSccCHBMQyjEVrIFHa2TPubjaO6H-g-QkQ7cflLzORvqYAK-E-c8ArwU5s19VeJrYpBuv4S06WpndwdKqyDPfliZwMCcNS1Xx8y7xdsuCV8wfNbl7wwh_BMPfYJ9SAQoU3RwJbYWdGq7bYVAEGzL-REqPGECBv_dyA2VxC-0U');"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-12 bg-primary/20 rounded-full flex items-center justify-center animate-pulse">
+<div class="size-4 bg-primary rounded-full shadow-[0_0_15px_rgba(255,68,88,0.8)]"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Floating Glassmorphism Action Bar -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
+<div class="glass-morphism rounded-full px-6 py-4 flex items-center justify-between shadow-2xl">
+<!-- Pass Button -->
+<button class="size-14 rounded-full flex items-center justify-center bg-slate-800 border border-slate-700 text-slate-400 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl">close</span>
+</button>
+<!-- Super Like Button -->
+<button class="size-16 rounded-full flex items-center justify-center bg-blue-500/10 border border-blue-500/30 text-blue-400 -mt-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl fill-1">star</span>
+</button>
+<!-- Like Button -->
+<button class="size-14 rounded-full flex items-center justify-center bg-primary border border-primary/20 text-white shadow-lg shadow-primary/20 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl fill-1">favorite</span>
+</button>
+</div>
+</div>
+</body></html>

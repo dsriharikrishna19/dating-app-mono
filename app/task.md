@@ -1,0 +1,22 @@
+# Tasks
+
+- [x] Review `auth_welcome_login` design
+- [x] Review other key designs (chat, discover, profile)
+- [x] Summarize UI/UX patterns and design tokens
+- [x] Create an implementation plan for any missing features
+- [x] Map out the "design tree" (app flow)
+- [x] Initialize Expo project and dependencies
+- [x] Implement `auth_welcome_login` screen
+- [x] Create project walkthrough
+- [x] Phase 2: Implement Phone Authentication flow
+    - [x] Phone Entry Screen
+    - [x] Verification Code Screen
+- [x] Phase 3: Implement Onboarding Flow (Step 1-4)
+- [x] Phase 4: Implement Core Application Tabs (Explore, Chat, Profile)
+- [x] Phase 5: Implement Detailed Chat Conversation View
+- [x] Phase 6: Implement Premium Search & Discovery
+- [x] Phase 7: Final Polish and Theme Refinement
+- [x] Phase 8: Implement Daily Ideas Section
+- [x] Phase 9: Implement User Detail (Public Profile) View
+- [x] Phase 10: Implement Advanced Settings & Preferences
+- [x] Phase 11: Final Quality Assurance

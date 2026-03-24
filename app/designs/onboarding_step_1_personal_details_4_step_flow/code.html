@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                        "card-dark": "#1E293B",
+                        "border-dark": "#334155"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex flex-col w-full px-6 pt-6 pb-2 gap-4">
+<div class="flex items-center justify-between">
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Step 1 of 4</span>
+</div>
+<div class="flex items-center">
+<span class="text-xs font-bold text-primary/80">25% Complete</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full w-[25%]"></div>
+</div>
+</header>
+<main class="flex-1 flex flex-col px-6 pt-8 gap-8 max-w-md mx-auto w-full">
+<!-- Main Title -->
+<div class="space-y-2">
+<h1 class="text-3xl font-bold tracking-tight text-white">Tell us about yourself</h1>
+<p class="text-slate-400 text-sm">We'll use this to find your perfect match.</p>
+</div>
+<!-- Form Content -->
+<div class="flex flex-col gap-6">
+<!-- First Name Input -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-300 ml-1">First Name</label>
+<div class="relative bg-card-dark border border-border-dark rounded-xl px-4 py-4 flex items-center gap-3 focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-slate-500">person</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-white placeholder:text-slate-500 w-full" placeholder="Your first name" type="text"/>
+</div>
+</div>
+<!-- Birthday Picker -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-300 ml-1">Birthday</label>
+<div class="relative bg-card-dark border border-border-dark rounded-xl px-4 py-4 flex items-center justify-between focus-within:border-primary transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-500">calendar_month</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-white placeholder:text-slate-500 w-full" placeholder="DD / MM / YYYY" type="text"/>
+</div>
+</div>
+</div>
+<!-- Gender Selection -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-slate-300 ml-1">I am a</label>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-3 rounded-full bg-primary text-white font-semibold text-sm border border-primary shadow-lg shadow-primary/20 transition-all">
+                        Woman
+                    </button>
+<button class="px-6 py-3 rounded-full bg-card-dark text-slate-400 font-semibold text-sm border border-border-dark hover:border-slate-500 transition-all">
+                        Man
+                    </button>
+<button class="px-6 py-3 rounded-full bg-card-dark text-slate-400 font-semibold text-sm border border-border-dark hover:border-slate-500 transition-all">
+                        Non-binary
+                    </button>
+</div>
+</div>
+</div>
+<!-- Visual Accent -->
+<div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 border border-primary/20">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-xl">verified_user</span>
+<p class="text-xs text-slate-300 leading-relaxed">
+                    Your profile information is safe with us. We only share what you choose to show others.
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer Action -->
+<footer class="p-6 max-w-md mx-auto w-full">
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white font-bold text-lg shadow-xl shadow-primary/30 active:scale-[0.98] transition-all">
+            Continue
+        </button>
+<p class="text-center text-slate-500 text-[10px] mt-4 uppercase tracking-widest font-medium">Step 1 of 4: Personal Details</p>
+</footer>
+</body></html>

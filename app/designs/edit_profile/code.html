@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Profile - Premium Dating App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0f172a", // Updated to requested deep dark blue/slate
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #ff4255 0%, #a855f7 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen pb-32">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-background-dark/80 backdrop-blur-md border-b border-white/5">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Edit Profile</h1>
+<button class="text-primary font-bold text-sm hover:opacity-80">Save</button>
+</header>
+<main class="max-w-2xl mx-auto px-4 py-6 space-y-8">
+<!-- Photo Grid Section -->
+<section>
+<div class="flex items-baseline justify-between mb-4">
+<h2 class="text-xl font-bold">Profile Photos</h2>
+<span class="text-xs text-slate-400 font-medium">Drag to reorder</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<!-- Main Photo -->
+<div class="relative group aspect-[3/4] col-span-2 row-span-2 rounded-xl overflow-hidden ring-2 ring-primary">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover" data-alt="Portrait of a smiling woman with sunset lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxUbOYcQI607Xd8BzZFyNzDTi_V-Ss06bFVpQOYmz9SJr6tphMG9TVt-w4iX0NKhO8H-FUPKEYBWAlpfHT3YG5S0HcZMQoGkMMC0Xs7LEOLbe2etBwTAYLQYW6EHwcQcu18r1VhLT0NPw8-0t9SloXk2_6zNlA7RbaJlX0I4PetN3MRyo3bzV9TY3CSo2HIDpOY2MaXYNY835qtUsfpjggOr0FHGu_e7Q3XNjFb2zTqF8g4e2oSNik9e19km7iag6a109NVolSwrE')"></div>
+<div class="absolute top-2 left-2 bg-primary text-[10px] font-bold px-2 py-1 rounded-full text-white uppercase tracking-wider">Main</div>
+<button class="absolute bottom-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Slot 2 -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover" data-alt="Candid street portrait of a woman" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCX9aS7TyWUZS4Vh9a7ZUcGU4RdKquurukcoAmmJwPPKtbyh8bl6dwWe-JeHDubh-m1K_3wCDgscepxKtZOBNGkKhGvyfETZfEG6ZiD7pMJoXh4RFGVrwgzlQbFXRNCn9PQB0fHGtYAK0KqG5YJWGHBucXmyxZ67zYmyOnxDBPAN47jIxXA9YWCaBxmxjyJznhueTgsJwuhjYwUuOr0uaW3CwBBC15VgjqSOjutEInZ7PiTijPgWHhH53X-c7MPrpUaySKg53g-WFs')"></div>
+<button class="absolute bottom-2 right-2 size-6 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xs">close</span>
+</button>
+</div>
+<!-- Slot 3 -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover" data-alt="Professional headshot profile picture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzc7MPmHlJTnwVjW3tI_V-SQB_87-k8rOvcHvAJUzfuvu_Ir24Nt3L1uXBNo9JOZwDV9tatdDKxHFzLSEhJR9QeZQ5gaGSOgcyUNsmEE2gTu0UG45cjWr2EWCHBAIMCp2NNl9CqBpbopWmHETpNlHbrqSQb5PhzJ9IirAb4rIy7YAiRn2d-FNYsx2bTpX7-yKDUxFH4TiDbMZk1uLOwyVSH7XZfH2Q3IzwGZa8VU2321wlBsQuxf1-yJc92f8t7cCY4MmUM_FEFu0')"></div>
+<button class="absolute bottom-2 right-2 size-6 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xs">close</span>
+</button>
+</div>
+<!-- Slot 4 -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group cursor-pointer">
+<span class="material-symbols-outlined text-3xl mb-1 group-hover:text-primary transition-colors">add_circle</span>
+<span class="text-[10px] font-medium uppercase">Add</span>
+</div>
+</div>
+<!-- Slot 5 -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group cursor-pointer">
+<span class="material-symbols-outlined text-3xl mb-1 group-hover:text-primary transition-colors">add_circle</span>
+</div>
+</div>
+<!-- Slot 6 -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 group cursor-pointer">
+<span class="material-symbols-outlined text-3xl mb-1 group-hover:text-primary transition-colors">add_circle</span>
+</div>
+</div>
+</div>
+</section>
+<!-- About Me Section -->
+<section class="space-y-3">
+<h2 class="text-xl font-bold">About Me</h2>
+<div class="glass-card rounded-xl p-4 focus-within:ring-1 ring-primary/50 transition-all">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-slate-200 resize-none min-h-[120px] p-0 placeholder-slate-500" placeholder="Tell your story...">Architecture enthusiast, world traveler, and part-time coffee connoisseur. Looking for someone who can match my energy and appreciates a good playlist.</textarea>
+<div class="flex justify-end mt-2">
+<span class="text-[11px] font-medium text-slate-500 uppercase tracking-widest">142 / 500</span>
+</div>
+</div>
+</section>
+<!-- Interests Chips -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold">Interests</h2>
+<button class="text-xs font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit</span> EDIT
+                </button>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-2 px-4 py-2 rounded-full gradient-primary text-white text-sm font-medium">
+<span class="material-symbols-outlined text-lg">restaurant</span>
+<span>Cooking</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card border-white/10 text-slate-200 text-sm font-medium">
+<span class="material-symbols-outlined text-lg">flight</span>
+<span>Travel</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card border-white/10 text-slate-200 text-sm font-medium">
+<span class="material-symbols-outlined text-lg">fitness_center</span>
+<span>Gym</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full gradient-primary text-white text-sm font-medium">
+<span class="material-symbols-outlined text-lg">palette</span>
+<span>Art</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card border-white/10 text-slate-200 text-sm font-medium">
+<span class="material-symbols-outlined text-lg">pets</span>
+<span>Dogs</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card border-white/10 text-slate-200 text-sm font-medium">
+<span class="material-symbols-outlined text-lg">hiking</span>
+<span>Hiking</span>
+</div>
+</div>
+</section>
+<!-- Basic Info Section -->
+<section class="space-y-4">
+<h2 class="text-xl font-bold">Basic Info</h2>
+<div class="glass-card rounded-xl overflow-hidden divide-y divide-white/5">
+<div class="flex items-center justify-between p-4 hover:bg-white/5 cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">work</span>
+<span class="text-sm font-medium">Job Title</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm">Senior Architect</span>
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-white/5 cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">school</span>
+<span class="text-sm font-medium">Education</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm">Columbia University</span>
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-white/5 cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">straighten</span>
+<span class="text-sm font-medium">Height</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm">5'9" (175 cm)</span>
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-white/5 cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">location_on</span>
+<span class="text-sm font-medium">Living in</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm">New York, NY</span>
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Actions -->
+<div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background-dark via-background-dark to-transparent">
+<div class="max-w-2xl mx-auto flex flex-col gap-3">
+<button class="w-full gradient-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">visibility</span>
+                Preview Profile
+            </button>
+</div>
+</div>
+<!-- Bottom Nav Bar Component -->
+<div class="fixed bottom-0 left-0 right-0 z-40 flex gap-2 border-t border-white/5 bg-background-dark/90 backdrop-blur-xl px-4 pb-4 pt-2">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">explore</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-widest uppercase">Discover</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-widest uppercase">Likes</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-widest uppercase">Chats</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-widest uppercase">Profile</p>
+</a>
+</div>
+</body></html>

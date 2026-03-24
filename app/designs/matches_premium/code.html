@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header Section -->
+<header class="sticky top-0 z-20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl font-bold">bubble_chart</span>
+<h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Matches</h1>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">tune</span>
+</button>
+</div>
+<!-- Sub-tabs -->
+<div class="px-6 flex gap-8">
+<a class="pb-3 border-b-2 border-primary text-primary font-bold text-sm" href="#">New Matches</a>
+<a class="pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 font-bold text-sm hover:text-primary transition-colors" href="#">Likes You</a>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- New Stories/Matches Horizontal Scroll -->
+<section class="py-6 px-6">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Daily Picks</h3>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<!-- User Story 0 -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="relative p-1 rounded-full bg-gradient-to-tr from-primary to-orange-400">
+<div class="w-16 h-16 rounded-full border-2 border-background-dark bg-center bg-cover" data-alt="Portrait of a smiling young woman with long hair" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQq5Wgsm-2vb4mrP5l913vpPfXGnU8VuBHw9OyWBxR7YYKllgomZMryADm1tSCn5HyK6WGTOJOBYHLtvTy_k53GrGIHvDz5HAfH71uCvxmlCndXIYFuyaW6hqqI4LRH-r83SuySfkatkIv1zfJJlwDbqfB5IRxNOV_TcV9qH_mQzrAyWJVlQiukJhxxCCbm4PYAo4MMb48P0hzSB2cwfUpT9A76LDGOdjsc1hzszvbPtiFaM7yEHkcYZfb_C0XXjur3ms-zEvUHbE')">
+</div>
+</div>
+<span class="text-xs font-medium">Elena</span>
+</div>
+<!-- User Story 1 -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="relative p-1 rounded-full bg-slate-200 dark:bg-slate-800">
+<div class="w-16 h-16 rounded-full border-2 border-background-dark bg-center bg-cover" data-alt="Modern professional portrait of a man in a blazer" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiJ2PKTz88E7N9R-k1KBVUuiRBUYblMqlbVP9CkHiQSWAjC6lFsJDQgzq-X4baAuK9nLoLEIe8niMu38ZprkS36d-95CGlVUlD3zzKsrNix6EnXi5cqLNp12bRTPMbZ7eEC-_FbU94o5YRsWMFmQRpYkl1nBdwXaxFrLDOhsR3wrnqlJsmlT5bLxuXT39dmGRTbbQRlTNUouD9Cw-WVi1Et66Gisl16MvbWbb71G2MXOXxWdYUOuga04GKehXCZDCN9Utx2g0qxPY')">
+</div>
+</div>
+<span class="text-xs font-medium">Marcus</span>
+</div>
+<!-- User Story 2 -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="relative p-1 rounded-full bg-gradient-to-tr from-primary to-orange-400">
+<div class="w-16 h-16 rounded-full border-2 border-background-dark bg-center bg-cover" data-alt="Artistic portrait of a woman in sunlight" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXppJEffTWHS3J2fUB6Vzd2-GRyp2D6rmw2BAC4DltfubUZiG_ukFo50Wz_ZmEPkgo1xJQ9iuU6ZdI00pljOimHe2At9aI_Bf-KC0xACI9N0SLz5zLkzabGzITc2QIu2YnHIqiVSmKoQzdv5M2i0rb39yVExKZgoDnjVbKsRfGuQcl2mpKWSIP-9JhGRF-6ziRjxn2wHhv1JjkozCkw9Qe5KY2VLveYupkDZx0jdh7QhED3SVtW0WFsagwtvfgl-BMS0nnLqSIO0g')">
+</div>
+</div>
+<span class="text-xs font-medium">Sophia</span>
+</div>
+<!-- User Story 3 -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="relative p-1 rounded-full bg-slate-200 dark:bg-slate-800">
+<div class="w-16 h-16 rounded-full border-2 border-background-dark bg-center bg-cover" data-alt="Portrait of a young man with a friendly expression" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCW-WEDX8fKZfOATctxtdJXzQYUiqQjt4kIwdPg0JrR-OQCinqi9ghtq9-QM6GwPEURJ4Nv_zlqzFT-jGV4rO1gXuBj4WjgcoFXlF0mYY9B34Ku8TlF4ap39aAE79GOsbdQe1AuS-yS0EVs30Dkd_e_jCZ9a8fp7BTaSCpq8sDNTnuFaXqbREiTrGVVRWMTPB3cRlvJW7Ke9KQnJnG_Tm39cdqlkqwEtKfNrIQap1zCPqEZM4KOKys9Yi3J8zBDGFRrsQxJYakFs-U')">
+</div>
+</div>
+<span class="text-xs font-medium">Liam</span>
+</div>
+<!-- User Story 4 -->
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<div class="relative p-1 rounded-full bg-slate-200 dark:bg-slate-800">
+<div class="w-16 h-16 rounded-full border-2 border-background-dark bg-center bg-cover" data-alt="Fashion portrait of a stylish woman" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwEEejxC2nVMbIQLMZaxzMrTIlHV1Eh1VdhVz_O4aBuyCh8Zmt944s8ZLvK5dypTRSHkHeUZBDZT-8Ic2ty9C-kmpP5kcN0feZY-7-L8sYccmrM5ynyqunjV3wNIXf1c58PEbwH9TgsrqLhBZsLRxU9EfeCk-yhAZiaFLYHKpat2_WlGvj6gcM9fW7vu_Z0NVM-lWOLhtEUOr1wT4XJNjOMP6427yjY2MWnLr8g_CF_m1Iyub-_Bktw0y_M1D2V6l8SaZlt3QBGeU')">
+</div>
+</div>
+<span class="text-xs font-medium">Ava</span>
+</div>
+</div>
+</section>
+<!-- Messages Grid Layout -->
+<section class="px-6 pt-2">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-6">Recent Messages</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Match Card 1 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Close up portrait of a young woman with curly hair" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCitcSp8_uY2EZzF-KFauH-r0ILa4NBgWNAFzATpNSWKV7HtAvBuvwWlitXIh9BMMqF0g-JuAbomFBNv-KB4dj4KZCsuJWD9tTNktI4gO7Wph26w16J3u6y8LdbM-Ltuz8UKdOO3ELBrYaavre1CpPF9wzVSJrYfnmx4D29vlDFzCWfzKyWFpWjFey8smTTOEL-5X1DKwSW4VWdLKOJM9mJ1A-YlZI8pE8Aa1RmiaumQsd7FGouvCiYKsVuMz9NNaFrYrQ4YM5lSuE')">
+</div>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Elena, 24</h4>
+<span class="text-[10px] text-slate-500 font-medium">2m ago</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 truncate">That coffee place sounds amazing, when should we go?</p>
+</div>
+<div class="w-2 h-2 rounded-full bg-primary shrink-0"></div>
+</div>
+<!-- Match Card 2 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Portrait of a young man with glasses" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBW4-6bq20tx61kgWZ7T7EzZbRtcb0uyQMKC4gPQ0sOvqaVQoeY8RNYuSDwZXv_PWEZp94gvrRoVmnRslQrzO-GB53rZxjeGux3zx1M6M2CdFwok4Mrdbw-AEDU-tNSExgNZ2mtrAkD_NZrRm710xvca4eaNgWwESUmRX2Fj1E7GKXBWb9ol2OMtrtrW9ej3duaKNXw5rM__plX8kSgkz_DHlkxL4PAt2fBZdFCuDw3tt3w7aSYB0PRk-boeqt5WurSMII4hB69vAY')">
+</div>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">James, 28</h4>
+<span class="text-[10px] text-slate-500 font-medium">15m ago</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">You: Hope your presentation went well today!</p>
+</div>
+</div>
+<!-- Match Card 3 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Portrait of a thoughtful woman looking at camera" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJqOHvitfT6OxUTIvr85enyh8IXJE-8YbKL5pS4w7sCZ9UVi_5htG37icYbSwrB_4rWcnOPB_xKZZAo1ABNpossJMhMRQOd2eBLPzxNRpsJ4SQA-sUytEWfzFJvWNyge7eXiFww-Cr34D1XQ1B-wh6SiRN48yR9gYYZJPjgZHsuTajc1VN4HhY5HfSIFv8wEs1FrmMbNR9vRaj5VFAl4C3M0wQvB9zCdsWXNZgI1_jki9UfO-Ff1zFlsqQMcYadWJeVVh_S_0dsGQ')">
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Chloe, 26</h4>
+<span class="text-[10px] text-slate-500 font-medium">1h ago</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400 truncate font-semibold">Sent a photo 📸</p>
+</div>
+<div class="w-2 h-2 rounded-full bg-primary shrink-0"></div>
+</div>
+<!-- Match Card 4 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Portrait of a bearded man smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA6-jZ8Zt_Pz9S1qqqUBbUQgmQ0AI63ocesNqbNVUt8iQQGQaUTYjS6rrril8jsWVtKR-b3VYTd47RQisEIvjMb5ylvlprTflX8uheBFZkTiXQBHGgHI-NUczk6eP51eBASr-Fkksof5JaKLXP9RW5lazfkFMgtxB0000iv7NBG2mnpXEjK6-sVwjGeJQss0RLxDxilicI1Ht6foiHESmhLGjl_eY8UJ0jj0J8PHe1A2ULcKZxAnS1zpUqM9kpf1SWVRp7D7pHiDS8')">
+</div>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Noah, 30</h4>
+<span class="text-[10px] text-slate-500 font-medium">3h ago</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">Haha, that's hilarious. My dog does the same thing.</p>
+</div>
+</div>
+<!-- Match Card 5 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Portrait of a young black woman with braids" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAER5LAHtaJOoX6v4CnkhAndsDhhkb1oqN_AdM3Pb4OoQ57rrsL8CqjlphlhFAEP_3AxKVY3HGd8c_-lD9XFtj7AT8flNUOZ_R797STBONbQJXUFSLcEjBwQa0BL1R2i7cNy6nUTFb5LRbqH6uEVN6nTbQ005hj6JccY2YbkdhPaPQmMZQPQT6e-uGkq3JFz1YW1M5Oz6QdBs3Pk9hjFhGv2eLxzXrr_pKWZ_WW7MGvIt8y8X94WQwy-bHzCOD6oeBT5kEhxjoyAuo')">
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Zara, 23</h4>
+<span class="text-[10px] text-slate-500 font-medium">Yesterday</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">It was really nice meeting you yesterday!</p>
+</div>
+</div>
+<!-- Match Card 6 -->
+<div class="group flex items-center gap-4 p-4 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-primary/30 transition-all cursor-pointer">
+<div class="relative">
+<div class="w-16 h-16 rounded-full bg-center bg-cover border-2 border-primary/20" data-alt="Portrait of a young man outdoors" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBnBf7T5tcQZ8ZFQCwQmOfPO_omeI7me1ynijpe8mzOA3G3NJZ8Zvq7we2dxYVE_7fokpQzN5KSNqqUJJHMQfK7mKd3nE1jUp2C9-bmZPlUjX_ERvP9iSOjaKqi-p3r1j014HIl9zlC3OZaUHoqG7COV5MK0LN_9W1jp1jMAd0vJZ4P81xlRPeo1GHBgMfGLBuXf8Tel-C_sK-_DWskjOoSotVGAVzs9PttfzOIvM-JeK3WH3EjtzxsB8iLExIYi02pneI8oHzUNuQ')">
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Oliver, 27</h4>
+<span class="text-[10px] text-slate-500 font-medium">Yesterday</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">What's your favorite spot for hiking?</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-30 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-6 py-2">
+<div class="flex items-center justify-between max-w-lg mx-auto h-16">
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[28px]">explore</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[28px]">favorite</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary relative" href="#">
+<span class="material-symbols-outlined text-[28px] fill-[1]">chat_bubble</span>
+<span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-white font-bold">3</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[28px]">person</span>
+</a>
+</div>
+<!-- iPhone Safe Area Handle -->
+<div class="w-32 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto mt-2 mb-1"></div>
+</nav>
+</body></html>

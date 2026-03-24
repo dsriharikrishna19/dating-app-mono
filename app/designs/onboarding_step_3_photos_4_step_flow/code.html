@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "secondary": "#a855f7",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #ff4255 0%, #a855f7 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<button class="text-slate-900 dark:text-slate-100 p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined text-2xl">Step 3 of 4</span>
+</button>
+<span class="text-xs font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">Step 3 of 4</span>
+<span class="text-xs font-bold text-primary">75% Complete</span>
+</div>
+<div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full gradient-primary" style="width: 80%;"></div>
+</div>
+</header>
+<main class="flex-1 px-4 overflow-y-auto pb-24">
+<div class="mt-6">
+<h1 class="text-3xl font-bold dark:text-white mb-2">Show your best self</h1>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                Add at least 2 photos to continue. The first one will be your profile cover.
+            </p>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-8">
+<!-- Slot 1: Cover -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-800 border-2 border-primary/50 group shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Portrait of a smiling young man in a leather jacket" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVSy4S_FJLo1bli4rB-GVDzNqph6wNOjaNP_j6c_rwxDHXJlXHklS8vid9ry2u6XaNaho7L9x3NmG3SeNd9r5GESGsDKsglExBuLNBcvs6cbYGJ38NZrMagkZIOi0uXdi1a7pq_cOsFu0ZkW00msqyZcMjZ73blqhcV8YI5LoVzaC7fMiiFVaoW_ZuxxkNYRBEJYhyJFYZfhPtiJAybWz4J7TJBDIII1CJsJJHurMYMRJ5Q3aTdyGKBsCEIRk6sT_C-iscZsAr5UQ')"></div>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+<div class="absolute top-2 left-2 px-2 py-0.5 bg-primary text-[10px] font-bold text-white rounded uppercase tracking-wider">Cover</div>
+<button class="absolute bottom-2 right-2 size-6 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Slot 2: Filled -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-800 group shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Candid shot of a man walking in a park" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCI9JFkAN8UHe4RA-1CGmpA5tJNrrDRY2XL5yiKjsls_i9oszUigpaT7rtoNmfCsSeaTO3aX6tNhvXM7X_EeUzZgpyppD7EbmhQTqNv_A37uMQgDq92Jnyz-wvG94PLCgiY6AB1Ge9VSY9zj49E1SX_sRFq8hTO9r1EEf9l3qwgXqiX6RCWiGelkQIxhmxkyp7ewJ1NEBUgrRjDndP8UBGRcJcOGVmlvmNJVcT3UfH5rVNKzBZD6429Nt_7CwKZknIjvZ8EPbdlRCM')"></div>
+<button class="absolute bottom-2 right-2 size-6 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Slot 3: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 4: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 5: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 6: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 7: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 8: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+<!-- Slot 9: Empty/Add -->
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 hover:border-primary/50 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-600">add_circle</span>
+</div>
+</div>
+<div class="mt-8 p-4 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-4">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-primary uppercase tracking-wide mb-1">Tips for better photos</h3>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Avoid filters, use natural lighting, and make sure your face is clearly visible. Group shots are great, but not as your first photo!
+                </p>
+</div>
+</div>
+</main>
+<footer class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark/80 backdrop-blur-md">
+<button class="w-full py-4 rounded-full gradient-primary text-white font-bold text-lg shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform">
+            Continue
+        </button>
+</footer>
+</body></html>

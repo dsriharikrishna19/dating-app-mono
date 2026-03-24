@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .swipe-gradient {
+            background: linear-gradient(0deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0) 40%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative mx-auto flex min-h-screen max-w-md flex-col overflow-hidden shadow-2xl">
+<header class="flex items-center justify-between px-6 pt-6 pb-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full border-2 border-primary p-0.5">
+<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Small profile thumbnail of the current user" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDKcaCkJApAwnnVqpvXA3n3Z5CQQ73AbBrZiyrHMAEtX5Ap4ReF5bJqFDCOWm02ncZawd0hu3PXR7FpXMUraOIoFhi8WfzxMyUXr1Mw3qvINoB9sHQ8e5UZrUV4GcGy9xgi252six6DqxJtsJXySVhRdN4kRVs-VuEf_h2OHsjlrmXJRApaEVS1r3LLw4kh0AOxVs7uWWWJ33njJW8IkgvCQMeFB0kqocAp4KQ6L6snIIibX5lxZcjYsNRvbppE8sIc8_Xe2hKoa1g')"></div>
+</div>
+<div>
+<h1 class="text-lg font-extrabold leading-none tracking-tight">Discover</h1>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400">London, UK</p>
+</div>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+</button>
+</header>
+<main class="relative flex-1 px-4 py-2">
+<div class="relative h-full w-full">
+<div class="relative h-[calc(100vh-240px)] w-full overflow-hidden rounded-2xl shadow-2xl">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="High quality portrait of a smiling woman in warm lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDj0i0J69pexujvVUAQ2c7rrGiFoNGBlJNzJj_FYChAow52wtSWrLoWB4ocZFoEA6NRPXANeAmJiFkmckLS6KdmCrvnjo81untEo3yE8VMxNAH6OUSgzNjwU2EqPxDiUU219kC1s6SK3HXXlbibn4Xtck-cB3B0uppnjriRjQbw7fK-Ai93XAc515dlp8vpYrhk6bsV3OFgrD-Z3fSZ-1VNRo1fmYoXP05pYcQfOuED3Uzey5Fds8FQcavsOz0sYOGIH1AZYXYklkY')"></div>
+<div class="swipe-gradient absolute inset-0"></div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="flex items-center gap-1 rounded-full bg-black/40 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1">verified</span>
+                            VERIFIED
+                        </span>
+<span class="rounded-full bg-black/40 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-md">
+                            2.4 KM AWAY
+                        </span>
+</div>
+<div class="absolute bottom-4 left-4 right-4 space-y-4">
+<div class="glass-card rounded-xl p-5 shadow-lg">
+<div class="flex items-end justify-between">
+<div>
+<h2 class="text-3xl font-extrabold text-white">Elena, 24</h2>
+<p class="mt-1 text-sm font-medium text-slate-200 line-clamp-2">Architecture student and weekend baker. Let's explore the city's best rooftop gardens! 🥐✨</p>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap gap-2">
+<span class="rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">🎨 Art</span>
+<span class="rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">🍷 Wine Tasting</span>
+<span class="rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">✈️ Travel</span>
+</div>
+</div>
+<div class="flex items-center justify-center gap-5">
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-800 shadow-xl transition-transform active:scale-90 dark:bg-slate-800 dark:text-white">
+<span class="material-symbols-outlined text-3xl">close</span>
+</button>
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 text-white shadow-xl transition-transform active:scale-90">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1">star</span>
+</button>
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-rose-600 text-white shadow-xl transition-transform active:scale-90">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<div class="absolute -z-10 top-2 left-2 right-2 h-[calc(100vh-240px)] rounded-2xl bg-slate-800/50 scale-[0.98]"></div>
+<div class="absolute -z-20 top-4 left-4 right-4 h-[calc(100vh-240px)] rounded-2xl bg-slate-800/30 scale-[0.96]"></div>
+</div>
+</main>
+<nav class="mt-auto border-t border-slate-200 bg-white/80 pb-6 pt-3 backdrop-blur-xl dark:border-slate-800 dark:bg-background-dark/80">
+<div class="flex items-center justify-around px-4">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1">style</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Discover</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">search</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Search</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">chat_bubble</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Messages</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-3xl">person</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dating App Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FF4458",
+                        "background-dark": "#0F172A",
+                        "card-dark": "#1E293B",
+                        "slate-custom": "#334155",
+                        "text-primary": "#F8FAFC",
+                        "text-secondary": "#CBD5F5",
+                    },
+                    fontFamily: {
+                        "sans": ["'Plus Jakarta Sans'", "sans-serif"],
+                        "display": ["'Plus Jakarta Sans'", "sans-serif"]
+                    },
+                    backgroundImage: {
+                        'brand-gradient': 'linear-gradient(135deg, #FF4458 0%, #6C5CE7 100%)',
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }</script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#0F172A] text-[#F8FAFC] min-h-screen flex items-center justify-center p-4 font-['Plus Jakarta Sans']">
+<!-- Mobile Container (390px simulated) -->
+<div class="relative w-full max-w-[390px] min-h-[844px] bg-[#0F172A] overflow-hidden flex flex-col rounded-3xl shadow-2xl border border-white/5">
+<!-- Top App Bar & Progress -->
+<div class="px-6 pt-8 pb-4">
+<div class="flex items-center justify-between mb-6">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="text-[#CBD5F5] text-sm font-medium">Step 1 of 5</div>
+<div class="w-10"></div> <!-- Spacer -->
+</div>
+<div class="w-full bg-slate-200 dark:bg-primary/20 h-1.5 rounded-full overflow-hidden">
+<div class="bg-brand-gradient h-full w-1/5 rounded-full"></div>
+</div>
+</div>
+<!-- Content -->
+<div class="px-6 flex-1 flex flex-col">
+<h1 class="text-3xl font-bold mt-8 mb-3 tracking-tight text-[#F8FAFC]">Enter your phone number</h1>
+<p class="text-[#CBD5F5] text-base leading-relaxed mb-10">
+                We'll send a code to verify your account. Message and data rates may apply.
+            </p>
+<!-- Input Section in Glass Container -->
+<div class="bg-[#1E293B] border border-[#334155] rounded-[24px] p-6 space-y-5">
+<div class="space-y-2">
+<label class="text-xs font-semibold uppercase tracking-wider text-[#CBD5F5]/60 ml-1">Country</label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+<span class="text-xl">🇺🇸</span>
+</div>
+<select class="w-full h-14 pl-14 pr-10 bg-transparent border-[#334155] rounded-xl text-[#F8FAFC] focus:ring-[#FF4458] focus:border-[#FF4458] appearance-none">
+<option>United States (+1)</option>
+<option>United Kingdom (+44)</option>
+<option>Canada (+1)</option>
+<option>Australia (+61)</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-semibold uppercase tracking-wider text-[#CBD5F5]/60 ml-1">Phone Number</label>
+<input class="w-full h-14 px-4 bg-transparent border-[#334155] rounded-xl text-[#F8FAFC] placeholder:text-[#334155] focus:ring-[#FF4458] focus:border-[#FF4458] text-lg" placeholder="(555) 000-0000" type="tel"/>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="mt-auto pb-10">
+<button class="w-full bg-brand-gradient hover:opacity-90 text-white font-bold h-16 rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                    Continue
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-center text-xs text-[#CBD5F5]/40 mt-6 px-4">
+                    By continuing, you agree to our Terms of Service and Privacy Policy.
+                </p>
+</div>
+</div>
+<!-- Simulated Numeric Keyboard -->
+<div class="bg-[#1E293B]/80 backdrop-blur-xl border-t border-white/5 p-2 grid grid-cols-3 gap-2">
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">1</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">2</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">3</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">4</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">5</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">6</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">7</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">8</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">9</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]"></div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">0</div>
+<div class="h-12 flex items-center justify-center font-semibold text-xl text-[#F8FAFC]">
+<span class="material-symbols-outlined">backspace</span>
+</div>
+<div class="col-span-3 h-1.5 flex justify-center py-4">
+<div class="w-32 h-1.5 bg-slate-400/30 rounded-full"></div>
+</div>
+</div>
+<!-- Background Decorative Element -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="absolute top-1/2 -left-32 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+</div>
+</body></html>

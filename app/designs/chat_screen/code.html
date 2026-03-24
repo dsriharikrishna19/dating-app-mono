@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0f172a", // Updated to user requested background
+                        "chat-received": "#1e293b",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .message-shadow {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">arrow_back_ios_new</span>
+</button>
+<div class="relative">
+<div class="size-11 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center border-2 border-primary" data-alt="Portrait of Elena with a warm smile" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDAg6zTN_cEHLkgi1aXPymiTLEdUP5RvVqxKMg-SZ1tqxflR8i70mvhCsf4HwKjQVXH_12xsesP-XL0Z8MR34qFVWXD48bh4M96Hm-TUwBcnZadyHm-iGJ6O0_u-L4nzjE-wwKO095tuV8kXZJtpQ7dFHq7gHfpnKBMLrZE-_RyE2hGbq6DSnJyp3TG7mSIoj1bn3Pvc0FZYMAgUPYx7qtKCUv7Rk_9QRruEG6QswPPa2_V64_NdO2Si2XdgpKeKhFj8Kg8k3OaaCQ')">
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="flex flex-col flex-1">
+<h2 class="text-base font-bold leading-tight">Elena</h2>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Active now</p>
+</div>
+<div class="flex gap-2">
+<button class="size-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">videocam</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">info</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Chat Content Area -->
+<main class="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+<div class="flex justify-center">
+<span class="bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Today</span>
+</div>
+<!-- Received Message -->
+<div class="flex items-end gap-3 max-w-[85%]">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0 mb-1" data-alt="Small profile avatar of Elena" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmrWQ2E3Pt2jQ-Kf3VrS-90dr2LqrR6JWk87sdCAxGSZ5BkvTwz4kIcMwAEN8SmPPB1H6E9A3GeJesYO-K8VvnUqGZCqMMBRbBZUERLVJdrmMSK4FQrjV61RzG2Wtr0qYIfnx0Lh6VMLJMHs-dnSZBzEKgmDvHNG9f6iOl6dH6alvG-B4F6ej1-yhzkOpOKtXeEVRd99-lUNjZ4bGX88rfIrzeeroXeRac3jchFUchEwf1PzhZE1u3dLJaTreYjBD7p0s-BHDe63w')"></div>
+<div class="flex flex-col gap-1">
+<div class="bg-chat-received text-slate-100 rounded-2xl rounded-bl-none px-4 py-3 message-shadow">
+<p class="text-[15px] leading-relaxed">Hey! I saw you're also into photography. That shot of the sunset in your profile is breathtaking. 🌅</p>
+</div>
+<span class="text-[10px] text-slate-500 ml-1">14:22</span>
+</div>
+</div>
+<!-- Sent Message -->
+<div class="flex flex-row-reverse items-end gap-3 max-w-[85%] ml-auto">
+<div class="flex flex-col items-end gap-1">
+<div class="bg-primary text-white rounded-2xl rounded-br-none px-4 py-3 message-shadow">
+<p class="text-[15px] leading-relaxed">Thank you so much, Elena! I took that one at the Golden Gate Bridge last month. Do you shoot as well?</p>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-slate-500">14:25</span>
+<span class="material-symbols-outlined text-[14px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<!-- Received Message -->
+<div class="flex items-end gap-3 max-w-[85%]">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0 mb-1" data-alt="Small profile avatar of Elena" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQCfkqFgov0dI8WtWdzdMlAwS1-gSrArF27ICnMeYdjepIryPHYPD0BKfrxAKe-kaR_hEtDkW7kRicqUxg0QmXodc-MmuBHaKWthl04wfsA7ZaVdxa3p58gEVMDBSss-RT8dFec-xMtt9nRoUh961wK-sYrhAr_WOxR47FHZc0vz3-GNaeu8aFi-Az1eU6XQd-JmHzt3c2rogStPz1sKs9ePpcAO1MewrH3MSjOqhQgsWTKZa0zeDAGk51YsGLOCdlrszy0HYzpoY')"></div>
+<div class="flex flex-col gap-1">
+<div class="bg-chat-received text-slate-100 rounded-2xl rounded-bl-none px-4 py-3 message-shadow">
+<p class="text-[15px] leading-relaxed">Mostly just hobby stuff with my Leica, but I'm trying to get better! Maybe you could give me some tips? 😊</p>
+</div>
+<span class="text-[10px] text-slate-500 ml-1">14:26</span>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-center gap-2 px-2">
+<div class="flex gap-1.5 bg-chat-received/50 px-3 py-3 rounded-full">
+<div class="size-1.5 bg-slate-400 rounded-full"></div>
+<div class="size-1.5 bg-slate-400 rounded-full opacity-60"></div>
+<div class="size-1.5 bg-slate-400 rounded-full opacity-30"></div>
+</div>
+<span class="text-[11px] text-slate-500 font-medium">Elena is typing...</span>
+</div>
+</main>
+<!-- Message Input Bar -->
+<footer class="p-4 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<div class="flex-1 relative flex items-center">
+<input class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-full py-3 px-5 text-[15px] focus:ring-2 focus:ring-primary/50 placeholder-slate-500 dark:placeholder-slate-400 text-slate-100" placeholder="Type a message..." type="text"/>
+<div class="absolute right-3 flex items-center gap-1">
+<button class="p-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">sticky_note_2</span>
+</button>
+</div>
+</div>
+<button class="flex items-center justify-center size-11 rounded-full bg-primary text-white shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="h-4"></div> <!-- Padding for mobile bottom bars -->
+</footer>
+</body></html>

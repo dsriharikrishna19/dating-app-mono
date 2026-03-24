@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dating App Onboarding - Interests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                        "card-dark": "#1E293B",
+                        "border-dark": "#334155"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Main Container -->
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto">
+<!-- Header Section -->
+<header class="flex flex-col w-full px-6 pt-6 pb-2 gap-4">
+<div class="flex items-center justify-between"><button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Step 2 of 4</span>
+</div>
+<div class="flex items-center">
+<span class="text-xs font-bold text-primary/80">50% Complete</span>
+</div></div>
+<!-- Progress Bar -->
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full" style="width: 50%;"></div>
+</div>
+</header>
+<!-- Main Title and Description -->
+<div class="px-6 pt-8 space-y-2"><h1 class="text-3xl font-bold tracking-tight text-white">What are you into?</h1>
+<p class="text-slate-400 text-sm">Select at least 5 interests to help us find your perfect match.</p></div>
+<!-- Search Bar -->
+<div class="px-6 py-4">
+<div class="relative bg-card-dark border border-border-dark rounded-xl px-4 py-4 flex items-center gap-3 focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-slate-500">search</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-white placeholder:text-slate-500 w-full" placeholder="Search interests" type="text"/>
+</div>
+</div>
+<!-- Interests Content -->
+<main class="flex-1 flex flex-col px-6 py-2 gap-8 max-w-md mx-auto w-full pb-32"><!-- Category: Creativity -->
+<div class="flex flex-col gap-4">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Creativity</label>
+<div class="flex flex-wrap gap-2.5">
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Photography</button>
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-sm shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-all">Design</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Painting</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Dancing</button>
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-sm shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-all">Music</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Writing</button>
+</div>
+</div>
+<!-- Category: Sports & Fitness -->
+<div class="flex flex-col gap-4">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Sports &amp; Fitness</label>
+<div class="flex flex-wrap gap-2.5">
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-sm shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-all">Gym</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Yoga</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Swimming</button>
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-sm shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-all">Hiking</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Football</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Tennis</button>
+</div>
+</div>
+<!-- Category: Lifestyle -->
+<div class="flex flex-col gap-4">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Lifestyle</label>
+<div class="flex flex-wrap gap-2.5">
+<button class="px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white font-semibold text-sm shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-all">Travel</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Cooking</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Gaming</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Movies</button>
+<button class="px-5 py-2.5 rounded-full bg-slate-800/50 text-slate-300 font-medium text-sm border border-slate-700/50 hover:bg-slate-800 transition-all">Reading</button>
+</div>
+</div></main>
+<!-- Footer -->
+<footer class="fixed bottom-0 left-0 right-0 p-6 max-w-md mx-auto w-full bg-gradient-to-t from-background-dark via-background-dark/95 to-transparent">
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white font-bold text-lg shadow-xl shadow-primary/30 active:scale-[0.98] transition-all">
+            Continue
+        </button>
+<p class="text-center text-slate-500 text-[10px] mt-4 uppercase tracking-widest font-medium">Step 2 of 4: Interests</p>
+</footer>
+</div>
+</body></html>

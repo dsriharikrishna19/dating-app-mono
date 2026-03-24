@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ff4255",
+                "background-light": "#f8f5f6",
+                "background-dark": "#230f11",
+              },
+              fontFamily: {
+                "display": ["Plus Jakarta Sans"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 66, 85, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-dark {
+            background: rgba(35, 15, 17, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 66, 85, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<!-- Header / Banner Section -->
+<div class="relative h-64 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background-dark/90 z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Golden hour cityscape of San Francisco rooftops" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAaa-1JlUYIassaRd0e0bO3RZdRyQOuACdWfrrGwyJlLWMLiD0A1lic2Xzx3cGZhEbHoraGoYalt7u8MoUxBRZWF0PC8Ve3U4oUM9jwe2ywWhKhE2bG-PeYHOhDC-aFfAXrcm9qjyZ3plK5uiZKOYqWdnVlrrcKBPmS4M-4RZ34rrhN98Tw7QURJEwqiLz_LMNh2BTq943bx2ukmbmGjRP2nSaHy5b8GkI-VK3jYki887k0eWI4VPDwoFBkHQVeHMCAORctP5fl6JI')"></div>
+<!-- Top Action Bar -->
+<div class="relative z-20 flex items-center justify-between p-4 pt-6">
+<button class="flex size-10 items-center justify-center rounded-full glass text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex gap-2">
+<button class="flex size-10 items-center justify-center rounded-full glass text-white">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="flex size-10 items-center justify-center rounded-full glass text-white">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Profile Info -->
+<div class="relative z-30 -mt-16 px-4">
+<div class="flex flex-col items-center">
+<div class="relative">
+<div class="size-32 rounded-full border-4 border-background-dark overflow-hidden shadow-xl">
+<img alt="Sophie's profile picture" class="h-full w-full object-cover" data-alt="Portrait of a smiling young woman with long dark hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp5FsmI7jbP62GC8yB1fP640jGcxcTT7eHwcEHqDjplR6-9mVhYB_pepGfOnVGAFKKUZsC_cOLrWvwjzEz9ggpqiuS4ACYayOC5TqpHtZe-gyws1l4Ek-seZf97RHt1nq8N4_B6dfS1eY8HnzD-6QRm6HiAovKScysFgkh5_0SIsgxwHUEyWEyNJ70flg7fMALN9ht7bqVFzeK6yen_kmCnjRxyYVfRmVMHwZ0Jy-aBYcvxTvR6WPCVmp6Yz_1AKDagnuf1eQd9sc"/>
+</div>
+<div class="absolute bottom-1 right-1 size-6 bg-green-500 border-2 border-background-dark rounded-full"></div>
+</div>
+<div class="mt-4 text-center">
+<h1 class="text-3xl font-extrabold flex items-center justify-center gap-2">
+                    Sophie, 24
+                    <span class="material-symbols-outlined text-blue-400 text-xl fill-1">verified</span>
+</h1>
+<p class="text-slate-400 flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                    San Francisco, CA
+                </p>
+</div>
+<div class="flex gap-3 mt-6 w-full max-w-md">
+<button class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20">
+                    Edit Profile
+                </button>
+<button class="glass-dark px-4 py-3 rounded-xl border border-primary/20 text-primary">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Stats Row -->
+<div class="flex justify-around mt-8 px-8 py-4 glass-dark rounded-2xl mx-4">
+<div class="text-center">
+<p class="text-xl font-bold">84%</p>
+<p class="text-xs text-slate-400 uppercase tracking-widest">Match</p>
+</div>
+<div class="w-[1px] bg-primary/20"></div>
+<div class="text-center">
+<p class="text-xl font-bold">1.2k</p>
+<p class="text-xs text-slate-400 uppercase tracking-widest">Likes</p>
+</div>
+<div class="w-[1px] bg-primary/20"></div>
+<div class="text-center">
+<p class="text-xl font-bold">12</p>
+<p class="text-xs text-slate-400 uppercase tracking-widest">Photos</p>
+</div>
+</div>
+<!-- Bio Section -->
+<section class="mt-8 px-4">
+<h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+            About Me
+        </h3>
+<p class="text-slate-300 leading-relaxed glass-dark p-4 rounded-xl border border-white/5">
+            Adventure seeker and coffee enthusiast. Looking for someone to explore hidden gems in the city with. When I'm not coding, you can find me at the local pottery studio or hiking near Land's End. ☕️⛰️
+        </p>
+</section>
+<!-- Interests Section -->
+<section class="mt-8 px-4">
+<h3 class="text-lg font-bold mb-3">Interests</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">🧘‍♀️ Yoga</span>
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">🍷 Wine Tasting</span>
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">🐕 Dogs</span>
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">📸 Photography</span>
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">🎿 Skiing</span>
+<span class="px-4 py-1.5 glass-dark rounded-full text-sm border border-primary/30 text-slate-200">🍰 Baking</span>
+</div>
+</section>
+<!-- Photo Gallery Grid -->
+<section class="mt-8 px-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">Photo Gallery</h3>
+<button class="text-primary text-sm font-semibold">View All</button>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="aspect-square rounded-lg overflow-hidden relative group">
+<img class="h-full w-full object-cover" data-alt="Aesthetic photo of a woman silhouettes against a sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8U_0c7onksP9cLNGZ6S_A2Vvr3zXeVnagQf0W87GmofGNpnMPosze65EZHVpO2L7YPm2gUjXjqCwz77RwFIX5mNL-JYnTRKmx2JwXe1xB6UkQ67aNDnNx0hNHVRJ-FCv9L6Zsv58LC4WpfvyNblburN-tGItFHPk7PZl4GvVjm3XtqL6mzIj_wlGPi3Gbt6BfSDinss09iFPTa5ctZdryknJN0_vFperc6uSetX9DKsN8nQjlyC6XKWi9KfRT7HAxNLrnGMVpDCU"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden relative group">
+<img class="h-full w-full object-cover" data-alt="Candid lifestyle portrait of a woman in a cafe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQCsm5iCgtAQueSVQmst-pbiF0iZjYhv3XlQ0H7wYjiiU8tH3C_wRL0y-U1YyYlkFhkHx1HM8aqYa_H1qWa98Ef1IVRpFvnwouQzS4C1WdrTnpJM7plrx7r4LiJIo4l4cD1_SfuWKTP0ity-FWCM-oCYZyO1uy34d06JTCkLspdovS2xfYrBuuw-IRqHK8Kdkh3nrD7yTb3n0B5X32VJOgFQ-EMKEscqhOCICoWO5sRwFCB-PuglwvdlqE99QmkWBNTbUhEZy3-48"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden relative group">
+<img class="h-full w-full object-cover" data-alt="Close up face portrait of a woman laughing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKdtnDIpUSwZ34kjDYieuzfTk5txulcozgiPO93Ik3wgHBqzidGLp3ZMbgXpxAFVzPT2pycVsVk6JVMWO8JYwcOBYlaB9gZtkpDfdq-1IBKRDkcwRwPwE-6iW1bg-7GyE80tErhSHElq8fe3JqBG4pmO9h9yoYdlhQh-iBDMylNV6qxb_xzQ8m5_zGTb5gZfRfYDz5t1cTGlGPxlZHFCps_ClIImQ5tMq9B5Vu6aFiyZ2y3SEiZMnX4F6n4MGqY6i48uIcibfOu5s"/>
+</div>
+<div class="aspect-[2/3] col-span-2 rounded-lg overflow-hidden relative group">
+<img class="h-full w-full object-cover" data-alt="Full body shot of a woman in stylish street wear" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlJTmC4LBVppxTgnbwUWHvNl8A1tMyQ_mNboeUBRPbIkzv_6DObXtUEwdWA5M2tXnvQA93goFAqtp_2IplSS7AckgtzeBriPyFayK8AFsNE1iEnhjFOaW6M_0zhJ0r9JAjU8-p6uN9P6pxfOqCYk8XeTTlaIgjlhHOrWvUHkWv-TiLjMFFWxV2f1DbXNxZ_IBIRfAEJjlmrs58BdUJm57be7aOOybuJ-kSFQ2J6T-qtoAMG6AdqxWkOzElwm0Sr5nx5lguhjrAaW4"/>
+</div>
+<div class="grid grid-rows-2 gap-2">
+<div class="rounded-lg overflow-hidden relative">
+<img class="h-full w-full object-cover" data-alt="Abstract mountain landscape at dusk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjYIVRa5zAplCnLMAIdG6f_pDOBevZNMY7iLS1ng_L7ULJkKkRhFBVT2kU6s94hZAoZtI4vvBUPkx-Q5z9bFAONAUX2U4dmWG9V7f34q9l-XK27Cobmtw_pKWKF65RuMb327bgXhc1YwKJjVjftYydngAg1edeSMXrH7FySL77KMm8s4sRgBQlHN3LRmxG_gQxDHvZbPrIDm_8QFG7rzYdiotuLxlM-ExcIj8wEe0-oXlj23KH1RHN4xVOZo6wROuYdD8bcEM8sng"/>
+</div>
+<div class="rounded-lg overflow-hidden relative bg-primary/20 flex items-center justify-center border border-primary/40">
+<span class="text-primary font-bold">+7</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 glass-dark border-t border-white/5 px-6 pb-6 pt-3">
+<div class="flex justify-between items-center max-w-lg mx-auto">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">explore</span>
+<p class="text-[10px] font-medium uppercase tracking-widest">Discover</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<p class="text-[10px] font-medium uppercase tracking-widest">Likes</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<div class="relative">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="absolute -top-1 -right-1 size-2 bg-primary rounded-full"></span>
+</div>
+<p class="text-[10px] font-medium uppercase tracking-widest">Chat</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">person</span>
+<p class="text-[10px] font-medium uppercase tracking-widest">Profile</p>
+</a>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#230f11",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Settings - HeartBeat Premium</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full max-w-md mx-auto flex-col bg-background-light dark:bg-background-dark overflow-x-hidden border-x border-primary/10">
+<!-- Header -->
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">Settings</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex cursor-pointer items-center justify-center rounded-full size-10 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Profile Section -->
+<div class="flex p-6 @container">
+<div class="flex w-full flex-col gap-4 items-center text-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 border-2 border-primary p-1" data-alt="User profile picture showing a smiling man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQrjg13x8NkywmVufeeF5ACqanMDf3khUyJxtfBm01nNwB6uu9c6bc3ue3zY009KIlmbtPG69SebIjWMajcy09P7NMYssjpDaNh7kPkJMx0XlDq82P7De3lWlJx24UonDNih_YmtoPzSxBDxGDDYhu1b3K7RnY2N74bN51Oj4eoOL4zEn7peGF86zeisBWx7VdMiiixUu_E7qSpUg_sVNY3zqDb4oxIzKrtKORV3Ya-HEoLS5R_UoiCsE3Il9qOEKPGj1rwKkask8");'>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border-2 border-background-dark">
+<span class="material-symbols-outlined text-[16px] block">verified</span>
+</div>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold tracking-tight">Alex Rogers</p>
+<div class="flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm font-fill">stars</span>
+<p class="text-primary text-sm font-semibold uppercase tracking-wider">Premium Member</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Premium Banner -->
+<div class="px-4 mb-6">
+<div class="bg-gradient-to-r from-primary to-[#ff6b7a] rounded-xl p-4 flex items-center justify-between shadow-lg shadow-primary/20">
+<div class="flex flex-col">
+<p class="text-white font-bold">HeartBeat Gold</p>
+<p class="text-white/80 text-xs">Your subscription expires in 24 days</p>
+</div>
+<button class="bg-white text-primary text-xs font-bold px-4 py-2 rounded-full uppercase tracking-tighter">Extend</button>
+</div>
+</div>
+<!-- Settings Categories -->
+<div class="flex flex-col gap-3 px-4 pb-24">
+<h3 class="text-primary text-xs font-bold uppercase tracking-[0.1em] px-2 mb-1">Account Preferences</h3>
+<!-- Category Card: Account -->
+<div class="group flex items-center justify-between gap-4 rounded-xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Account</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Profile, email, phone number</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Category Card: Notifications -->
+<div class="group flex items-center justify-between gap-4 rounded-xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Notifications</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Push, email, and marketing</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<h3 class="text-primary text-xs font-bold uppercase tracking-[0.1em] px-2 mt-4 mb-1">Safety &amp; Security</h3>
+<!-- Category Card: Privacy -->
+<div class="group flex items-center justify-between gap-4 rounded-xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Privacy</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Incognito mode, visibility</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Category Card: Security -->
+<div class="group flex items-center justify-between gap-4 rounded-xl bg-primary/5 dark:bg-primary/10 p-4 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="flex size-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">security</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight">Security</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Password, 2FA, connected apps</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<!-- Danger Zone -->
+<div class="mt-8 flex flex-col gap-2">
+<button class="w-full flex items-center justify-center gap-2 p-4 text-slate-500 dark:text-slate-400 font-medium hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">logout</span>
+                    Logout
+                </button>
+<button class="w-full flex items-center justify-center gap-2 p-2 text-red-500/60 text-xs font-medium hover:text-red-500 transition-colors">
+                    Delete Account
+                </button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto border-t border-primary/10 bg-background-light dark:bg-background-dark/95 backdrop-blur-md px-4 pb-6 pt-3">
+<div class="flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">explore</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Discover</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Likes</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Messages</p>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined font-fill">settings</span>
+<p class="text-[10px] font-medium leading-normal tracking-wide">Settings</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

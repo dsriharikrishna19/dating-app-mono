@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - Step 5</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff4255",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #ff4255 0%, #a855f7 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h2 class="text-xs font-bold tracking-[0.2em] text-slate-500 uppercase">Step 4 of 4</h2>
+<p class="text-primary/80 text-sm font-bold">100% Complete</p>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-2">
+<div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full gradient-primary rounded-full w-full"></div>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 pt-8 pb-4 max-w-md mx-auto w-full">
+<h1 class="text-4xl font-bold mb-8 tracking-tight text-white">Final steps</h1>
+<!-- Content Cards -->
+<div class="space-y-4">
+<!-- Location Card -->
+<div class="glass-card rounded-xl p-6 flex items-start gap-4">
+<div class="flex flex-col flex-1 gap-4">
+<div class="flex items-start gap-4">
+<div class="p-3 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">location_on</span>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold text-white">Enable Location</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Find matches nearby and see who's in your area right now.</p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="text-xs font-medium text-slate-500 italic">Required for matches</span>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+<span class="text-sm font-semibold text-white">Enable</span>
+<span class="material-symbols-outlined text-lg text-slate-400">toggle_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Notifications Card -->
+<div class="glass-card rounded-xl p-6 flex items-start gap-4">
+<div class="flex flex-col flex-1 gap-4">
+<div class="flex items-start gap-4">
+<div class="p-3 rounded-lg bg-purple-500/10 text-purple-400">
+<span class="material-symbols-outlined text-2xl">notifications_active</span>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold text-white">Enable Notifications</h3>
+<p class="text-slate-400 text-sm leading-relaxed">Get notified instantly when you get a new match or message.</p>
+</div>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="text-xs font-medium text-slate-500 italic">Stay connected</span>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+<span class="text-sm font-semibold text-white">Enable</span>
+<span class="material-symbols-outlined text-lg text-slate-400">toggle_off</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative Map Image Element -->
+<div class="mt-8 relative h-40 w-full rounded-xl overflow-hidden glass-card">
+<div class="absolute inset-0 opacity-40 mix-blend-overlay bg-center bg-cover" data-alt="Modern dark stylized city map interface" data-location="New York City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5v7qTUKoIAzIejKbcCYkA3zkQRlC8DMcUJXDa3xRJTJ7UJXVyMqddDUfCAsAROptqFb6a1pC9xyAxiOgQ9ncZRZCXxUDRmEqCYkvbakvTtVF_NiH5_iteBfFTlb7crbq6oyZeQNIcooekIsYNvppocgHek-J149eq86N_bDfL57YyV1RznFYspDxWdptKTO2tmbn7fKFbjDAvv_DKO-Nc3ll1zLTRGJkWN7ruCWPSL2UeAQ_F6aMAr6QUDlH0FCjGiDyCjtJkmNI')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4 flex items-center gap-2">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-medium text-slate-300">Scanning for people nearby...</span>
+</div>
+</div>
+</main>
+<!-- Footer Action -->
+<footer class="p-6 max-w-md mx-auto w-full mt-auto">
+<button class="w-full gradient-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span>Finish Setup</span>
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</button>
+<p class="text-center text-slate-500 text-xs mt-4 px-8 leading-relaxed">
+            By finishing setup, you agree to our Terms of Service and Privacy Policy.
+        </p>
+</footer>
+</body></html>
