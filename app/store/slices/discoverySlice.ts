@@ -21,6 +21,7 @@ interface DiscoveryState {
     maxAge?: number;
     maxDistance?: number;
   };
+  passportLocation: { lat: number; lng: number; name: string } | null;
   isLoading: boolean;
   exhausted: boolean;
   error: string | null;
@@ -34,6 +35,7 @@ const initialState: DiscoveryState = {
     maxAge: 100,
     maxDistance: 50,
   },
+  passportLocation: null,
   isLoading: false,
   exhausted: false,
   error: null,
@@ -59,6 +61,9 @@ const discoverySlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    setPassportLocation: (state, action: PayloadAction<{ lat: number; lng: number; name: string } | null>) => {
+      state.passportLocation = action.payload;
+    },
     setExhausted: (state, action: PayloadAction<boolean>) => {
       state.exhausted = action.payload;
     },
@@ -70,5 +75,14 @@ const discoverySlice = createSlice({
   },
 });
 
-export const { setProfiles, nextProfile, updateFilters, setLoading, setError, resetDiscovery, setExhausted } = discoverySlice.actions;
+export const { 
+  setProfiles, 
+  nextProfile, 
+  updateFilters, 
+  setLoading, 
+  setError, 
+  resetDiscovery, 
+  setExhausted,
+  setPassportLocation
+} = discoverySlice.actions;
 export default discoverySlice.reducer;

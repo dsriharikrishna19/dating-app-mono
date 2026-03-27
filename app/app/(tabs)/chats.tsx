@@ -14,16 +14,34 @@ export default function ChatsScreen() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const [matchesRes, convRes] = await Promise.all([
-          chatService.getMatches(),
-          chatService.getConversations()
-        ]);
-        dispatch(setMatches(matchesRes.data));
-        dispatch(setConversations(convRes.data));
+        const response = await chatService.getMatches();
+        const allMatches = response.data;
+        
+        // Split into matches (no messages) and conversations (with messages)
+        const newMatches = allMatches.filter((m: any) => !m.lastMessage);
+        const activeConvs = allMatches.filter((m: any) => m.lastMessage);
+        
+        dispatch(setMatches(newMatches.map((m: any) => ({
+          id: m.id,
+          user: {
+            id: m.otherUser.id,
+            name: m.otherUser.name,
+            images: [{ url: m.otherUser.image }]
+          }
+        }))));
+        
+        dispatch(setConversations(activeConvs.map((m: any) => ({
+          matchId: m.id,
+          otherUser: {
+            id: m.otherUser.id,
+            name: m.otherUser.name,
+            images: [{ url: m.otherUser.image }]
+          },
+          lastMessage: m.lastMessage,
+          unreadCount: m.unreadCount || 0
+        }))));
       } catch (err) {
         console.error('Fetch Chats Error:', err);
-        // Fallback for demo is already in the hardcoded lists if we wanted, 
-        // but let's just use the real state which might be empty
       }
     };
 
@@ -97,7 +115,7 @@ export default function ChatsScreen() {
                         className={`font-display text-sm flex-1 mr-2 ${chat.unreadCount > 0 ? 'text-slate-100 font-display-bold' : 'text-slate-400'}`}
                         numberOfLines={1}
                       >
-                        {chat.lastMessage?.text || 'No messages yet'}
+                        {chat.lastMessage?.content || 'No messages yet'}
                       </Text>
                       {chat.unreadCount > 0 && (
                         <View className="size-2 bg-primary rounded-full" />

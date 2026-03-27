@@ -67,7 +67,9 @@ export default function OnboardingStep3() {
             url: response.data.data.publicUrl, 
             isPrimary: images.length === 0 
           };
-          setImages([...images, newImage]);
+          const nextImages = [...images, newImage];
+          setImages(nextImages);
+          dispatch(updateProfile({ images: nextImages.map(img => img.url) }));
         }
       } catch (error: any) {
         console.error('Upload Error:', error.message);

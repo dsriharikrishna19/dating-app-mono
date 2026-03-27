@@ -5,6 +5,7 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import discoveryReducer from './slices/discoverySlice';
 import chatReducer from './slices/chatSlice';
+import callReducer from './slices/callSlice';
 import settingsReducer from './slices/settingsSlice';
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   discovery: discoveryReducer,
   chat: chatReducer,
   settings: settingsReducer,
+  call: callReducer,
 });
 
 const persistConfig = {

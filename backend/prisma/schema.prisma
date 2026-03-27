@@ -31,10 +31,10 @@ model Profile {
   birthDate    DateTime?
   gender       String?
   lookingFor   String?
-  location     String?  // SQLite doesn't support Json well, using string for now
+  location     Json?
   images       Image[]
   interests    Interest[]
-  filters      String?  // SQLite doesn't support Json well, using string for now
+  filters      Json?
   notificationMatches  Boolean  @default(true)
   notificationMessages Boolean  @default(true)
   notificationPromos   Boolean  @default(false)
@@ -64,12 +64,19 @@ model Match {
   id        String   @id @default(uuid())
   user1Id   String
   user2Id   String
-  status    String   @default("PENDING") // PENDING, MATCHED, UNMATCHED, BLOCKED
+  status    MatchStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   messages  Message[]
 
   @@unique([user1Id, user2Id])
+}
+
+enum MatchStatus {
+  PENDING
+  MATCHED
+  UNMATCHED
+  BLOCKED
 }
 
 model Message {

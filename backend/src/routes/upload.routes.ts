@@ -36,7 +36,13 @@ async function uploadToSupabase(file: Express.Multer.File) {
 }
 
 /**
- * POST /api/upload - Single file upload
+ * @openapi
+ * /api/upload:
+ *   post:
+ *     tags: [Upload]
+ *     summary: Single file upload
+ *     security:
+ *       - bearerAuth: []
  */
 router.post('/', uploadMiddleware.single('image'), async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -29,11 +29,18 @@ export default function OnboardingStep2() {
   };
 
   const toggleInterest = (interest: string) => {
+    let nextSelected = [];
     if (selected.includes(interest)) {
-      setSelected(selected.filter(i => i !== interest));
+      nextSelected = selected.filter(i => i !== interest);
     } else if (selected.length < 5) {
-      setSelected([...selected, interest]);
+      nextSelected = [...selected, interest];
+    } else {
+      return;
     }
+    
+    setSelected(nextSelected);
+    const interests = nextSelected.map(name => ({ id: name, name }));
+    dispatch(updateProfile({ interests }));
   };
   
   return (

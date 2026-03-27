@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { store } from '../store/store';
 
-const API_URL = 'http://localhost:8081/api';
+const API_URL = 'http://192.168.0.42:8081/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -10,7 +10,20 @@ const api = axios.create({
   },
 });
 
-// Generic HTTP Service
+// Response Interceptor to unwrap backend data
+api.interceptors.response.use(
+  (response) => {
+    // If it has our standard wrapper, return the inner data
+    if (response.data && response.data.success === true) {
+      return { ...response, data: response.data.data };
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const HttpService = {
   get: async <T = any>(url: string, params?: any) => {
     return api.get<T>(url, { params });

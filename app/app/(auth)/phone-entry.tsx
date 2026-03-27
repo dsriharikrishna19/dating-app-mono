@@ -4,7 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { ArrowLeft, ChevronDown, Check } from 'lucide-react-native';
 import { authService } from '../../services/auth.service';
 import { useAppDispatch } from '../../store/hooks';
-import { setLoading, setError } from '../../store/slices/authSlice';
+import { setLoading, setError, setCredentials } from '../../store/slices/authSlice';
 
 const COUNTRIES = [
   { code: '+1', name: 'United States', flag: '🇺🇸', id: 'US' },
@@ -31,20 +31,34 @@ export default function PhoneEntryScreen() {
     if (phone.length <= 8) return;
     
     setIsSubmitting(true);
+    dispatch(setError(null));
     const fullPhone = `${selectedCountry.code}${phone}`;
+    
     try {
-      await authService.requestOtp(fullPhone);
-      router.push({
-        pathname: '/verify-code',
-        params: { phoneNumber: fullPhone }
-      });
+      const response = await authService.authenticate(fullPhone);
+      const data = response.data;
+
+      if (data.requiresVerification) {
+        router.push({
+          pathname: '/verify-code',
+          params: { phoneNumber: fullPhone }
+        });
+      } else {
+        // Direct login if already verified (unlikely for phone auth but possible)
+        const { user, token } = data;
+        dispatch(setCredentials({ user, token }));
+      }
     } catch (err: any) {
-      console.error('OTP Request Error:', err);
-      // Fallback for demo purposes if backend isn't ready
-      router.push({
-        pathname: '/verify-code',
-        params: { phoneNumber: fullPhone }
-      });
+      console.error('Authentication Error:', err);
+      dispatch(setError(err.response?.data?.message || 'Authentication failed. Please try again.'));
+      
+      // Fallback for demo if backend is offline
+      if (__DEV__) {
+        router.push({
+          pathname: '/verify-code',
+          params: { phoneNumber: fullPhone }
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

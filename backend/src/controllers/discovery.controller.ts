@@ -35,13 +35,13 @@ export const getFeed = async (req: AuthRequest, res: Response, next: NextFunctio
             throw new BadRequestError('User profile not found. Please complete onboarding.');
         }
 
-        const filters = ownProfile.filters ? JSON.parse(ownProfile.filters) : {
+        const filters = (ownProfile.filters as any) || {
             ageRange: [18, 50],
             distance: 50,
             gender: 'ANY',
         };
 
-        const ownLocation = ownProfile.location ? JSON.parse(ownProfile.location) : null;
+        const ownLocation = (ownProfile.location as any) || null;
 
         // Get list of users already swiped on or blocked
         const swipedMatches = await prisma.match.findMany({
@@ -83,14 +83,15 @@ export const getFeed = async (req: AuthRequest, res: Response, next: NextFunctio
             // Age Filter
             if (p.birthDate) {
                 const age = now.getFullYear() - p.birthDate.getFullYear();
-                if (age < filters.ageRange[0] || age > filters.ageRange[1]) return false;
+                const ageFilters = (filters as any).ageRange || [18, 50];
+                if (age < ageFilters[0] || age > ageFilters[1]) return false;
             }
 
             // Distance Filter
             if (ownLocation && p.location) {
-                const targetLoc = JSON.parse(p.location);
+                const targetLoc = p.location as any;
                 const distance = calculateDistance(ownLocation.lat, ownLocation.lng, targetLoc.lat, targetLoc.lng);
-                if (distance > filters.distance) return false;
+                if (distance > (filters as any).distance) return false;
                 (p as any).distance = Math.round(distance);
             }
 
@@ -99,7 +100,7 @@ export const getFeed = async (req: AuthRequest, res: Response, next: NextFunctio
             .slice(0, 20)
             .map(p => ({
                 ...p,
-                location: p.location ? JSON.parse(p.location) : null,
+                location: p.location ? p.location : null,
             }));
 
         sendSuccess(res, enrichedFeed, 'Discovery feed fetched successfully');
@@ -132,7 +133,7 @@ export const getFilters = async (req: AuthRequest, res: Response, next: NextFunc
             select: { filters: true },
         });
 
-        const filters = profile?.filters ? JSON.parse(profile.filters) : {
+        const filters = profile?.filters ? (profile.filters as any) : {
             ageRange: [18, 50],
             distance: 50,
             gender: 'ANY',
@@ -151,10 +152,46 @@ export const updateFilters = async (req: AuthRequest, res: Response, next: NextF
 
         await prisma.profile.update({
             where: { userId },
-            data: { filters: JSON.stringify(filters) },
+            data: { filters: filters as any },
         });
 
         sendSuccess(res, null, 'Filters updated successfully');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getWhoLikesMe = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const userId = req.userId!;
+
+        // Since we don't have a dedicated Swipe model, we use PENDING matches.
+        // We look for matches where status is PENDING.
+        // In this architecture, PENDING usually means someone swiped RIGHT.
+        const pendingLikes = await prisma.match.findMany({
+            where: {
+                OR: [
+                    { user1Id: userId, status: 'PENDING' },
+                    { user2Id: userId, status: 'PENDING' }
+                ]
+            },
+            take: 20
+        });
+
+        const likerIds = pendingLikes.map(m => m.user1Id === userId ? m.user2Id : m.user1Id);
+        
+        const profiles = await prisma.profile.findMany({
+            where: { userId: { in: likerIds } },
+            include: { images: { take: 1 } }
+        });
+
+        const likers = profiles.map(p => ({
+            id: p.userId,
+            name: p.name || 'Unknown',
+            imageUrl: p.images[0]?.url || null,
+        }));
+
+        sendSuccess(res, likers, 'Incoming likes fetched successfully');
     } catch (error) {
         next(error);
     }

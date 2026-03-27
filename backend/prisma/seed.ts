@@ -34,7 +34,7 @@ async function main() {
         birthDate: new Date('1995-06-15'),
         gender: 'MALE',
         lookingFor: 'FEMALE',
-        location: JSON.stringify({ latitude: 40.7128, longitude: -74.0060, address: 'New York, NY' }),
+        location: { latitude: 40.7128, longitude: -74.0060, address: 'New York, NY' },
         isGold: true,
         interests: { connect: [{ id: createdInterests[0].id }, { id: createdInterests[1].id }] }
       }

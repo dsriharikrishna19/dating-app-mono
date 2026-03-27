@@ -4,7 +4,7 @@ import { getIO } from '../lib/socket.js';
 import { z } from 'zod';
 import { MatchService } from '../services/match.service.js';
 import { sendSuccess } from '../utils/response.js';
-import { ForbiddenError, NotFoundError } from '../utils/errors.js';
+import { ForbiddenError } from '../utils/errors.js';
 
 interface AuthRequest extends Request {
     userId?: string;

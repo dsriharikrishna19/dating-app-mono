@@ -6,6 +6,9 @@ import { authService } from '../../services/auth.service';
 import { useAppDispatch } from '../../store/hooks';
 import { setCredentials, setLoading, setError } from '../../store/slices/authSlice';
 
+import { userService } from '../../services/user.service';
+import { setProfile } from '../../store/slices/userSlice';
+
 export default function VerifyCodeScreen() {
   const router = useRouter();
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
@@ -25,15 +28,26 @@ export default function VerifyCodeScreen() {
       
       if (!user.onboarded) {
         router.push('/onboarding/step1');
+      } else {
+        // Fetch full profile for returning users
+        try {
+          const profileResponse = await userService.getProfile();
+          dispatch(setProfile(profileResponse.data.profile));
+        } catch (profileErr) {
+          console.error('Profile fetch error:', profileErr);
+        }
+        router.replace('/');
       }
-      // Root _layout guard will handle redirect to (tabs) if onboarded
     } catch (err: any) {
       console.error('Verification Error:', err);
       // Fallback for demo: assume verified
-      dispatch(setCredentials({ 
-        user: { id: '1', name: 'Demo User', onboarded: true }, 
-        token: 'demo-token' 
-      }));
+      if (__DEV__) {
+        dispatch(setCredentials({ 
+          user: { id: 'demo-123', phoneNumber: phoneNumber as string, onboarded: true }, 
+          token: 'demo-token' 
+        }));
+        router.replace('/');
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -69,20 +83,22 @@ export default function VerifyCodeScreen() {
           <Text className="text-slate-400 text-lg font-display">Wait, did you get it? Code sent to {phoneNumber}</Text>
         </View>
 
-        <View className="flex-row justify-between mb-10 gap-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <View key={i} className="flex-1 aspect-square bg-slate-800/50 border border-slate-700/50 rounded-2xl items-center justify-center">
-              <TextInput
-                maxLength={1}
-                keyboardType="number-pad"
-                className="text-white text-2xl font-display-extrabold text-center w-full"
-                value={code[i-1]}
-                onChangeText={(val) => {
-                  if (val) setCode(prev => prev + val);
-                }}
-              />
-            </View>
-          ))}
+        <View className="mb-10 h-16 w-full px-4">
+          <TextInput
+            placeholder="000000"
+            placeholderTextColor="#334155"
+            maxLength={6}
+            keyboardType="number-pad"
+            className="w-full h-full bg-slate-800/50 border border-slate-700/50 rounded-2xl text-center text-white text-3xl font-display-extrabold tracking-[20px]"
+            value={code}
+            onChangeText={(val) => {
+              setCode(val);
+              if (val.length === 6) {
+                // Potential auto-submit here
+              }
+            }}
+            autoFocus
+          />
         </View>
 
         <TouchableOpacity 

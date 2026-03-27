@@ -26,26 +26,24 @@ export const initSocket = (server: HttpServer) => {
             console.log('User disconnected:', socket.id);
         });
 
-        // WebRTC Signaling
-        socket.on('call-user', ({ to, offer }) => {
-            console.log(`Call from ${userId} to ${to}`);
-            socket.to(to).emit('incoming-call', { from: userId, offer });
+        // Agora Calling Signaling
+        socket.on('call-invite', ({ to, channelName, fromUser }) => {
+            console.log(`Call invite from ${userId} to ${to} on channel ${channelName}`);
+            socket.to(to).emit('incoming-call', { from: userId, fromUser, channelName });
         });
 
-        socket.on('call-accepted', ({ to, answer }) => {
-            console.log(`Call accepted by ${userId} for ${to}`);
-            socket.to(to).emit('call-answered', { from: userId, answer });
-        });
-
-        socket.on('ice-candidate', ({ to, candidate }) => {
-            socket.to(to).emit('ice-candidate', { from: userId, candidate });
+        socket.on('call-answered', ({ to, channelName }) => {
+            console.log(`Call answered by ${userId} for ${to} on channel ${channelName}`);
+            socket.to(to).emit('call-answered', { from: userId, channelName });
         });
 
         socket.on('call-rejected', ({ to }) => {
+            console.log(`Call rejected by ${userId} for ${to}`);
             socket.to(to).emit('call-rejected', { from: userId });
         });
 
         socket.on('end-call', ({ to }) => {
+            console.log(`Call ended by ${userId} for ${to}`);
             socket.to(to).emit('end-call', { from: userId });
         });
     });

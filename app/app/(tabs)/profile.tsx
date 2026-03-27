@@ -21,7 +21,7 @@ export default function ProfileScreen() {
   const profile = useAppSelector((state) => state.user.profile);
   const [isEditing, setIsEditing] = React.useState(false);
   const [editedBio, setEditedBio] = React.useState(profile?.bio || '');
-  
+
   if (!profile) {
     return (
       <View className="flex-1 bg-background-dark items-center justify-center">
@@ -32,12 +32,29 @@ export default function ProfileScreen() {
 
   const calculateAge = (birthday?: string) => {
     if (!birthday) return 24;
-    const ageDifMs = Date.now() - new Date(birthday).getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+    const birthDate = new Date(birthday);
+    let age = new Date().getFullYear() - birthDate.getFullYear();
+    const m = new Date().getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && new Date().getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   };
 
+  React.useEffect(() => {
+    const syncProfile = async () => {
+      try {
+        const response = await userService.getProfile();
+        dispatch(updateProfile(response.data.profile));
+      } catch (err) {
+        console.error('Profile Sync Error:', err);
+      }
+    };
+    syncProfile();
+  }, []);
+
   const handleSaveBio = async () => {
+    if (!editedBio.trim()) return;
     try {
       await userService.updateProfile({ bio: editedBio });
       dispatch(updateProfile({ bio: editedBio }));
@@ -52,7 +69,7 @@ export default function ProfileScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Banner Section */}
         <View className="relative h-64 w-full">
-          <Image 
+          <Image
             source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAaa-1JlUYIassaRd0e0bO3RZdRyQOuACdWfrrGwyJlLWMLiD0A1lic2Xzx3cGZhEbHoraGoYalt7u8MoUxBRZWF0PC8Ve3U4oUM9jwe2ywWhKhE2bG-PeYHOhDC-aFfAXrcm9qjyZ3plK5uiZKOYqWdnVlrrcKBPmS4M-4RZ34rrhN98Tw7QURJEwqiLz_LMNh2BTq943bx2ukmbmGjRP2nSaHy5b8GkI-VK3jYki887k0eWI4VPDwoFBkHQVeHMCAORctP5fl6JI' }}
             className="w-full h-full"
             resizeMode="cover"
@@ -61,7 +78,7 @@ export default function ProfileScreen() {
             colors={['rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.95)']}
             className="absolute inset-0"
           />
-          
+
           <SafeAreaView className="absolute inset-x-0 top-0">
             <View className="flex-row items-center justify-between p-4">
               <TouchableOpacity className="size-10 rounded-full bg-white/10 items-center justify-center border border-white/10">
@@ -71,7 +88,7 @@ export default function ProfileScreen() {
                 <TouchableOpacity className="size-10 rounded-full bg-white/10 items-center justify-center border border-white/10">
                   <Share2 size={20} stroke="white" />
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => router.push('/settings')}
                   className="size-10 rounded-full bg-white/10 items-center justify-center border border-white/10"
                 >
@@ -86,7 +103,7 @@ export default function ProfileScreen() {
         <View className="relative z-30 -mt-20 items-center px-4">
           <View className="relative">
             <View className="size-36 rounded-full border-4 border-background-dark overflow-hidden shadow-2xl">
-              <Image 
+              <Image
                 source={{ uri: profile.images[0]?.url || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2' }}
                 className="w-full h-full"
               />
@@ -98,11 +115,11 @@ export default function ProfileScreen() {
             <View className="flex-row items-center gap-2">
               <Text className="text-3xl font-display-extrabold text-white">{profile.name}, {calculateAge(profile.birthDate)}</Text>
               {profile.isGold ? (
-                 <View className="bg-yellow-500 px-2 py-0.5 rounded-md">
-                   <Text className="text-slate-900 text-[10px] font-display-black uppercase">Gold</Text>
-                 </View>
+                <View className="bg-yellow-500 px-2 py-0.5 rounded-md">
+                  <Text className="text-slate-900 text-[10px] font-display-black uppercase">Gold</Text>
+                </View>
               ) : (
-                 <Award size={20} stroke="#60a5fa" fill="#60a5fa" />
+                <Award size={20} stroke="#60a5fa" fill="#60a5fa" />
               )}
             </View>
             <View className="flex-row items-center gap-1 mt-1">
@@ -147,7 +164,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Premium Banner */}
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => router.push('/premium')}
           className="mx-4 mt-6 h-32 rounded-3xl overflow-hidden shadow-2xl shadow-yellow-500/20"
         >

@@ -19,12 +19,18 @@ export default function OnboardingSuccessScreen() {
     setIsSubmitting(true);
     try {
       // 1. Submit Onboarding Data to Backend
-      await userService.onboarding(profile);
+      // The backend expects images as string[] and interests as string[]
+      if (!profile) throw new Error('Profile data missing');
       
-      // 2. Mark as Onboarded in Backend (assume specialized endpoint or part of update)
-      // await userService.completeOnboarding();
+      const submissionData = {
+        ...profile,
+        images: profile.images?.map((img: any) => img.url) || [],
+        interests: profile.interests?.map((i: any) => i.name || i) || []
+      };
       
-      // 3. Update local Redux state
+      await userService.onboarding(submissionData);
+      
+      // 2. Update local Redux state
       if (user) {
         dispatch(setCredentials({ 
           user: { ...user, onboarded: true }, 
@@ -36,7 +42,9 @@ export default function OnboardingSuccessScreen() {
     } catch (err) {
       console.error('Final Submission Error:', err);
       // Fallback for demo
-      router.replace('/');
+      if (__DEV__) {
+        router.replace('/');
+      }
     } finally {
       setIsSubmitting(false);
     }

@@ -1,4 +1,11 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import '../global.css';
+import { NativeWindStyleSheet } from "nativewind";
+
+NativeWindStyleSheet.setOutput({
+  default: "native",
+});
+
 import { 
   useFonts,
   PlusJakartaSans_400Regular,
@@ -11,6 +18,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import { store, persistor } from '../store/store';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -19,6 +27,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setHasCheckedAuth } from '../store/slices/authSlice';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { socketService } from '../services/socket.service';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -67,10 +76,22 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-  const { isAuthenticated, hasCheckedAuth } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, hasCheckedAuth, user } = useAppSelector((state) => state.auth);
   const segments = useSegments();
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      socketService.connect(user.id);
+    } else {
+      socketService.disconnect();
+    }
+    
+    return () => {
+      socketService.disconnect();
+    };
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     // Check for tokens or existing session here if needed
@@ -88,6 +109,21 @@ function RootLayoutNav() {
       router.replace('/');
     }
   }, [isAuthenticated, segments, hasCheckedAuth]);
+
+  const { status, matchId: callChannel, otherUser: caller } = useAppSelector((state) => state.call);
+
+  useEffect(() => {
+    if (status === 'ringing' && callChannel) {
+      // Incoming call - navigate to video call screen
+      router.push({
+        pathname: '/video-call',
+        params: { 
+          channelName: callChannel, 
+          otherUserName: caller?.name || 'Partner' 
+        }
+      });
+    }
+  }, [status, callChannel, caller]);
 
   if (!hasCheckedAuth) {
     return null;

@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Phone, Video, Send, Plus, Smile } from 'lucide-react-native';
+import { ArrowLeft, Phone, Video, Send, Plus, Smile, MoreVertical } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setMessages, addMessage, setActiveMatch, Message } from '../../store/slices/chatSlice';
+import { initiateCall } from '../../store/slices/callSlice';
 import { chatService } from '../../services/chat.service';
+import { socketService } from '../../services/socket.service';
+import { safetyService } from '../../services/safety.service';
 import { RootState } from '../../store/store';
 
 export default function ChatDetailScreen() {
@@ -51,6 +54,52 @@ export default function ChatDetailScreen() {
     }
   };
 
+  const handleSafetyAction = () => {
+    Alert.alert(
+      'Safety Options',
+      'What would you like to do?',
+      [
+        {
+          text: 'Report User',
+          onPress: () => {
+            router.push({ 
+              pathname: '/report/[id]' as any, 
+              params: { id: matchId as string, name: name as string } 
+            });
+          }
+        },
+        {
+          text: 'Block User',
+          style: 'destructive',
+          onPress: () => confirmBlock()
+        },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const confirmBlock = () => {
+    Alert.alert(
+      'Block User?',
+      'You will no longer be able to message each other. This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Block', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await safetyService.blockUser(matchId as string);
+              router.replace('/(tabs)/chats');
+            } catch (err) {
+              console.error('Block Error:', err);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <KeyboardAvoidingView 
       className="flex-1 bg-background-dark"
@@ -69,7 +118,23 @@ export default function ChatDetailScreen() {
         headerRight: () => (
           <View className="flex-row items-center gap-4 mr-2">
             <TouchableOpacity><Phone size={20} stroke="#fff" /></TouchableOpacity>
-            <TouchableOpacity><Video size={20} stroke="#fff" /></TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => {
+                const channelName = `call_${matchId}`;
+                socketService.inviteToCall(matchId as string, channelName, {
+                  id: currentUser?.id,
+                  name: currentUser?.profile?.name || 'User',
+                  image: currentUser?.profile?.images?.[0]?.url
+                });
+                
+                router.push({
+                  pathname: '/video-call',
+                  params: { channelName, otherUserName: name as string }
+                });
+              }}
+            >
+              <Video size={20} stroke="#fff" />
+            </TouchableOpacity>
           </View>
         )
       }} />
@@ -91,7 +156,7 @@ export default function ChatDetailScreen() {
           return (
             <View key={msg.id} className={`mb-6 flex-row ${isMe ? 'justify-end' : 'justify-start'}`}>
               <View className={`max-w-[80%] px-4 py-3 rounded-2xl ${isMe ? 'bg-primary' : 'bg-slate-800'}`}>
-                <Text className="text-white font-display text-base">{msg.text}</Text>
+                <Text className="text-white font-display text-base">{msg.content}</Text>
                 <Text className={`text-[10px] mt-1 ${isMe ? 'text-white/70' : 'text-slate-500'}`}>
                   {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>

@@ -35,12 +35,18 @@ export default function OnboardingStep1() {
     router.push('/onboarding/step2');
   };
 
+  const updateField = (field: string, value: any) => {
+    dispatch(updateProfile({ [field]: value }));
+  };
+
   const confirmDate = () => {
     // Basic date validation
     const lastDayOfMonth = new Date(tempYear, tempMonth + 1, 0).getDate();
     const validatedDay = Math.min(tempDay, lastDayOfMonth);
     const selectedDate = new Date(tempYear, tempMonth, validatedDay);
-    setBirthDate(selectedDate.toISOString());
+    const isoDate = selectedDate.toISOString();
+    setBirthDate(isoDate);
+    updateField('birthDate', isoDate);
     setShowDatePicker(false);
   };
 
@@ -86,7 +92,10 @@ export default function OnboardingStep1() {
                     placeholderTextColor="#64748b"
                     className="flex-1 text-white font-display-bold text-lg"
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={(text) => {
+                      setName(text);
+                      updateField('name', text);
+                    }}
                   />
                 </View>
               </View>
@@ -111,7 +120,10 @@ export default function OnboardingStep1() {
                   {['Man', 'Woman', 'Other'].map((option) => (
                     <TouchableOpacity 
                       key={option}
-                      onPress={() => setGender(option)}
+                      onPress={() => {
+                        setGender(option);
+                        updateField('gender', option);
+                      }}
                       className={`flex-1 py-4 rounded-2xl border items-center justify-center ${gender === option ? 'bg-primary border-primary' : 'bg-slate-800/50 border-slate-700/50'}`}
                     >
                       <Text className={`font-display-bold ${gender === option ? 'text-white' : 'text-slate-400'}`}>{option}</Text>

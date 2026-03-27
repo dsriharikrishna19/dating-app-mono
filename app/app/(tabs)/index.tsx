@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, SafeAreaView, Dimensions, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Heart, X, Star, MapPin, Globe, Award, SlidersHorizontal } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfiles, nextProfile, setExhausted, updateFilters } from '../../store/slices/discoverySlice';
+import { decrementLikes } from '../../store/slices/userSlice';
 import { discoveryService } from '../../services/discovery.service';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withSpring, 
+  interpolate, 
+  Extrapolate,
+  withTiming,
+  runOnJS
+} from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,19 +24,24 @@ export default function ExploreScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   
-  const { profiles, currentIndex, exhausted, isLoading, filters } = useAppSelector((state) => state.discovery);
+  const { profiles, currentIndex, exhausted, filters } = useAppSelector((state) => state.discovery);
+  const { profile, likesRemaining } = useAppSelector((state) => state.user);
   const currentUser = useAppSelector((state) => state.auth.user);
 
-  const [showMatch, setShowMatch] = React.useState(false);
-  const [matchedProfile, setMatchedProfile] = React.useState<any>(null);
-  const [showFilters, setShowFilters] = React.useState(false);
+  const [showMatch, setShowMatch] = useState(false);
+  const [matchedProfile, setMatchedProfile] = useState<any>(null);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(1);
 
   const currentProfile = profiles[currentIndex];
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await discoveryService.getProfiles();
+        const response = await discoveryService.getFeed();
         dispatch(setProfiles(response.data));
       } catch (err) {
         console.error('Fetch Profiles Error:', err);
@@ -47,14 +63,82 @@ export default function ExploreScreen() {
     if (profiles.length === 0) {
       fetchProfiles();
     }
-  }, []);
+  }, [profiles.length, dispatch]);
+
+  const rotate = useAnimatedStyle(() => {
+    const rotation = interpolate(
+      translateX.value,
+      [-width / 2, 0, width / 2],
+      [-10, 0, 10],
+      Extrapolate.CLAMP
+    );
+    return {
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { rotate: `${rotation}deg` },
+        { scale: scale.value }
+      ],
+    };
+  });
+
+  const likeOpacity = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(translateX.value, [0, width / 4], [0, 1], Extrapolate.CLAMP),
+    };
+  });
+
+  const nopeOpacity = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(translateX.value, [-width / 4, 0], [1, 0], Extrapolate.CLAMP),
+    };
+  });
+
+  const gesture = Gesture.Pan()
+    .onBegin(() => {
+      scale.value = withSpring(1.05);
+    })
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+    })
+    .onEnd((event) => {
+      if (Math.abs(event.translationX) > width * 0.3) {
+        if (event.translationX > 0) {
+          runOnJS(onLike)();
+        } else {
+          runOnJS(onDislike)();
+        }
+        
+        translateX.value = withTiming(event.translationX > 0 ? width * 1.5 : -width * 1.5, { duration: 200 });
+        
+        setTimeout(() => {
+          translateX.value = 0;
+          translateY.value = 0;
+          scale.value = 1;
+        }, 300);
+      } else {
+        translateX.value = withSpring(0);
+        translateY.value = withSpring(0);
+        scale.value = withSpring(1);
+      }
+    });
 
   const onLike = async () => {
     if (!currentProfile) return;
+    if (!profile?.isGold && likesRemaining <= 0) {
+      router.push('/premium');
+      return;
+    }
     
     try {
+      const Haptics = require('expo-haptics');
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      
       const response = await discoveryService.swipe(currentProfile.id, 'RIGHT');
-      if (response.data.isMatch) {
+      dispatch(decrementLikes());
+      
+      if (response.data.match) {
         setMatchedProfile(currentProfile);
         setShowMatch(true);
       }
@@ -67,8 +151,9 @@ export default function ExploreScreen() {
 
   const onDislike = async () => {
     if (!currentProfile) return;
-    
     try {
+      const Haptics = require('expo-haptics');
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       await discoveryService.swipe(currentProfile.id, 'LEFT');
       dispatch(nextProfile());
     } catch (err) {
@@ -114,73 +199,93 @@ export default function ExploreScreen() {
         ) : (
           <View className="flex-1 relative px-4 py-4 justify-center">
             {/* Swipe Card */}
-            <TouchableOpacity 
-              activeOpacity={0.9}
-              className="self-center"
-              onPress={() => router.push({
-                pathname: '/user/[id]',
-                params: {
-                  id: currentProfile.id,
-                  name: currentProfile.name,
-                  age: currentProfile.age.toString(),
-                  image: currentProfile.images[0]?.url,
-                  bio: currentProfile.bio,
-                  interests: JSON.stringify(currentProfile.interests),
-                  images: JSON.stringify(currentProfile.images),
-                }
-              })}
-            >
-              <View 
-                style={{ width: width - 32, height: (width - 32) * 1.33 }}
-                className="rounded-[32px] overflow-hidden shadow-2xl relative"
+            <GestureDetector gesture={gesture}>
+              <Animated.View 
+                style={[rotate]}
+                className="self-center z-10"
               >
-              <Image 
-                source={{ uri: currentProfile.images[0]?.url }}
-                className="absolute inset-0"
-                resizeMode="cover"
-              />
-              
-              <LinearGradient
-                colors={['transparent', 'rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.95)']}
-                locations={[0.5, 0.7, 1]}
-                className="absolute inset-0"
-              />
+                <TouchableOpacity 
+                  activeOpacity={1}
+                  onPress={() => router.push({
+                    pathname: '/user/[id]',
+                    params: {
+                      id: currentProfile.id,
+                      name: currentProfile.name,
+                      age: currentProfile.age.toString(),
+                      image: currentProfile.images[0]?.url,
+                      bio: currentProfile.bio,
+                      interests: JSON.stringify(currentProfile.interests),
+                      images: JSON.stringify(currentProfile.images),
+                    }
+                  })}
+                >
+                  <View 
+                    style={{ width: width - 32, height: (width - 32) * 1.33 }}
+                    className="rounded-[32px] overflow-hidden shadow-2xl relative bg-slate-800"
+                  >
+                  <Image 
+                    source={{ uri: currentProfile.images[0]?.url }}
+                    className="absolute inset-0"
+                    resizeMode="cover"
+                  />
+                  
+                  {/* LIKE/NOPE Overlays */}
+                  <Animated.View style={[likeOpacity]} className="absolute top-10 left-6 z-20 border-4 border-emerald-500 rounded-xl px-4 py-1 rotate-[-15deg]">
+                    <Text className="text-emerald-500 text-4xl font-display-extrabold uppercase">Like</Text>
+                  </Animated.View>
+                  
+                  <Animated.View style={[nopeOpacity]} className="absolute top-10 right-6 z-20 border-4 border-primary rounded-xl px-4 py-1 rotate-[15deg]">
+                    <Text className="text-primary text-4xl font-display-extrabold uppercase">Nope</Text>
+                  </Animated.View>
+                  
+                  <LinearGradient
+                    colors={['transparent', 'rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.95)']}
+                    locations={[0.5, 0.7, 1]}
+                    className="absolute inset-0"
+                  />
 
-              <View className="absolute inset-x-0 bottom-0 p-6">
-                <View className="flex-row items-baseline gap-2 mb-1">
-                  <Text className="text-3xl font-display-bold text-white">{currentProfile.name}, {currentProfile.age}</Text>
-                  <Award size={18} stroke="#60a5fa" fill="#60a5fa" />
-                </View>
-                
-                <View className="flex-row items-center gap-2 mb-4">
-                  <MapPin size={14} stroke="#ff4255" fill="#ff4255" />
-                  <Text className="text-slate-200 text-sm font-display">{currentProfile.distance}</Text>
-                </View>
-
-                <Text className="text-slate-200 text-base mb-4 leading-relaxed font-display" numberOfLines={2}>
-                  {currentProfile.bio}
-                </Text>
-
-                <View className="flex-row flex-wrap gap-2">
-                  {currentProfile.interests?.map((interest: any) => (
-                    <View 
-                      key={interest.name} 
-                      className="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md"
-                    >
-                      <Text className="text-white text-xs font-display-medium">{interest.name}</Text>
+                  <View className="absolute inset-x-0 bottom-0 p-6">
+                    <View className="flex-row items-baseline gap-2 mb-1">
+                      <Text className="text-3xl font-display-bold text-white">{currentProfile.name}, {currentProfile.age}</Text>
+                      {currentProfile.id === 'elena-123' && (
+                        <View className="flex-row items-center bg-yellow-500 px-2 py-0.5 rounded-md gap-1">
+                          <Star size={10} fill="#0F172A" stroke="#0F172A" />
+                          <Text className="text-[10px] font-display-bold text-slate-900 uppercase">Gold</Text>
+                        </View>
+                      )}
+                      <Award size={18} stroke="#60a5fa" fill="#60a5fa" />
                     </View>
-                  ))}
-                </View>
-              </View>
+                    
+                    <View className="flex-row items-center gap-2 mb-4">
+                      <MapPin size={14} stroke="#ff4255" fill="#ff4255" />
+                      <Text className="text-slate-200 text-sm font-display">{currentProfile.distance}</Text>
+                    </View>
 
-              {/* Progress/Stories Indicators */}
-              <View className="absolute top-4 left-4 right-4 flex-row gap-1">
-                <View className="h-1 flex-1 bg-white rounded-full" />
-                <View className="h-1 flex-1 bg-white/30 rounded-full" />
-                <View className="h-1 flex-1 bg-white/30 rounded-full" />
-              </View>
-              </View>
-            </TouchableOpacity>
+                    <Text className="text-slate-200 text-base mb-4 leading-relaxed font-display" numberOfLines={2}>
+                      {currentProfile.bio}
+                    </Text>
+
+                    <View className="flex-row flex-wrap gap-2">
+                      {currentProfile.interests?.map((interest: any) => (
+                        <View 
+                          key={interest.name} 
+                          className="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md"
+                        >
+                          <Text className="text-white text-xs font-display-medium">{interest.name}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+
+                  <View className="absolute top-4 left-4 right-4 flex-row gap-1">
+                    <View className="h-1 flex-1 bg-white rounded-full" />
+                    <View className="h-1 flex-1 bg-white/30 rounded-full" />
+                    <View className="h-1 flex-1 bg-white/30 rounded-full" />
+                  </View>
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+            </GestureDetector>
 
             {/* Action Buttons */}
             <View className="mt-8 flex-row items-center justify-center gap-6">
@@ -306,6 +411,34 @@ export default function ExploreScreen() {
                       </TouchableOpacity>
                     ))}
                   </View>
+                </View>
+
+                {/* Passport Mode */}
+                <View>
+                  <View className="flex-row justify-between items-center mb-4">
+                    <Text className="text-slate-400 font-display-bold uppercase tracking-widest text-xs">Passport Mode</Text>
+                    {profile?.isGold ? (
+                       <TouchableOpacity onPress={() => {/* Logic to change location */}}>
+                         <Text className="text-primary font-display-bold">Change Location</Text>
+                       </TouchableOpacity>
+                    ) : (
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-slate-600 font-display-bold">Locked</Text>
+                        <View className="size-5 bg-yellow-500/20 rounded-full items-center justify-center">
+                          <Award size={12} stroke="#EAB308" />
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                  <TouchableOpacity 
+                    onPress={() => !profile?.isGold && router.push('/premium')}
+                    className={`bg-slate-800 border border-white/5 rounded-2xl p-4 flex-row items-center gap-4 ${!profile?.isGold ? 'opacity-60' : ''}`}
+                  >
+                    <MapPin size={20} stroke={profile?.isGold ? "#FF4458" : "#64748b"} />
+                    <Text className="text-white font-display flex-1">
+                      {profile?.isGold ? 'Change my discovery location' : 'Unlock Passport to match anywhere'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
 

@@ -15,12 +15,14 @@ interface Profile {
 
 interface UserState {
   profile: Profile | null;
+  likesRemaining: number;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
   profile: null,
+  likesRemaining: 10,
   isLoading: false,
   error: null,
 };
@@ -48,11 +50,19 @@ const userSlice = createSlice({
         state.profile.isGold = action.payload;
       }
     },
+    decrementLikes: (state) => {
+      if (!state.profile?.isGold && state.likesRemaining > 0) {
+        state.likesRemaining -= 1;
+      }
+    },
+    resetLikes: (state) => {
+      state.likesRemaining = 10;
+    },
     clearProfile: (state) => {
       state.profile = null;
     },
   },
 });
 
-export const { setProfile, updateProfile, setGold, setLoading, setError, clearProfile } = userSlice.actions;
+export const { setProfile, updateProfile, setGold, decrementLikes, resetLikes, setLoading, setError, clearProfile } = userSlice.actions;
 export default userSlice.reducer;

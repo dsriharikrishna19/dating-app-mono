@@ -3,6 +3,10 @@ import { View, Text, SafeAreaView, TextInput, ScrollView, TouchableOpacity, Imag
 import { Search as SearchIcon, SlidersHorizontal, Flame, MapPin, Music, Camera, Bike, Pizza, Code, Heart } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useAppSelector } from '../../store/hooks';
+import { useRouter } from 'expo-router';
+import { discoveryService } from '../../services/discovery.service';
+
 const { width } = Dimensions.get('window');
 
 const TRENDING = [
@@ -26,6 +30,27 @@ const NEARBY = [
 ];
 
 export default function SearchScreen() {
+  const router = useRouter();
+  const { profile } = useAppSelector((state) => state.user);
+  const [likes, setLikes] = React.useState<any[]>([]);
+  const [nearby, setNearby] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [likesRes, feedRes] = await Promise.all([
+          discoveryService.getLikes(),
+          discoveryService.getFeed()
+        ]);
+        setLikes(likesRes.data);
+        setNearby(feedRes.data);
+      } catch (err) {
+        console.error('Search Fetch Error:', err);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <View className="flex-1 bg-background-dark">
       <SafeAreaView className="flex-1">
@@ -49,6 +74,37 @@ export default function SearchScreen() {
         </View>
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          {/* Likes Glimpse */}
+          <View className="mt-6 px-6">
+            <View className="flex-row justify-between items-baseline mb-4">
+              <Text className="text-sm font-display-bold text-slate-500 uppercase tracking-widest">See Who Likes You</Text>
+              {!profile?.isGold && (
+                <TouchableOpacity onPress={() => router.push('/premium')}>
+                  <Text className="text-yellow-500 font-display-bold text-xs uppercase">Unlock Gold</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-6 px-6">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <TouchableOpacity 
+                  key={i} 
+                  className="mr-3 size-20 rounded-2xl overflow-hidden bg-slate-800/40 border border-white/5"
+                  onPress={() => !profile?.isGold && router.push('/premium')}
+                >
+                  <Image 
+                    source={{ uri: `https://i.pravatar.cc/150?u=${i}` }} 
+                    className={`w-full h-full ${!profile?.isGold ? 'blur-[8px] opacity-40' : ''}`}
+                  />
+                  {!profile?.isGold && (
+                    <View className="absolute inset-0 items-center justify-center">
+                      <Heart size={16} stroke="white" fill="white" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
           {/* Trending Now */}
           <View className="mt-6">
             <View className="px-6 flex-row items-center gap-2 mb-4">

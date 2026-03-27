@@ -51,8 +51,8 @@ export const getProfile = async (req: AuthRequest, res: Response, next: NextFunc
             },
             profile: user.profile ? {
                 ...user.profile,
-                location: user.profile.location ? JSON.parse(user.profile.location) : null,
-                filters: user.profile.filters ? JSON.parse(user.profile.filters) : null,
+                location: user.profile.location || null,
+                filters: user.profile.filters || null,
             } : null,
         }, 'Profile fetched successfully');
     } catch (error) {
@@ -112,7 +112,7 @@ export const onboarding = async (req: AuthRequest, res: Response, next: NextFunc
 
         sendSuccess(res, {
             ...profile,
-            location: profile.location ? JSON.parse(profile.location) : null,
+            location: profile.location ? JSON.parse(profile.location as any) : null,
         }, 'Onboarding completed successfully');
     } catch (error) {
         next(error);
@@ -150,7 +150,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
 
         sendSuccess(res, {
             ...profile,
-            location: profile.location ? JSON.parse(profile.location) : null,
+            location: profile.location ? JSON.parse(profile.location as any) : null,
         }, 'Profile updated successfully');
     } catch (error) {
         next(error);

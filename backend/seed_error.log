@@ -1,0 +1,6 @@
+﻿
+> backend@1.0.0 prisma:seed
+> tsx prisma/seed.ts
+
+Seeding database...
+Seeding complete!

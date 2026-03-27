@@ -4,7 +4,7 @@ export interface Message {
   id: string;
   matchId: string;
   senderId: string;
-  text: string;  // Changed from content to text for consistency
+  content: string;
   isRead: boolean;
   createdAt: string;
 }

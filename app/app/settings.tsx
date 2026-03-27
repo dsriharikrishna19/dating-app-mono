@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Switch, Platform } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { ArrowLeft, Bell, Lock, Eye, Sparkles, HelpCircle, Info, LogOut, ChevronRight, MapPin } from 'lucide-react-native';
+import { ArrowLeft, Bell, Lock, Eye, Sparkles, HelpCircle, Info, LogOut, ChevronRight, MapPin, UserX } from 'lucide-react-native';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateNotification, updateVisibility } from '../store/slices/settingsSlice';
 import { logout } from '../store/slices/authSlice';
@@ -16,13 +16,22 @@ export default function SettingsScreen() {
   const { notifications, visibility } = useAppSelector((state) => state.settings);
   const user = useAppSelector((state) => state.user.profile);
 
-  const handleToggleNotifications = (value: boolean) => {
-    // Assuming we toggle all for now or the main ones
-    dispatch(updateNotification({ messages: value, matches: value }));
+  const handleToggleNotifications = async (value: boolean) => {
+    try {
+      dispatch(updateNotification({ messages: value, matches: value }));
+      await userService.updateSettings({ notifications: value });
+    } catch (err) {
+      console.error('Settings Update Error:', err);
+    }
   };
 
-  const handleToggleIncognito = (value: boolean) => {
-    dispatch(updateVisibility({ ghostMode: value }));
+  const handleToggleIncognito = async (value: boolean) => {
+    try {
+      dispatch(updateVisibility({ ghostMode: value }));
+      await userService.updateSettings({ ghostMode: value });
+    } catch (err) {
+      console.error('Ghost Mode Error:', err);
+    }
   };
 
   const handleLogout = () => {
@@ -105,6 +114,17 @@ export default function SettingsScreen() {
                   trackColor={{ false: '#334155', true: '#ff4255' }}
                 />
               </View>
+
+              <TouchableOpacity 
+                onPress={() => router.push('/blocked-users' as any)}
+                className="flex-row items-center justify-between p-4 border-b border-white/5"
+              >
+                <View className="flex-row items-center gap-3">
+                  <UserX size={20} stroke="#ef4444" />
+                  <Text className="text-white font-display-semibold">Blocked Users</Text>
+                </View>
+                <ChevronRight size={16} stroke="#64748b" />
+              </TouchableOpacity>
 
               <TouchableOpacity className="flex-row items-center justify-between p-4">
                 <View className="flex-row items-center gap-3">
