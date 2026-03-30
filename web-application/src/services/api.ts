@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Note: In production, this should be in an environment variable
-const API_URL = 'http://192.168.0.42:8081/api';
+const API_URL = 'http://localhost:8081/api';
 
 const api = axios.create({
   baseURL: API_URL,

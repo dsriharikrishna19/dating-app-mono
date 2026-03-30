@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { Phone, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/auth.service';
 
@@ -12,6 +12,7 @@ interface AuthFormProps {
 
 export default function AuthForm({ type }: AuthFormProps) {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function AuthForm({ type }: AuthFormProps) {
     setError(null);
 
     try {
-      await authService.authenticate(phoneNumber);
+      await authService.authenticate(phoneNumber, email);
       // If successful, redirect to OTP verification
       router.push(`/verify?phone=${encodeURIComponent(phoneNumber)}`);
     } catch (err: any) {
@@ -42,9 +43,27 @@ export default function AuthForm({ type }: AuthFormProps) {
         <h2 className="text-3xl font-black text-white mb-2 leading-tight">
           {type === 'login' ? 'Welcome Back.' : 'Join the Club.'}
         </h2>
-        <p className="text-slate-400 mb-8 font-medium">Enter your phone number to {type === 'login' ? 'login' : 'register'}.</p>
+        <p className="text-slate-400 mb-8 font-medium">Enter your details to {type === 'login' ? 'login' : 'register'}.</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {type === 'register' && (
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Email Address</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="size-5 text-slate-500 group-focus-within:text-primary transition-colors" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="john@example.com"
+                  className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:ring-2 focus:ring-primary/40 focus:bg-white/10 transition-all outline-none"
+                  required
+                />
+              </div>
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
             <div className="relative group">

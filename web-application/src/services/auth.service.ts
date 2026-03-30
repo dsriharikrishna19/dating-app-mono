@@ -4,11 +4,11 @@ export const authService = {
   /**
    * Universal login/register entry point.
    */
-  authenticate: async (phoneNumber: string) => {
+  authenticate: async (phoneNumber: string, email?: string) => {
     return HttpService.post('/auth/login', { phoneNumber })
       .catch(err => {
         if (err.response?.status === 404) {
-          return HttpService.post('/auth/register', { phoneNumber });
+          return HttpService.post('/auth/register', { phoneNumber, email });
         }
         throw err;
       });

@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = 'http://192.168.0.42:8081';
+const SOCKET_URL = 'http://localhost:8081';
 
 class SocketService {
   private socket: Socket | null = null;

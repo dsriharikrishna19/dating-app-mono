@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image, Plus, MoreVertical, Heart, ArrowLeft, Loader2, Search, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Send, Image as ImageIcon, Plus, MoreVertical, Heart, ArrowLeft, Search, MessageCircle } from 'lucide-react';
 
 const DUMMY_MATCHES = [
   { id: '1', name: 'Sarah', lastMsg: 'Hey! How are you?', time: '2m', active: true, image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80' },
@@ -15,8 +14,6 @@ const DUMMY_MESSAGES = [
   { id: '1', sender: 'them', text: 'Hey there!', time: '10:30 AM' },
   { id: '2', sender: 'me', text: 'Hi Sarah! How is it going?', time: '10:32 AM' },
   { id: '3', sender: 'them', text: 'Pretty good! Just finished my class. How about you?', time: '10:35 AM' },
-  { id: '4', sender: 'me', text: 'Just started working on a new project. It\'s quite exciting!', time: '10:37 AM' },
-  { id: '5', sender: 'them', text: 'That\'s great to hear! Tell me more about it.', time: '10:40 AM' },
 ];
 
 export default function ChatPage() {
@@ -42,110 +39,109 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Matches List */}
-      <aside className={`w-full lg:w-96 border-r border-white/5 flex flex-col bg-slate-900/50 backdrop-blur-xl ${selectedMatch && 'hidden lg:flex'}`}>
-        <header className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-black text-white">Messages.</h1>
-            <div className="bg-primary/10 p-2 rounded-xl text-primary border border-primary/20">
-              <Plus className="size-5" />
-            </div>
+    <div className="flex h-screen bg-[#05070A] overflow-hidden">
+      {/* Matches List: Refactored for Density */}
+      <aside className={`w-full lg:w-80 border-r border-white/5 flex flex-col bg-slate-900/10 backdrop-blur-xl shrink-0 ${selectedMatch && 'hidden lg:flex'}`}>
+        <header className="p-5 flex flex-col gap-5">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-black text-white tracking-tight">Messages</h1>
+            <button className="size-8 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center hover:bg-primary/20 transition-all">
+              <Plus className="size-4" />
+            </button>
           </div>
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500 group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-slate-500 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
-              placeholder="Search conversations..."
-              className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:ring-2 focus:ring-primary/40 outline-none"
+              placeholder="Search..."
+              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-slate-600 outline-none focus:ring-1 focus:ring-primary/40 transition-all"
             />
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-2 flex flex-col gap-1">
           {DUMMY_MATCHES.map((match) => (
             <button
               key={match.id}
               onClick={() => setSelectedMatch(match)}
-              className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all border ${
+              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border group relative ${
                 selectedMatch?.id === match.id 
-                ? 'bg-primary/10 border-primary/20' 
-                : 'hover:bg-white/5 border-transparent'
+                ? 'bg-primary/10 border-primary/10' 
+                : 'hover:bg-white/5 border-transparent text-slate-400'
               }`}
             >
-              <div className="relative">
-                <img src={match.image} className="size-14 rounded-2xl object-cover" />
-                {match.active && <div className="absolute -top-1 -right-1 size-4 bg-emerald-500 rounded-full border-4 border-slate-900" />}
+              <div className="relative shrink-0">
+                <img src={match.image} className="size-11 rounded-xl object-cover border border-white/5" />
+                {match.active && <div className="absolute -top-1 -right-1 size-3 bg-emerald-500 rounded-full border-2 border-[#05070A] shadow-lg" />}
               </div>
-              <div className="flex-1 text-left">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-bold text-white">{match.name}</h3>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{match.time}</span>
+              <div className="flex-1 text-left min-w-0">
+                <div className="flex justify-between items-center">
+                  <h3 className={`font-bold text-sm tracking-tight truncate ${selectedMatch?.id === match.id ? 'text-white' : 'text-slate-300'}`}>
+                    {match.name}
+                  </h3>
+                  <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">{match.time}</span>
                 </div>
-                <p className="text-sm text-slate-400 font-medium line-clamp-1">{match.lastMsg}</p>
+                <p className="text-xs text-slate-500 font-medium truncate leading-tight">{match.lastMsg}</p>
               </div>
             </button>
           ))}
         </div>
       </aside>
 
-      {/* Conversation Area */}
+      {/* Conversation Area: Refactored with Flex + Gap */}
       <main className={`flex-1 flex flex-col relative ${!selectedMatch && 'hidden lg:flex'}`}>
         {selectedMatch ? (
           <>
-            {/* Header */}
-            <header className="p-4 lg:p-6 border-b border-white/5 flex items-center justify-between glass-panel">
-              <div className="flex items-center gap-4">
-                <button onClick={() => setSelectedMatch(null)} className="lg:hidden p-2 text-slate-400">
-                  <ArrowLeft className="size-6" />
+            <header className="px-4 py-3 border-b border-white/5 flex items-center justify-between glass-panel shrink-0">
+              <div className="flex items-center gap-3">
+                <button onClick={() => setSelectedMatch(null)} className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors">
+                  <ArrowLeft className="size-5" />
                 </button>
-                <div className="relative">
-                  <img src={selectedMatch.image} className="size-12 lg:size-14 rounded-2xl object-cover" />
-                  {selectedMatch.active && <div className="absolute -top-1 -right-1 size-4 bg-emerald-500 rounded-full border-4 border-slate-900" />}
+                <div className="relative size-9">
+                  <img src={selectedMatch.image} className="size-full rounded-xl object-cover border border-white/5" />
+                  {selectedMatch.active && <div className="absolute -top-1 -right-1 size-2.5 bg-emerald-500 rounded-full border-2 border-[#05070A]" />}
                 </div>
-                <div>
-                  <h3 className="font-bold text-white text-lg">{selectedMatch.name}</h3>
-                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-500">Online now</p>
+                <div className="flex flex-col gap-0.5">
+                  <h3 className="font-bold text-white text-sm tracking-tight leading-none">{selectedMatch.name}</h3>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-emerald-500 leading-none">Online</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <button className="size-12 rounded-xl glass-panel border border-white/10 flex items-center justify-center text-slate-400 hover:text-white">
-                  <Heart className="size-5" />
+              <div className="flex items-center gap-1.5">
+                <button className="size-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+                  <Heart className="size-4.5" />
                 </button>
-                <button className="size-12 rounded-xl glass-panel border border-white/10 flex items-center justify-center text-slate-400 hover:text-white">
-                  <MoreVertical className="size-5" />
+                <button className="size-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+                  <MoreVertical className="size-4.5" />
                 </button>
               </div>
             </header>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
               {messages.map((msg, i) => (
                 <div 
                   key={msg.id} 
-                  className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}
+                  className={`flex flex-col gap-1.5 ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}
                 >
-                  <div className={`max-w-[75%] p-4 rounded-[2rem] text-sm font-medium leading-relaxed ${
+                  <div className={`max-w-[70%] p-3.5 rounded-2xl text-[13px] font-medium leading-relaxed shadow-xl ${
                     msg.sender === 'me' 
-                    ? 'brand-gradient text-white rounded-tr-none shadow-xl shadow-primary/10' 
-                    : 'glass-panel text-slate-200 border border-white/5 rounded-tl-none'
+                    ? 'brand-gradient text-white rounded-br-none' 
+                    : 'glass-panel text-slate-200 border border-white/5 rounded-bl-none'
                   }`}>
                     {msg.text}
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-2 mx-2">{msg.time}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 px-1">{msg.time}</span>
                 </div>
               ))}
               <div ref={scrollRef} />
             </div>
 
-            {/* Input */}
-            <div className="p-6 pt-2">
-              <div className="glass-panel p-3 rounded-3xl border border-white/10 flex items-center gap-3 shadow-2xl">
-                <button className="size-12 rounded-2xl hover:bg-white/5 flex items-center justify-center text-slate-400 transition-colors">
-                  <Plus className="size-6" />
+            <div className="p-4 pt-1">
+              <div className="glass-panel p-2 rounded-2xl border border-white/10 flex items-center gap-2 shadow-2xl">
+                <button className="size-9 rounded-xl hover:bg-white/5 flex items-center justify-center text-slate-500 transition-colors">
+                  <Plus className="size-5" />
                 </button>
-                <button className="size-12 rounded-2xl hover:bg-white/5 flex items-center justify-center text-slate-400 transition-colors">
-                  <Image className="size-6" />
+                <button className="size-9 rounded-xl hover:bg-white/5 flex items-center justify-center text-slate-500 transition-colors">
+                  <ImageIcon className="size-5" />
                 </button>
                 <input 
                   type="text" 
@@ -153,25 +149,29 @@ export default function ChatPage() {
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Type a message..."
-                  className="flex-1 bg-transparent text-white font-medium placeholder-slate-600 outline-none px-2"
+                  className="flex-1 bg-transparent text-white text-sm placeholder-slate-600 outline-none px-2 font-medium"
                 />
                 <button 
                   onClick={handleSend}
                   disabled={!inputText.trim()}
-                  className="size-12 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-lg shadow-primary/20 disabled:opacity-30 transition-all active:scale-90"
+                  className="size-10 rounded-xl brand-gradient flex items-center justify-center text-white shadow-lg disabled:opacity-20 transition-all active:scale-90"
                 >
-                  <Send className="size-5" />
+                  <Send className="size-4.5" />
                 </button>
               </div>
             </div>
           </>
         ) : (
-          <div className="h-full flex flex-col items-center justify-center text-center p-12">
-            <div className="size-24 rounded-full brand-gradient flex items-center justify-center mb-8 shadow-2xl shadow-primary/20 opacity-20">
-              <MessageCircle className="size-10 text-white" />
+          <div className="h-full flex flex-col items-center justify-center text-center p-8 gap-6 opacity-40">
+            <div className="size-20 rounded-2xl brand-gradient flex items-center justify-center shadow-2xl shadow-primary/20 rotate-3">
+              <MessageCircle className="size-10 text-white fill-current" />
             </div>
-            <h2 className="text-3xl font-black text-white mb-3">Select a conversation.</h2>
-            <p className="text-slate-500 max-w-xs font-medium">Click on a match to start a chat and find your real connection.</p>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-2xl font-black text-white tracking-tight">Select a conversation</h2>
+              <p className="text-slate-500 max-w-xs font-medium text-sm leading-relaxed">
+                Connect with your matches and start something real today.
+              </p>
+            </div>
           </div>
         )}
       </main>

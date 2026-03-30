@@ -1,17 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, X, Zap, RefreshCcw, Star, MessageCircle, Users, Settings, User } from 'lucide-react';
-import UserCard from '@/components/discovery/UserCard';
-import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, X, Zap, RefreshCcw, Star, Sparkles, MapPin, Info } from 'lucide-react';
 
 const DUMMY_USERS = [
   {
     id: '1',
     name: 'Sarah',
     age: 24,
-    bio: 'Architecture student and coffee lover. Let\'s explore the city together!',
+    bio: 'Architecture student and coffee lover.',
     distance: '3 miles',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80',
     interests: ['Design', 'Coffee', 'Music'],
@@ -20,7 +18,7 @@ const DUMMY_USERS = [
     id: '2',
     name: 'Jessica',
     age: 22,
-    bio: 'Yoga instructor and nature enthusiast. Finding peace in the chaos.',
+    bio: 'Yoga instructor and nature enthusiast.',
     distance: '5 miles',
     image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
     interests: ['Yoga', 'Nature', 'Wellness'],
@@ -29,125 +27,124 @@ const DUMMY_USERS = [
     id: '3',
     name: 'Emily',
     age: 26,
-    bio: 'Professional foodie and part-time traveler. Always looking for the next best sushi spot.',
+    bio: 'Professional foodie and traveler.',
     distance: '2 miles',
     image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
-    interests: ['Sushi', 'Travel', 'Dining Out'],
+    interests: ['Sushi', 'Travel', 'Dining'],
+  },
+  {
+    id: '4',
+    name: 'Chloe',
+    age: 23,
+    bio: 'Digital artist and plant lover.',
+    distance: '1 mile',
+    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
+    interests: ['Art', 'Plants', 'Museums'],
   }
 ];
 
 export default function DiscoverPage() {
   const [users, setUsers] = useState(DUMMY_USERS);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleSwipe = (direction: 'left' | 'right') => {
-    console.log(`Swiped ${direction} on ${users[currentIndex].name}`);
-    setCurrentIndex(prev => prev + 1);
+  const handleAction = (id: string, action: string) => {
+    setUsers(curr => curr.filter(u => u.id !== id));
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar Navigation */}
-      <aside className="w-20 lg:w-72 border-r border-white/5 flex flex-col p-6 h-screen sticky top-0">
-        <Link href="/" className="size-12 rounded-2xl brand-gradient flex items-center justify-center mb-12 shadow-xl shadow-primary/20 mx-auto lg:mx-0">
-          <Heart className="size-7 text-white fill-current" />
-        </Link>
+    <div className="flex-1 p-4 lg:p-5 flex flex-col gap-6 max-w-[1600px] mx-auto w-full overflow-y-auto pb-24 lg:pb-12">
+      
+      {/* Header: More Compact */}
+      <header className="flex flex-col gap-1 px-1">
+        <h1 className="text-xl font-black text-white tracking-tight leading-none">Discover</h1>
+        <p className="text-slate-600 font-bold uppercase tracking-widest text-[8px]">Matches for you</p>
+      </header>
 
-        <nav className="flex-1 flex flex-col gap-4">
-          {[
-            { icon: Users, label: 'Discover', href: '/discover', active: true },
-            { icon: Heart, label: 'Likes', href: '/likes' },
-            { icon: MessageCircle, label: 'Messages', href: '/chat' },
-            { icon: Star, label: 'Premium', href: '/premium' },
-          ].map((item, i) => (
-            <Link 
-              key={i} 
-              href={item.href}
-              className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                item.active 
-                ? 'bg-primary/10 text-primary border border-primary/10' 
-                : 'text-slate-500 hover:text-white hover:bg-white/5'
-              }`}
+      {/* Optimized Multi-Card Grid: Higher column count (4) and reduced card size */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <AnimatePresence mode="popLayout">
+          {users.map((user) => (
+            <motion.div
+              key={user.id}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              className="group relative flex flex-col glass-panel rounded-2xl border border-white/5 overflow-hidden shadow-xl transition-all hover:border-white/10"
             >
-              <item.icon className="size-6" />
-              <span className="hidden lg:block font-black text-sm uppercase tracking-widest">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-auto flex flex-col gap-4 pt-6 border-t border-white/5">
-          <Link href="/profile" className="flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:text-white hover:bg-white/5 transition-all">
-            <User className="size-6" />
-            <span className="hidden lg:block font-black text-sm uppercase tracking-widest">Profile</span>
-          </Link>
-          <Link href="/settings" className="flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:text-white hover:bg-white/5 transition-all">
-            <Settings className="size-6" />
-            <span className="hidden lg:block font-black text-sm uppercase tracking-widest">Settings</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Discover Area */}
-      <main className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 relative overflow-hidden">
-        {/* Background Decorative Blobs */}
-        <div className="absolute top-0 right-0 size-[600px] brand-gradient rounded-full blur-[150px] opacity-10 -z-10 translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 size-[400px] bg-primary rounded-full blur-[120px] opacity-10 -z-10 -translate-x-1/2 translate-y-1/2"></div>
-
-        <div className="relative w-full max-w-[450px] aspect-[3/4.5] lg:aspect-[3/4]">
-          <AnimatePresence>
-            {currentIndex < users.length ? (
-              <UserCard 
-                key={users[currentIndex].id}
-                user={users[currentIndex]}
-                onSwipe={handleSwipe}
-              />
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-full w-full glass-panel rounded-[2.5rem] border border-white/10 flex flex-col items-center justify-center text-center p-12"
-              >
-                <div className="size-24 rounded-full bg-white/5 flex items-center justify-center mb-8 border border-white/10 animate-pulse">
-                  <RefreshCcw className="size-10 text-slate-600" />
+              {/* Image Section: Aspect ratio reduced for density (aspect-[4/5.2]) */}
+              <div className="aspect-[4/5.2] relative overflow-hidden">
+                <img src={user.image} className="size-full object-cover transition-transform duration-700 group-hover:scale-105" alt={user.name} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-60" />
+                
+                <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1 max-w-[85%]">
+                  {user.interests.slice(0, 2).map((tag, i) => (
+                    <span key={i} className="px-1.5 py-0.5 rounded bg-black/40 backdrop-blur-md border border-white/10 text-[7px] font-black uppercase tracking-widest text-white/80">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
-                <h2 className="text-3xl font-black text-white mb-4">You've reached the end!</h2>
-                <p className="text-slate-400 font-medium mb-8">We'll let you know when there are more people to meet in your area.</p>
-                <button 
-                  onClick={() => setCurrentIndex(0)}
-                  className="px-8 py-4 rounded-2xl brand-gradient text-white font-black uppercase tracking-tight shadow-xl shadow-primary/20 hover:scale-105 transition-all"
-                >
-                  Refresh Feed
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              </div>
 
-        {/* Swipe Controls */}
-        <div className="mt-12 flex items-center gap-6">
-          <button className="size-16 rounded-full glass-panel border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 transition-all">
-            <RefreshCcw className="size-6" />
-          </button>
-          <button 
-            onClick={() => handleSwipe('left')}
-            className="size-20 rounded-full glass-panel border border-white/10 flex items-center justify-center text-primary hover:bg-primary/10 hover:border-primary/50 transition-all shadow-xl"
-          >
-            <X className="size-8" />
-          </button>
-          <button className="size-16 rounded-full glass-panel border border-white/10 flex items-center justify-center text-indigo-400 hover:text-indigo-300 transition-all">
-            <Star className="size-6 fill-current" />
-          </button>
-          <button 
-            onClick={() => handleSwipe('right')}
-            className="size-20 rounded-full glass-panel border border-white/10 flex items-center justify-center text-emerald-400 hover:bg-emerald-400/10 hover:border-emerald-500 transition-all shadow-xl"
-          >
-            <Heart className="size-8 fill-current" />
-          </button>
-          <button className="size-16 rounded-full glass-panel border border-white/10 flex items-center justify-center text-orange-400 hover:text-orange-300 transition-all">
-            <Zap className="size-6 fill-current" />
-          </button>
-        </div>
-      </main>
+              {/* Info Section: Reduced Padding (p-3) */}
+              <div className="p-3.5 flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-1.5">
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm font-black text-white tracking-tight leading-none truncate">{user.name}, {user.age}</h3>
+                      <Sparkles className="size-3 text-primary shrink-0" />
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-500">
+                      <MapPin className="size-2.5 text-primary/60" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest leading-none truncate">{user.distance} away</span>
+                    </div>
+                  </div>
+                  <button className="size-8 rounded-lg glass-panel border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all shrink-0">
+                    <Info className="size-3.5" />
+                  </button>
+                </div>
+
+                <p className="text-[11px] text-slate-400 font-medium line-clamp-1 leading-normal">
+                  {user.bio}
+                </p>
+
+                {/* Actions: Scaled Down Buttons */}
+                <div className="grid grid-cols-2 gap-2 mt-0.5">
+                  <button 
+                    onClick={() => handleAction(user.id, 'nope')}
+                    className="flex items-center justify-center py-2 rounded-xl bg-white/5 border border-white/5 text-slate-500 hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all font-black text-[9px] uppercase tracking-widest"
+                  >
+                    <X className="size-3.5 mr-1" />
+                    Nope
+                  </button>
+                  <button 
+                    onClick={() => handleAction(user.id, 'like')}
+                    className="flex items-center justify-center py-2 rounded-xl brand-gradient text-white shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all font-black text-[9px] uppercase tracking-widest"
+                  >
+                    <Heart className="size-3.5 mr-1 fill-current" />
+                    Like
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {users.length === 0 && (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 gap-5 opacity-30 text-center">
+            <RefreshCcw className="size-8 text-slate-600 animate-spin-slow" />
+            <div className="flex flex-col gap-1.5">
+              <h2 className="text-lg font-black text-white">All Caught Up</h2>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600">More people soon</p>
+            </div>
+            <button 
+              onClick={() => setUsers(DUMMY_USERS)}
+              className="px-6 py-2.5 rounded-xl brand-gradient text-white font-black uppercase text-xs tracking-widest shadow-xl"
+            >
+              Refresh Feed
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
