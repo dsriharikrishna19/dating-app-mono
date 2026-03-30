@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Providers from "@/components/providers/Providers";
-import NavbarSwitcher from "@/components/layout/NavbarSwitcher";
+import RootProvider from "@/components/providers/RootProvider";
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+});
 
 export const metadata: Metadata = {
-  title: "Spark - Find Your Connection",
-  description: "Modern dating platform for genuine connections",
+  title: "Friendly Buddy | Find Your Perfect Match",
+  description: "Join the most premium dating app to find meaningful connections and real chemistry.",
 };
 
 export default function RootLayout({
@@ -14,16 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased font-sans">
-        <Providers>
-          <div className="min-h-screen flex flex-col">
-            <NavbarSwitcher />
-            <main className="flex-grow">
-              {children}
-            </main>
-          </div>
-        </Providers>
+    <html lang="en" className="dark">
+      <body className={`${jakarta.variable} antialiased`}>
+        <RootProvider>
+          {children}
+        </RootProvider>
       </body>
     </html>
   );

@@ -1,43 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #FF4458;
-  --secondary: #6C5CE7;
+  --primary: #ff4255;
+  --primary-gradient: linear-gradient(135deg, #ff4255 0%, #9333ea 100%);
   --background: #0F172A;
-  --card: rgba(30, 41, 59, 0.7);
-  --text: #F8FAFC;
+  --foreground: #F8FAFC;
+  --card: #1E293B;
+  --card-foreground: #F1F5F9;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 @theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-background-dark: var(--background);
-  --color-card-glass: var(--card);
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 80px;
-  /* offset for fixed navbar */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
 }
 
 body {
   background-color: var(--background);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
+  color: var(--foreground);
+  font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
-.glass-card {
-  background: var(--card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
+.brand-gradient {
+  background: var(--primary-gradient);
 }
 
-.gradient-text {
-  background: linear-gradient(to right, var(--primary), var(--secondary));
+.glass-panel {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.text-gradient {
+  background: var(--primary-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+@layer base {
+  * {
+    @apply border-white/5;
+  }
 }
