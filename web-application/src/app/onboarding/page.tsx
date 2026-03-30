@@ -3,42 +3,83 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
-import { Heart, ArrowRight, ArrowLeft, Camera, Sparkles, User, Star, Check } from 'lucide-react';
+import { Heart, ArrowRight, ArrowLeft, Camera, Sparkles, User, Star, Check, Loader2, MapPin, Sliders } from 'lucide-react';
+import { userService } from '@/services/user.service';
+import { setCredentials } from '@/store/slices/authSlice';
+import { setStep, updateFormData, updatePreferences, setImage, resetOnboarding } from '@/store/slices/onboardingSlice';
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    birthDate: '',
-    gender: '',
-    bio: '',
-    interests: [] as string[],
-    images: [] as string[],
-  });
-
+  const dispatch = useDispatch();
   const router = useRouter();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const [loading, setLoading] = useState(false);
+  
+  const { step, formData } = useSelector((state: RootState) => state.onboarding);
+  const { user, token } = useSelector((state: RootState) => state.auth);
 
   const handleImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const newImages = [...formData.images];
-        newImages[index] = reader.result as string;
-        setFormData({ ...formData, images: newImages });
+        dispatch(setImage({ index, url: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const nextStep = () => setStep(s => s + 1);
-  const prevStep = () => setStep(s => s - 1);
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      dispatch(updateFormData({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude
+      }));
+    });
+  };
+
+  const nextStep = () => {
+    // Validation for basics
+    if (step === 1 && (!formData.name || !formData.birthDate || !formData.gender || !formData.latitude)) return;
+    // Validation for interests
+    if (step === 2 && formData.interests.length < 5) return;
+    
+    dispatch(setStep(step + 1));
+  };
+  
+  const prevStep = () => dispatch(setStep(step - 1));
 
   const handleComplete = async () => {
-    router.push('/discover');
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      // Filter out empty image slots
+      const finalImages = formData.images.filter(Boolean);
+      
+      await userService.completeOnboarding({
+        ...formData,
+        images: finalImages,
+      });
+
+      // Update auth state with the now-onboarded user
+      if (token) {
+        dispatch(setCredentials({ 
+          user: { ...user, onboarded: true }, 
+          token 
+        }));
+      }
+
+      // Clear onboarding progress
+      dispatch(resetOnboarding());
+      router.push('/discover');
+    } catch (error) {
+      console.error('Onboarding failed:', error);
+      alert('Failed to complete onboarding. Please check your details.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,14 +146,14 @@ export default function OnboardingPage() {
 
           <div className="flex flex-col items-end gap-1 flex-1 max-w-[200px] ml-auto">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Step {step} of 4</span>
-              <span className="text-xs font-black text-primary leading-none">{Math.round((step / 4) * 100)}%</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Step {step} of 5</span>
+              <span className="text-xs font-black text-primary leading-none">{Math.round((step / 5) * 100)}%</span>
             </div>
             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
               <motion.div 
                 className="h-full brand-gradient"
                 initial={{ width: 0 }}
-                animate={{ width: `${(step / 4) * 100}%` }}
+                animate={{ width: `${(step / 5) * 100}%` }}
                 transition={{ type: "spring", stiffness: 100, damping: 20 }}
               />
             </div>
@@ -147,7 +188,7 @@ export default function OnboardingPage() {
                         placeholder="John Doe"
                         className="w-full pl-12 pr-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-primary/40 focus:bg-white/10 transition-all font-medium text-lg placeholder:text-slate-700"
                         value={formData.name}
-                        onChange={e => setFormData({...formData, name: e.target.value})}
+                        onChange={e => dispatch(updateFormData({ name: e.target.value }))}
                       />
                     </div>
                   </div>
@@ -158,7 +199,7 @@ export default function OnboardingPage() {
                       type="date"
                       className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white outline-none focus:ring-2 focus:ring-primary/40 focus:bg-white/10 transition-all font-medium text-lg color-scheme-dark"
                       value={formData.birthDate}
-                      onChange={e => setFormData({...formData, birthDate: e.target.value})}
+                      onChange={e => dispatch(updateFormData({ birthDate: e.target.value }))}
                     />
                   </div>
 
@@ -168,7 +209,7 @@ export default function OnboardingPage() {
                       {['Male', 'Female', 'Other'].map(g => (
                         <button
                           key={g}
-                          onClick={() => setFormData({...formData, gender: g})}
+                          onClick={() => dispatch(updateFormData({ gender: g }))}
                           className={`flex-1 py-5 rounded-2xl font-black text-sm transition-all border uppercase tracking-tighter ${
                             formData.gender === g 
                             ? 'brand-gradient border-transparent text-white shadow-xl shadow-primary/30 scale-[1.02]' 
@@ -180,42 +221,26 @@ export default function OnboardingPage() {
                       ))}
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
 
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-10"
-              >
-                <div className="space-y-4">
-                  <h1 className="text-5xl font-black text-white leading-none tracking-tighter">Your Interests.</h1>
-                  <p className="text-slate-400 text-lg font-medium leading-relaxed">Select at least 5 things you love.</p>
-                </div>
-                
-                <div className="flex flex-wrap gap-3">
-                  {['Travel', 'Music', 'Cooking', 'Art', 'Sports', 'Gaming', 'Reading', 'Movies', 'Tech', 'Yoga', 'Nature', 'Coffee', 'Wine', 'Dancing', 'Design', 'Fashion', 'Fitness', 'Foodie'].map(interest => (
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Location</label>
                     <button
-                      key={interest}
-                      onClick={() => {
-                        const newInterests = formData.interests.includes(interest)
-                          ? formData.interests.filter(i => i !== interest)
-                          : [...formData.interests, interest];
-                        setFormData({...formData, interests: newInterests});
-                      }}
-                      className={`px-8 py-3.5 rounded-full font-bold text-sm transition-all border ${
-                        formData.interests.includes(interest)
-                        ? 'brand-gradient border-transparent text-white shadow-xl shadow-primary/30 scale-[1.05]'
-                        : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'
+                      onClick={handleDetectLocation}
+                      className={`w-full py-5 rounded-2xl font-black text-sm transition-all border uppercase tracking-tighter flex items-center justify-center gap-3 ${
+                        formData.latitude 
+                        ? 'bg-green-500/20 border-green-500/30 text-green-400' 
+                        : 'bg-white/5 border-white/10 text-slate-500 hover:border-white/20 hover:bg-primary/5 hover:text-primary'
                       }`}
                     >
-                      {interest}
+                      <MapPin className="size-5" />
+                      {formData.latitude ? 'Location Captured' : 'Detect Location'}
                     </button>
-                  ))}
+                    {formData.latitude && (
+                      <p className="text-[10px] text-center text-slate-600 font-bold uppercase tracking-widest">
+                        {formData.latitude.toFixed(4)}, {formData.longitude?.toFixed(4)}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -223,6 +248,76 @@ export default function OnboardingPage() {
             {step === 3 && (
               <motion.div
                 key="step3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-10"
+              >
+                <div className="space-y-4">
+                  <h1 className="text-5xl font-black text-white leading-none tracking-tighter">Preferences.</h1>
+                  <p className="text-slate-400 text-lg font-medium leading-relaxed">Who are you looking for?</p>
+                </div>
+                
+                <div className="space-y-10">
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Age Range</label>
+                      <span className="text-primary font-black">{formData.preferences.minAge} - {formData.preferences.maxAge}</span>
+                    </div>
+                    <div className="flex gap-4">
+                      <input 
+                        type="range" min="18" max="100" 
+                        value={formData.preferences.minAge}
+                        onChange={e => dispatch(updatePreferences({ minAge: parseInt(e.target.value) }))}
+                        className="flex-1 accent-primary"
+                      />
+                      <input 
+                        type="range" min="18" max="100" 
+                        value={formData.preferences.maxAge}
+                        onChange={e => dispatch(updatePreferences({ maxAge: parseInt(e.target.value) }))}
+                        className="flex-1 accent-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Max Distance (KM)</label>
+                      <span className="text-primary font-black">{formData.preferences.maxDistance} km</span>
+                    </div>
+                    <input 
+                      type="range" min="1" max="500" 
+                      value={formData.preferences.maxDistance}
+                      onChange={e => dispatch(updatePreferences({ maxDistance: parseInt(e.target.value) }))}
+                      className="w-full accent-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1">Interested In</label>
+                    <div className="flex gap-3">
+                      {['MALE', 'FEMALE', 'ANY'].map(gp => (
+                        <button
+                          key={gp}
+                          onClick={() => dispatch(updatePreferences({ genderPreference: gp }))}
+                          className={`flex-1 py-4 rounded-2xl font-black text-xs transition-all border uppercase tracking-tighter ${
+                            formData.preferences.genderPreference === gp
+                            ? 'brand-gradient border-transparent text-white' 
+                            : 'bg-white/5 border-white/10 text-slate-500'
+                          }`}
+                        >
+                          {gp}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 4 && (
+              <motion.div
+                key="step4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -284,9 +379,9 @@ export default function OnboardingPage() {
               </motion.div>
             )}
 
-            {step === 4 && (
+            {step === 5 && (
               <motion.div
-                key="step4"
+                key="step5"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center space-y-12 py-12"
@@ -311,10 +406,17 @@ export default function OnboardingPage() {
                 
                 <button
                   onClick={handleComplete}
-                  className="w-full lg:max-w-md mx-auto py-6 rounded-[2rem] brand-gradient text-white font-black text-2xl shadow-2xl shadow-primary/40 flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-tighter"
+                  disabled={loading}
+                  className="w-full lg:max-w-md mx-auto py-6 rounded-[2rem] brand-gradient text-white font-black text-2xl shadow-2xl shadow-primary/40 flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-tighter disabled:opacity-50"
                 >
-                  Enter Discovery
-                  <Heart className="size-8 fill-current" />
+                  {loading ? (
+                    <Loader2 className="size-8 animate-spin" />
+                  ) : (
+                    <>
+                      Enter Discovery
+                      <Heart className="size-8 fill-current" />
+                    </>
+                  )}
                 </button>
               </motion.div>
             )}
@@ -322,7 +424,7 @@ export default function OnboardingPage() {
         </main>
 
         {/* Global Navigation Fixed Bottom Area */}
-        {step < 4 && (
+        {step < 5 && (
           <div className="sticky bottom-0 bg-[#05070A]/80 backdrop-blur-xl border-t border-white/5 p-4 flex gap-4 w-full">
             <div className="flex gap-4 w-full max-w-3xl mx-auto">
               {step > 1 && (

@@ -1,68 +1,88 @@
 import prisma from '../lib/prisma.js';
 import { BadRequestError } from '../utils/errors.js';
+import { NotificationType } from '@prisma/client';
 
 export class MatchService {
-    static async handleSwipe(userId: string, targetUserId: string, direction: 'LEFT' | 'RIGHT' | 'SUPERLIKE') {
-        if (userId === targetUserId) {
-            throw new BadRequestError('You cannot swipe on yourself');
-        }
+    static async createMatch(userId1: string, userId2: string) {
+        // Deterministic order for userA and userB to simplify queries and uniq constraints
+        const [a, b] = [userId1, userId2].sort();
 
-        const id1 = userId < targetUserId ? userId : targetUserId;
-        const id2 = userId < targetUserId ? targetUserId : userId;
+        // 1. Create Match
+        const match = await prisma.match.upsert({
+            where: { userAId_userBId: { userAId: a, userBId: b } },
+            update: { status: 'MATCHED' },
+            create: { userAId: a, userBId: b, status: 'MATCHED' },
+        });
 
-        if (direction === 'LEFT') {
-            return await prisma.match.upsert({
-                where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } },
-                update: { status: 'UNMATCHED' },
-                create: { user1Id: id1, user2Id: id2, status: 'UNMATCHED' },
+        // 2. Create Conversation (if not exists)
+        let conversation = await prisma.conversation.findUnique({
+            where: { matchId: match.id },
+            include: { members: true }
+        });
+
+        if (!conversation) {
+            conversation = await prisma.conversation.create({
+                data: {
+                    matchId: match.id,
+                    members: {
+                        create: [
+                            { userId: a },
+                            { userId: b },
+                        ]
+                    }
+                },
+                include: { members: true }
             });
         }
 
-        if (direction === 'SUPERLIKE') {
-            return await prisma.match.upsert({
-                where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } },
-                update: { status: 'MATCHED' },
-                create: { user1Id: id1, user2Id: id2, status: 'MATCHED' },
-            });
-        }
-
-        // Action is RIGHT (LIKE)
-        const existingSwipe = await prisma.match.findUnique({
-            where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } },
+        // 3. Create Notifications
+        await prisma.notification.createMany({
+            data: [
+                { userId: a, type: NotificationType.NEW_MATCH, referenceId: match.id },
+                { userId: b, type: NotificationType.NEW_MATCH, referenceId: match.id },
+            ]
         });
 
-        if (existingSwipe) {
-            if (existingSwipe.status === 'PENDING') {
-                return await prisma.match.update({
-                    where: { id: existingSwipe.id },
-                    data: { status: 'MATCHED' },
-                });
-            }
-        }
-
-        return await prisma.match.create({
-            data: {
-                user1Id: id1,
-                user2Id: id2,
-                status: 'PENDING',
-            },
-        });
+        return { matched: true, match, conversation };
     }
 
     static async getMatches(userId: string) {
-        return await prisma.match.findMany({
+        const matches = await prisma.match.findMany({
             where: {
                 OR: [
-                    { user1Id: userId, status: 'MATCHED' },
-                    { user2Id: userId, status: 'MATCHED' },
+                    { userAId: userId, status: 'MATCHED' },
+                    { userBId: userId, status: 'MATCHED' },
                 ],
             },
-            include: {
-                messages: {
-                    orderBy: { createdAt: 'desc' },
-                    take: 1,
-                },
-            },
+            orderBy: { createdAt: 'desc' },
         });
+
+        // Map to include the target profile for each match
+        const enhancedMatches = await Promise.all(matches.map(async (m) => {
+            const targetId = m.userAId === userId ? m.userBId : m.userAId;
+            const targetProfile = await prisma.profile.findUnique({
+                where: { userId: targetId },
+                include: { images: { where: { isPrimary: true }, take: 1 } }
+            });
+
+            const conversation = await prisma.conversation.findUnique({
+                where: { matchId: m.id },
+                include: { 
+                    messages: { 
+                        orderBy: { createdAt: 'desc' }, 
+                        take: 1 
+                    } 
+                }
+            });
+
+            return {
+                ...m,
+                targetProfile,
+                lastMessage: conversation?.messages[0] || null,
+                conversationId: conversation?.id
+            };
+        }));
+
+        return enhancedMatches;
     }
 }

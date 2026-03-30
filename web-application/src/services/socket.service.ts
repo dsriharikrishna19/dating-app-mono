@@ -33,8 +33,11 @@ class SocketService {
     this.socket?.emit(event, data);
   }
 
-  on(event: string, callback: (data: any) => void) {
+  on(event: string, callback: (...args: any[]) => void) {
     this.socket?.on(event, callback);
+    return () => {
+      this.socket?.off(event, callback);
+    };
   }
 
   off(event: string) {

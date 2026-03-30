@@ -14,9 +14,6 @@ router.use(authMiddleware);
  *     summary: Get potential matches feed
  *     security:
  *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Discovery feed fetched successfully
  */
 router.get('/feed', getFeed);
 
@@ -34,13 +31,10 @@ router.get('/feed', getFeed);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [profileId, direction]
+ *             required: [profileId, type]
  *             properties:
- *               profileId:
- *                 type: string
- *               direction:
- *                 type: string
- *                 enum: [LEFT, RIGHT, SUPERLIKE]
+ *               profileId: { type: string }
+ *               type: { type: string, enum: [LIKE, PASS, SUPERLIKE] }
  */
 router.post('/swipe', swipe);
 
@@ -60,12 +54,12 @@ router.get('/likes', getWhoLikesMe);
  * /api/discovery/filters:
  *   get:
  *     tags: [Discovery]
- *     summary: Get discovery filters
+ *     summary: Get discovery preferences
  *     security:
  *       - bearerAuth: []
  *   put:
  *     tags: [Discovery]
- *     summary: Update discovery filters
+ *     summary: Update discovery preferences
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -75,13 +69,10 @@ router.get('/likes', getWhoLikesMe);
  *           schema:
  *             type: object
  *             properties:
- *               ageRange:
- *                 type: array
- *                 items: { type: number }
- *               distance:
- *                 type: number
- *               gender:
- *                 type: string
+ *               minAge: { type: number }
+ *               maxAge: { type: number }
+ *               maxDistance: { type: number }
+ *               genderPreference: { type: string, enum: [MALE, FEMALE, ANY] }
  */
 router.get('/filters', getFilters);
 router.put('/filters', updateFilters);

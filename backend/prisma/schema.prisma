@@ -8,38 +8,112 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  phoneNumber  String   @unique
-  email        String?  @unique
-  passwordHash String?
-  isVerified   Boolean  @default(false)
-  onboarded    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  profile      Profile?
+  id                  String               @id @default(uuid())
+  phoneNumber         String               @unique
+  email               String?              @unique
+  passwordHash        String?
+  isVerified          Boolean              @default(false)
+  onboarded           Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  profile             Profile?
+  preferences         UserPreference?
+  swipesMade          Swipe[]              @relation("Swiper")
+  swipesReceived      Swipe[]              @relation("Target")
+  conversationMembers ConversationMember[]
+  notifications       Notification[]
+  blocksMade          Block[]              @relation("Blocker")
+  blocksReceived      Block[]              @relation("Blocked")
+  reportsMade         Report[]             @relation("Reporter")
+  reportsReceived     Report[]             @relation("Reported")
 }
 
 model Profile {
-  id                   String     @id @default(uuid())
-  userId               String     @unique
-  name                 String?
-  bio                  String?
-  birthDate            DateTime?
-  gender               String?
-  lookingFor           String?
-  location             Json?
-  filters              Json?
-  notificationMatches  Boolean    @default(true)
-  notificationMessages Boolean    @default(true)
-  notificationPromos   Boolean    @default(false)
-  profileVisible       Boolean    @default(true)
-  ghostMode            Boolean    @default(false)
-  isGold               Boolean    @default(false)
-  createdAt            DateTime   @default(now())
-  updatedAt            DateTime   @updatedAt
-  images               Image[]
-  user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interests            Interest[] @relation("InterestToProfile")
+  id        String    @id @default(uuid())
+  userId    String    @unique
+  name      String?
+  bio       String?
+  birthDate DateTime?
+  gender    String?
+  latitude  Float?
+  longitude Float?
+  isGold    Boolean   @default(false)
+  notificationMatches  Boolean @default(true)
+  notificationMessages Boolean @default(true)
+  notificationPromos   Boolean @default(false)
+  profileVisible       Boolean @default(true)
+  ghostMode            Boolean @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images    Image[]
+  interests Interest[] @relation("InterestToProfile")
+
+  @@index([latitude, longitude])
+}
+
+model UserPreference {
+  id               String  @id @default(uuid())
+  userId           String  @unique
+  minAge           Int     @default(18)
+  maxAge           Int     @default(50)
+  maxDistance      Int     @default(50) // km
+  genderPreference String  @default("ANY") // MALE, FEMALE, ANY
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Swipe {
+  id        String    @id @default(uuid())
+  swiperId  String
+  targetId  String
+  type      SwipeType
+  createdAt DateTime  @default(now())
+  swiper    User      @relation("Swiper", fields: [swiperId], references: [id], onDelete: Cascade)
+  target    User      @relation("Target", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([swiperId, targetId])
+  @@index([swiperId, targetId])
+}
+
+model Match {
+  id        String      @id @default(uuid())
+  userAId   String
+  userBId   String
+  status    MatchStatus @default(MATCHED)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([userAId, userBId])
+}
+
+model Conversation {
+  id        String               @id @default(uuid())
+  matchId   String?              @unique
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  members   ConversationMember[]
+  messages  Message[]
+}
+
+model ConversationMember {
+  id             String       @id @default(uuid())
+  conversationId String
+  userId         String
+  joinedAt       DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
 model Image {
@@ -57,33 +131,13 @@ model Interest {
   profiles Profile[] @relation("InterestToProfile")
 }
 
-model Match {
-  id        String      @id @default(uuid())
-  user1Id   String
-  user2Id   String
-  status    MatchStatus @default(PENDING)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  messages  Message[]
-
-  @@unique([user1Id, user2Id])
-}
-
-model Message {
-  id        String   @id @default(uuid())
-  matchId   String
-  senderId  String
-  content   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
-}
-
 model Block {
   id        String   @id @default(uuid())
   blockerId String
   blockedId String
   createdAt DateTime @default(now())
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
 }
@@ -95,11 +149,34 @@ model Report {
   reason      String
   description String?
   createdAt   DateTime @default(now())
+  reporter    User     @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported    User     @relation("Reported", fields: [reportedId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType
+  referenceId String? // ID of the Match, Message, or Swipe
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum SwipeType {
+  LIKE
+  PASS
+  SUPERLIKE
 }
 
 enum MatchStatus {
-  PENDING
   MATCHED
   UNMATCHED
-  BLOCKED
+}
+
+enum NotificationType {
+  NEW_MATCH
+  NEW_MESSAGE
+  LIKE_RECEIVED
+  SYSTEM
 }

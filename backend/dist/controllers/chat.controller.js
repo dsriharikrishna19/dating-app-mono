@@ -1,34 +1,56 @@
 import prisma from '../lib/prisma.js';
 import { getIO } from '../lib/socket.js';
 import { z } from 'zod';
-import { MatchService } from '../services/match.service.js';
 import { sendSuccess } from '../utils/response.js';
 import { ForbiddenError } from '../utils/errors.js';
+import { NotificationType } from '@prisma/client';
 const SendMessageSchema = z.object({
     content: z.string().min(1),
 });
-export const getMatches = async (req, res, next) => {
+export const getConversations = async (req, res, next) => {
     try {
         const userId = req.userId;
-        const matches = await MatchService.getMatches(userId);
-        const enrichedMatches = await Promise.all(matches.map(async (match) => {
-            const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
-            const otherProfile = await prisma.profile.findUnique({
-                where: { userId: otherUserId },
-                include: { images: { take: 1 } },
-            });
+        const memberOf = await prisma.conversationMember.findMany({
+            where: { userId },
+            include: {
+                conversation: {
+                    include: {
+                        members: {
+                            where: { userId: { not: userId } },
+                            include: {
+                                user: {
+                                    include: {
+                                        profile: {
+                                            include: { images: { where: { isPrimary: true }, take: 1 } }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        messages: {
+                            orderBy: { createdAt: 'desc' },
+                            take: 1
+                        }
+                    }
+                }
+            }
+        });
+        const conversations = memberOf.map(m => {
+            const conv = m.conversation;
+            const otherMember = conv.members[0];
             return {
-                id: match.id,
+                id: conv.id,
+                matchId: conv.matchId,
                 otherUser: {
-                    id: otherUserId,
-                    name: otherProfile?.name || 'Unknown',
-                    image: otherProfile?.images[0]?.url || null,
+                    id: otherMember?.userId,
+                    name: otherMember?.user.profile?.name || 'Unknown',
+                    image: otherMember?.user.profile?.images[0]?.url || null,
                 },
-                lastMessage: match.messages[0] || null,
-                updatedAt: match.updatedAt,
+                lastMessage: conv.messages[0] || null,
+                updatedAt: conv.updatedAt,
             };
-        }));
-        sendSuccess(res, enrichedMatches, 'Matches fetched successfully');
+        });
+        sendSuccess(res, conversations, 'Conversations fetched successfully');
     }
     catch (error) {
         next(error);
@@ -36,14 +58,16 @@ export const getMatches = async (req, res, next) => {
 };
 export const getMessages = async (req, res, next) => {
     try {
-        const matchId = req.params.matchId;
+        const conversationId = req.params.conversationId;
         const userId = req.userId;
-        const match = await prisma.match.findUnique({ where: { id: matchId } });
-        if (!match || (match.user1Id !== userId && match.user2Id !== userId)) {
-            throw new ForbiddenError('You are not authorized to view these messages');
+        const member = await prisma.conversationMember.findUnique({
+            where: { conversationId_userId: { conversationId, userId } }
+        });
+        if (!member) {
+            throw new ForbiddenError('You are not a member of this conversation');
         }
         const messages = await prisma.message.findMany({
-            where: { matchId: matchId },
+            where: { conversationId },
             orderBy: { createdAt: 'asc' },
         });
         sendSuccess(res, messages, 'Messages fetched successfully');
@@ -54,20 +78,39 @@ export const getMessages = async (req, res, next) => {
 };
 export const sendMessage = async (req, res, next) => {
     try {
-        const { matchId } = req.params;
+        const { conversationId } = req.params;
         const userId = req.userId;
         const { content } = SendMessageSchema.parse(req.body);
-        const match = await prisma.match.findUnique({ where: { id: matchId } });
-        if (!match || (match.user1Id !== userId && match.user2Id !== userId)) {
+        const member = await prisma.conversationMember.findUnique({
+            where: { conversationId_userId: { conversationId, userId } }
+        });
+        if (!member) {
             throw new ForbiddenError('You are not authorized to send messages here');
         }
         const message = await prisma.message.create({
-            data: { matchId, senderId: userId, content },
+            data: { conversationId, senderId: userId, content },
         });
-        // Notify the other user via Socket.io
-        const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
+        // Update conversation timestamp
+        await prisma.conversation.update({
+            where: { id: conversationId },
+            data: { updatedAt: new Date() }
+        });
+        // Notify other members
+        const otherMembers = await prisma.conversationMember.findMany({
+            where: { conversationId, userId: { not: userId } }
+        });
         const io = getIO();
-        io.to(otherUserId).emit('new_message', { matchId, message });
+        otherMembers.forEach(m => {
+            io.to(m.userId).emit('new_message', { conversationId, message });
+            // Create notification
+            prisma.notification.create({
+                data: {
+                    userId: m.userId,
+                    type: NotificationType.NEW_MESSAGE,
+                    referenceId: conversationId
+                }
+            }).catch(console.error); // Silent fail for notification in this block
+        });
         sendSuccess(res, message, 'Message sent successfully', 201);
     }
     catch (error) {
@@ -76,11 +119,11 @@ export const sendMessage = async (req, res, next) => {
 };
 export const markAsRead = async (req, res, next) => {
     try {
-        const matchId = req.params.matchId;
+        const conversationId = req.params.conversationId;
         const userId = req.userId;
         await prisma.message.updateMany({
             where: {
-                matchId: matchId,
+                conversationId,
                 senderId: { not: userId },
                 isRead: false,
             },
@@ -92,16 +135,18 @@ export const markAsRead = async (req, res, next) => {
         next(error);
     }
 };
-export const unmatch = async (req, res, next) => {
+export const deleteConversation = async (req, res, next) => {
     try {
-        const matchId = req.params.matchId;
+        const conversationId = req.params.conversationId;
         const userId = req.userId;
-        const match = await prisma.match.findUnique({ where: { id: matchId } });
-        if (!match || (match.user1Id !== userId && match.user2Id !== userId)) {
+        const member = await prisma.conversationMember.findUnique({
+            where: { conversationId_userId: { conversationId, userId } }
+        });
+        if (!member) {
             throw new ForbiddenError('You are not authorized to perform this action');
         }
-        await prisma.match.delete({ where: { id: matchId } });
-        sendSuccess(res, null, 'Unmatched successfully');
+        await prisma.conversation.delete({ where: { id: conversationId } });
+        sendSuccess(res, null, 'Conversation deleted successfully');
     }
     catch (error) {
         next(error);

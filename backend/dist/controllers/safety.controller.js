@@ -26,8 +26,8 @@ export const blockUser = async (req, res, next) => {
         await prisma.match.deleteMany({
             where: {
                 OR: [
-                    { user1Id: blockerId, user2Id: blockedId },
-                    { user1Id: blockedId, user2Id: blockerId },
+                    { userAId: blockerId, userBId: blockedId },
+                    { userAId: blockedId, userBId: blockerId },
                 ],
             },
         });

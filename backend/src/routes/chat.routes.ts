@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getMatches, getMessages, sendMessage, markAsRead, unmatch } from '../controllers/chat.controller.js';
+import { getConversations, getMessages, sendMessage, markAsRead, deleteConversation } from '../controllers/chat.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -8,26 +8,26 @@ router.use(authMiddleware);
 
 /**
  * @openapi
- * /api/chat/matches:
+ * /api/chat/conversations:
  *   get:
  *     tags: [Chat]
- *     summary: Get all matches for current user
+ *     summary: Get all conversations for current user
  *     security:
  *       - bearerAuth: []
  */
-router.get('/matches', getMatches);
+router.get('/conversations', getConversations);
 
 /**
  * @openapi
- * /api/chat/{matchId}/messages:
+ * /api/chat/{conversationId}/messages:
  *   get:
  *     tags: [Chat]
- *     summary: Get messages for a match
+ *     summary: Get messages for a conversation
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: matchId
+ *         name: conversationId
  *         required: true
  *         schema:
  *           type: string
@@ -38,7 +38,7 @@ router.get('/matches', getMatches);
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: matchId
+ *         name: conversationId
  *         required: true
  *         schema:
  *           type: string
@@ -52,29 +52,29 @@ router.get('/matches', getMatches);
  *             properties:
  *               content: { type: string }
  */
-router.get('/:matchId/messages', getMessages);
-router.post('/:matchId/messages', sendMessage);
+router.get('/:conversationId/messages', getMessages);
+router.post('/:conversationId/messages', sendMessage);
 
 /**
  * @openapi
- * /api/chat/{matchId}/read:
+ * /api/chat/{conversationId}/read:
  *   put:
  *     tags: [Chat]
  *     summary: Mark messages as read
  *     security:
  *       - bearerAuth: []
  */
-router.put('/:matchId/read', markAsRead);
+router.put('/:conversationId/read', markAsRead);
 
 /**
  * @openapi
- * /api/chat/matches/{matchId}:
+ * /api/chat/conversations/{conversationId}:
  *   delete:
  *     tags: [Chat]
- *     summary: Unmatch a user
+ *     summary: Delete a conversation
  *     security:
  *       - bearerAuth: []
  */
-router.delete('/matches/:matchId', unmatch);
+router.delete('/conversations/:conversationId', deleteConversation);
 
 export default router;

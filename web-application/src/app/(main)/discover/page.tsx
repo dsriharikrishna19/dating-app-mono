@@ -1,54 +1,71 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, X, Zap, RefreshCcw, Star, Sparkles, MapPin, Info } from 'lucide-react';
-
-const DUMMY_USERS = [
-  {
-    id: '1',
-    name: 'Sarah',
-    age: 24,
-    bio: 'Architecture student and coffee lover.',
-    distance: '3 miles',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80',
-    interests: ['Design', 'Coffee', 'Music'],
-  },
-  {
-    id: '2',
-    name: 'Jessica',
-    age: 22,
-    bio: 'Yoga instructor and nature enthusiast.',
-    distance: '5 miles',
-    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
-    interests: ['Yoga', 'Nature', 'Wellness'],
-  },
-  {
-    id: '3',
-    name: 'Emily',
-    age: 26,
-    bio: 'Professional foodie and traveler.',
-    distance: '2 miles',
-    image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
-    interests: ['Sushi', 'Travel', 'Dining'],
-  },
-  {
-    id: '4',
-    name: 'Chloe',
-    age: 23,
-    bio: 'Digital artist and plant lover.',
-    distance: '1 mile',
-    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
-    interests: ['Art', 'Plants', 'Museums'],
-  }
-];
+import { Heart, X, Zap, RefreshCcw, Star, Sparkles, MapPin, Info, Loader2 } from 'lucide-react';
+import { discoveryService, DiscoveryUser } from '@/services/discovery.service';
 
 export default function DiscoverPage() {
-  const [users, setUsers] = useState(DUMMY_USERS);
+  const [users, setUsers] = useState<DiscoveryUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleAction = (id: string, action: string) => {
-    setUsers(curr => curr.filter(u => u.id !== id));
+  const fetchFeed = async () => {
+    try {
+      setRefreshing(true);
+      const response = await discoveryService.getFeed();
+      const rawUsers = response.data;
+      
+      // Map backend profiles to frontend DiscoveryUser format
+      const mappedUsers = rawUsers.map((p: any) => ({
+        id: p.userId, // Using userId as the identifier
+        name: p.name || 'User',
+        age: p.birthDate ? new Date().getFullYear() - new Date(p.birthDate).getFullYear() : 24,
+        bio: p.bio || 'Finding connections.',
+        distance: p.distance ? `${p.distance} miles` : 'Nearby',
+        image: p.images?.[0]?.url || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+        interests: p.interests?.map((i: any) => i.name) || [],
+      }));
+
+      setUsers(mappedUsers);
+    } catch (error) {
+      console.error('Failed to fetch discovery feed:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
+
+  useEffect(() => {
+    fetchFeed();
+  }, []);
+
+  const handleAction = async (id: string, action: 'nope' | 'like') => {
+    // Optimistic UI: remove immediately
+    setUsers(curr => curr.filter(u => u.id !== id));
+
+    try {
+      const direction = action === 'like' ? 'LIKE' : 'PASS';
+      const response = await discoveryService.swipe(id, direction);
+      
+      if (response.data.match) {
+        // TODO: Handle match overlay
+        console.log('IT\'S A MATCH!', response.data.matchId);
+      }
+    } catch (error) {
+      console.error('Action failed:', error);
+      // Optional: restore the user if the server fails? 
+      // For dating apps, it's usually better to just move on.
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Loader2 className="size-10 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 p-4 lg:p-5 flex flex-col gap-6 max-w-[1600px] mx-auto w-full overflow-y-auto pb-24 lg:pb-12">
@@ -59,7 +76,7 @@ export default function DiscoverPage() {
         <p className="text-slate-600 font-bold uppercase tracking-widest text-[8px]">Matches for you</p>
       </header>
 
-      {/* Optimized Multi-Card Grid: Higher column count (4) and reduced card size */}
+      {/* Optimized Multi-Card Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         <AnimatePresence mode="popLayout">
           {users.map((user) => (
@@ -71,7 +88,7 @@ export default function DiscoverPage() {
               exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
               className="group relative flex flex-col glass-panel rounded-2xl border border-white/5 overflow-hidden shadow-xl transition-all hover:border-white/10"
             >
-              {/* Image Section: Aspect ratio reduced for density (aspect-[4/5.2]) */}
+              {/* Image Section */}
               <div className="aspect-[4/5.2] relative overflow-hidden">
                 <img src={user.image} className="size-full object-cover transition-transform duration-700 group-hover:scale-105" alt={user.name} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-60" />
@@ -85,7 +102,7 @@ export default function DiscoverPage() {
                 </div>
               </div>
 
-              {/* Info Section: Reduced Padding (p-3) */}
+              {/* Info Section */}
               <div className="p-3.5 flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-1.5">
                   <div className="flex flex-col gap-0.5 min-w-0">
@@ -107,11 +124,11 @@ export default function DiscoverPage() {
                   {user.bio}
                 </p>
 
-                {/* Actions: Scaled Down Buttons */}
+                {/* Actions */}
                 <div className="grid grid-cols-2 gap-2 mt-0.5">
                   <button 
                     onClick={() => handleAction(user.id, 'nope')}
-                    className="flex items-center justify-center py-2 rounded-xl bg-white/5 border border-white/5 text-slate-500 hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all font-black text-[9px] uppercase tracking-widest"
+                    className="flex items-center justify-center py-2 rounded-xl bg-white/5 border border-white/10 text-slate-500 hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all font-black text-[9px] uppercase tracking-widest"
                   >
                     <X className="size-3.5 mr-1" />
                     Nope
@@ -129,16 +146,21 @@ export default function DiscoverPage() {
           ))}
         </AnimatePresence>
 
-        {users.length === 0 && (
+        {users.length === 0 && !loading && (
           <div className="col-span-full flex flex-col items-center justify-center py-16 gap-5 opacity-30 text-center">
-            <RefreshCcw className="size-8 text-slate-600 animate-spin-slow" />
+            {refreshing ? (
+               <Loader2 className="size-8 text-slate-600 animate-spin" />
+            ) : (
+              <RefreshCcw className="size-8 text-slate-600" />
+            )}
             <div className="flex flex-col gap-1.5">
               <h2 className="text-lg font-black text-white">All Caught Up</h2>
               <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600">More people soon</p>
             </div>
             <button 
-              onClick={() => setUsers(DUMMY_USERS)}
-              className="px-6 py-2.5 rounded-xl brand-gradient text-white font-black uppercase text-xs tracking-widest shadow-xl"
+              onClick={fetchFeed}
+              disabled={refreshing}
+              className="px-6 py-2.5 rounded-xl brand-gradient text-white font-black uppercase text-xs tracking-widest shadow-xl disabled:opacity-50"
             >
               Refresh Feed
             </button>

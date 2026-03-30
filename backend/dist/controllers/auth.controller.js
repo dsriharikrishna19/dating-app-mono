@@ -7,6 +7,7 @@ import { BadRequestError, NotFoundError } from '../utils/errors.js';
 const { JWT_SECRET, OTP_MOCK } = ENV_CONFIG;
 const RegisterSchema = z.object({
     phoneNumber: z.string().min(10).max(15),
+    email: z.string().email(),
 });
 const LoginSchema = z.object({
     phoneNumber: z.string().min(10).max(15),
@@ -17,15 +18,21 @@ const VerifyOtpSchema = z.object({
 });
 export const register = async (req, res, next) => {
     try {
-        const { phoneNumber } = RegisterSchema.parse(req.body);
-        const existingUser = await prisma.user.findUnique({
-            where: { phoneNumber },
+        const { phoneNumber, email } = RegisterSchema.parse(req.body);
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { phoneNumber },
+                    { email },
+                ],
+            },
         });
         if (existingUser) {
-            throw new BadRequestError('User already exists');
+            const field = existingUser.phoneNumber === phoneNumber ? 'Phone number' : 'Email';
+            throw new BadRequestError(`${field} already exists`);
         }
         const newUser = await prisma.user.create({
-            data: { phoneNumber },
+            data: { phoneNumber, email },
         });
         // Mock OTP sending for first-time verification during registration.
         console.log(`OTP for ${phoneNumber}: ${OTP_MOCK}`);

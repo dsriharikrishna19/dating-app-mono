@@ -1,103 +1,206 @@
-import { PrismaClient } from '@prisma/client';
-import process from 'node:process';
+import { PrismaClient, SwipeType, NotificationType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding database...');
+  console.log('🌱 Starting seed...');
 
-  // 1. Create Interests
-  const interests = [
-    'Cooking', 'Hiking', 'Gaming', 'Music', 'Photography', 
-    'Travel', 'Art', 'Fitness', 'Reading', 'Movies'
-  ];
+  // 1. Clear existing data (optional but recommended during refactor)
+  await prisma.$transaction([
+    prisma.notification.deleteMany(),
+    prisma.message.deleteMany(),
+    prisma.conversationMember.deleteMany(),
+    prisma.conversation.deleteMany(),
+    prisma.match.deleteMany(),
+    prisma.swipe.deleteMany(),
+    prisma.image.deleteMany(),
+    prisma.userPreference.deleteMany(),
+    prisma.interest.deleteMany(),
+    prisma.profile.deleteMany(),
+    prisma.user.deleteMany(),
+  ]);
 
-  const createdInterests = await Promise.all(
-    interests.map(name => 
-      prisma.interest.upsert({
-        where: { name },
-        update: {},
-        create: { name }
-      })
-    )
-  );
+  // 2. Seed Interests
+  const interests = await Promise.all([
+    prisma.interest.create({ data: { name: 'Travel' } }),
+    prisma.interest.create({ data: { name: 'Music' } }),
+    prisma.interest.create({ data: { name: 'Photography' } }),
+    prisma.interest.create({ data: { name: 'Fitness' } }),
+    prisma.interest.create({ data: { name: 'Gaming' } }),
+    prisma.interest.create({ data: { name: 'Cooking' } }),
+    prisma.interest.create({ data: { name: 'Art' } }),
+    prisma.interest.create({ data: { name: 'Reading' } }),
+    prisma.interest.create({ data: { name: 'Movies' } }),
+    prisma.interest.create({ data: { name: 'Tech' } }),
+  ]);
 
-  // 2. Create Sample Users & Profiles
-  const sampleUsers = [
-    {
-      phoneNumber: '+1234567890',
-      email: 'alex@example.com',
-      isGold: true,
+  // 3. Seed Users
+  const alice = await prisma.user.create({
+    data: {
+      phoneNumber: '+1111111111',
+      email: 'alice@example.com',
+      isVerified: true,
+      onboarded: true,
       profile: {
-        name: 'Alex Johnson',
-        bio: 'Adventure seeker and coffee lover. Let\'s explore the city!',
-        birthDate: new Date('1995-06-15'),
-        gender: 'MALE',
-        lookingFor: 'FEMALE',
-        location: { latitude: 40.7128, longitude: -74.0060, address: 'New York, NY' },
-        isGold: true,
-        interests: { connect: [{ id: createdInterests[0].id }, { id: createdInterests[1].id }] }
-      }
-    },
-    {
-      phoneNumber: '+1987654321',
-      email: 'sarah@example.com',
-      isGold: true,
-      profile: {
-        name: 'Sarah Miller',
-        bio: 'Artist, traveler, and amateur chef. Always looking for new inspiration.',
-        birthDate: new Date('1993-02-10'),
-        gender: 'FEMALE',
-        lookingFor: 'MALE',
-        location: JSON.stringify({ latitude: 34.0522, longitude: -118.2437, address: 'Los Angeles, CA' }),
-        isGold: false,
-        interests: { connect: [{ id: createdInterests[6].id }, { id: createdInterests[5].id }] }
-      }
-    },
-    {
-        phoneNumber: '+1122334455',
-        email: 'jordan@example.com',
-        isGold: true,
-        profile: {
-          name: 'Jordan Lee',
-          bio: 'Fitness enthusiast and tech nerd. I love heavy weights and heavy metal.',
-          birthDate: new Date('1998-11-20'),
-          gender: 'MALE',
-          lookingFor: 'FEMALE',
-          location: JSON.stringify({ latitude: 41.8781, longitude: -87.6298, address: 'Chicago, IL' }),
-          isGold: true,
-          interests: { connect: [{ id: createdInterests[7].id }, { id: createdInterests[3].id }] }
+        create: {
+          name: 'Alice Johnson',
+          bio: 'Traveling the world and loving life!',
+          gender: 'FEMALE',
+          birthDate: new Date('1998-05-15'),
+          latitude: 40.7128,
+          longitude: -74.006,
+          interests: { connect: [{ name: 'Travel' }, { name: 'Photography' }, { name: 'Music' }] },
+          images: {
+            create: [
+              { url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330', isPrimary: true },
+            ]
+          }
+        }
+      },
+      preferences: {
+        create: {
+          minAge: 20,
+          maxAge: 35,
+          maxDistance: 50,
+          genderPreference: 'MALE'
         }
       }
-  ];
+    }
+  });
 
-  for (const u of sampleUsers) {
-    await prisma.user.upsert({
-      where: { phoneNumber: u.phoneNumber },
-      update: {
-        isVerified: true,
-        onboarded: true,
+  const bob = await prisma.user.create({
+    data: {
+      phoneNumber: '+2222222222',
+      email: 'bob@example.com',
+      isVerified: true,
+      onboarded: true,
+      profile: {
+        create: {
+          name: 'Bob Miller',
+          bio: 'Coffee lover and tech enthusiast.',
+          gender: 'MALE',
+          birthDate: new Date('1995-10-20'),
+          latitude: 40.7306,
+          longitude: -73.9352,
+          interests: { connect: [{ name: 'Tech' }, { name: 'Music' }, { name: 'Gaming' }] },
+          images: {
+            create: [
+              { url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e', isPrimary: true },
+            ]
+          }
+        }
       },
-      create: {
-        phoneNumber: u.phoneNumber,
-        email: u.email,
-        onboarded: true,
-        isVerified: true,
-        profile: {
-          create: {
-            ...u.profile,
-            images: {
-              create: [
-                { url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop', isPrimary: true }
-              ]
-            }
+      preferences: {
+        create: {
+          minAge: 18,
+          maxAge: 30,
+          maxDistance: 50,
+          genderPreference: 'FEMALE'
+        }
+      }
+    }
+  });
+
+  const charlie = await prisma.user.create({
+    data: {
+      phoneNumber: '+3333333333',
+      email: 'charlie@example.com',
+      isVerified: true,
+      onboarded: true,
+      profile: {
+        create: {
+          name: 'Charlie Smith',
+          bio: 'Outdoor guy who loves reading.',
+          gender: 'MALE',
+          birthDate: new Date('1992-02-10'),
+          latitude: 40.7589,
+          longitude: -73.9851,
+          interests: { connect: [{ name: 'Reading' }, { name: 'Travel' }] },
+          images: {
+            create: [
+              { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', isPrimary: true },
+            ]
           }
         }
       }
-    });
-  }
+    }
+  });
 
-  console.log('Seeding complete!');
+  // 4. Seed Swipes
+  // Alice likes Bob
+  await prisma.swipe.create({
+    data: {
+      swiperId: alice.id,
+      targetId: bob.id,
+      type: SwipeType.LIKE,
+    }
+  });
+
+  // Bob likes Alice (Mutual!)
+  await prisma.swipe.create({
+    data: {
+      swiperId: bob.id,
+      targetId: alice.id,
+      type: SwipeType.LIKE,
+    }
+  });
+
+  // Alice passes Charlie
+  await prisma.swipe.create({
+    data: {
+      swiperId: alice.id,
+      targetId: charlie.id,
+      type: SwipeType.PASS,
+    }
+  });
+
+  // 5. Establish Match & Conversation for Alice & Bob
+  const match = await prisma.match.create({
+    data: {
+      userAId: alice.id,
+      userBId: bob.id,
+    }
+  });
+
+  const conversation = await prisma.conversation.create({
+    data: {
+      matchId: match.id,
+      members: {
+        create: [
+          { userId: alice.id },
+          { userId: bob.id },
+        ]
+      }
+    }
+  });
+
+  // 6. Seed Messages
+  await prisma.message.create({
+    data: {
+      conversationId: conversation.id,
+      senderId: alice.id,
+      content: 'Hey Bob! Loved your tech bio.',
+    }
+  });
+
+  await prisma.message.create({
+    data: {
+      conversationId: conversation.id,
+      senderId: bob.id,
+      content: 'Hi Alice! Thanks. Where was your primary photo taken?',
+    }
+  });
+
+  // 7. Seed Notifications
+  await prisma.notification.create({
+    data: {
+      userId: alice.id,
+      type: NotificationType.NEW_MATCH,
+      referenceId: match.id,
+    }
+  });
+
+  console.log('✅ Seed completed successfully!');
 }
 
 main()

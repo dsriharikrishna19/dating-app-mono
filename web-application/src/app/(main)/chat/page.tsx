@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Image as ImageIcon, Plus, MoreVertical, Heart, ArrowLeft, Search, MessageCircle } from 'lucide-react';
+import { Send, Image as ImageIcon, Plus, MoreVertical, Heart, ArrowLeft, Search, MessageCircle, Loader2 } from 'lucide-react';
+import { chatService, Conversation, ChatMessage } from '@/services/chat.service';
+import { socketService } from '@/services/socket.service';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const DUMMY_MATCHES = [
   { id: '1', name: 'Sarah', lastMsg: 'Hey! How are you?', time: '2m', active: true, image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80' },
@@ -17,31 +21,86 @@ const DUMMY_MESSAGES = [
 ];
 
 export default function ChatPage() {
-  const [selectedMatch, setSelectedMatch] = useState<any>(DUMMY_MATCHES[0]);
-  const [messages, setMessages] = useState(DUMMY_MESSAGES);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
+  const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Fetch conversations
+  useEffect(() => {
+    const fetchConvs = async () => {
+      try {
+        const data = await chatService.getConversations();
+        setConversations(data);
+      } catch (err) {
+        console.error('Failed to fetch conversations:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchConvs();
+  }, []);
+
+  // Fetch messages when selection changes
+  useEffect(() => {
+    if (!selectedConv) return;
+    const fetchMsgs = async () => {
+      try {
+        const data = await chatService.getMessages(selectedConv.id);
+        setMessages(data);
+      } catch (err) {
+        console.error('Failed to fetch messages:', err);
+      }
+    };
+    fetchMsgs();
+  }, [selectedConv]);
+
+  // Real-time listener
+  useEffect(() => {
+    if (!user) return;
+    socketService.connect(user.id);
+    
+    const unbind = socketService.on('new_message', (payload: any) => {
+      if (selectedConv && payload.conversationId === selectedConv.id) {
+        setMessages(prev => [...prev, payload.message]);
+      }
+      
+      // Update last message in the list
+      setConversations(prev => prev.map(c => {
+        if (c.id === payload.conversationId) {
+          return { ...c, lastMessage: payload.message };
+        }
+        return c;
+      }));
+    });
+
+    return () => unbind();
+  }, [user, selectedConv]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
-    const newMsg = {
-      id: Date.now().toString(),
-      sender: 'me',
-      text: inputText,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-    setMessages([...messages, newMsg]);
+  const handleSend = async () => {
+    if (!inputText.trim() || !selectedConv) return;
+    const text = inputText;
     setInputText('');
+    
+    try {
+      const msg = await chatService.sendMessage(selectedConv.id, text);
+      setMessages(prev => [...prev, msg]);
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
   };
 
   return (
     <div className="flex h-screen bg-[#05070A] overflow-hidden">
       {/* Matches List: Refactored for Density */}
-      <aside className={`w-full lg:w-80 border-r border-white/5 flex flex-col bg-slate-900/10 backdrop-blur-xl shrink-0 ${selectedMatch && 'hidden lg:flex'}`}>
+      <aside className={`w-full lg:w-80 border-r border-white/5 flex flex-col bg-slate-900/10 backdrop-blur-xl shrink-0 ${selectedConv && 'hidden lg:flex'}`}>
         <header className="p-5 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-black text-white tracking-tight">Messages</h1>
@@ -60,28 +119,35 @@ export default function ChatPage() {
         </header>
 
         <div className="flex-1 overflow-y-auto px-2 flex flex-col gap-1">
-          {DUMMY_MATCHES.map((match) => (
+          {loading ? (
+             <div className="flex-1 flex items-center justify-center">
+               <Loader2 className="size-6 text-primary animate-spin" />
+             </div>
+          ) : conversations.length === 0 ? (
+            <p className="text-center text-slate-500 text-xs mt-10">No messages yet.</p>
+          ) : conversations.map((conv) => (
             <button
-              key={match.id}
-              onClick={() => setSelectedMatch(match)}
+              key={conv.id}
+              onClick={() => setSelectedConv(conv)}
               className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border group relative ${
-                selectedMatch?.id === match.id 
+                selectedConv?.id === conv.id 
                 ? 'bg-primary/10 border-primary/10' 
                 : 'hover:bg-white/5 border-transparent text-slate-400'
               }`}
             >
               <div className="relative shrink-0">
-                <img src={match.image} className="size-11 rounded-xl object-cover border border-white/5" />
-                {match.active && <div className="absolute -top-1 -right-1 size-3 bg-emerald-500 rounded-full border-2 border-[#05070A] shadow-lg" />}
+                <img src={conv.otherUser.image || '/placeholder-user.png'} className="size-11 rounded-xl object-cover border border-white/5" />
               </div>
               <div className="flex-1 text-left min-w-0">
                 <div className="flex justify-between items-center">
-                  <h3 className={`font-bold text-sm tracking-tight truncate ${selectedMatch?.id === match.id ? 'text-white' : 'text-slate-300'}`}>
-                    {match.name}
+                  <h3 className={`font-bold text-sm tracking-tight truncate ${selectedConv?.id === conv.id ? 'text-white' : 'text-slate-300'}`}>
+                    {conv.otherUser.name}
                   </h3>
-                  <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">{match.time}</span>
+                  <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">
+                    {new Date(conv.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
                 </div>
-                <p className="text-xs text-slate-500 font-medium truncate leading-tight">{match.lastMsg}</p>
+                <p className="text-xs text-slate-500 font-medium truncate leading-tight">{conv.lastMessage?.content || 'No messages yet'}</p>
               </div>
             </button>
           ))}
@@ -89,20 +155,19 @@ export default function ChatPage() {
       </aside>
 
       {/* Conversation Area: Refactored with Flex + Gap */}
-      <main className={`flex-1 flex flex-col relative ${!selectedMatch && 'hidden lg:flex'}`}>
-        {selectedMatch ? (
+      <main className={`flex-1 flex flex-col relative ${!selectedConv && 'hidden lg:flex'}`}>
+        {selectedConv ? (
           <>
             <header className="px-4 py-3 border-b border-white/5 flex items-center justify-between glass-panel shrink-0">
               <div className="flex items-center gap-3">
-                <button onClick={() => setSelectedMatch(null)} className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors">
+                <button onClick={() => setSelectedConv(null)} className="lg:hidden p-2 text-slate-500 hover:text-white transition-colors">
                   <ArrowLeft className="size-5" />
                 </button>
                 <div className="relative size-9">
-                  <img src={selectedMatch.image} className="size-full rounded-xl object-cover border border-white/5" />
-                  {selectedMatch.active && <div className="absolute -top-1 -right-1 size-2.5 bg-emerald-500 rounded-full border-2 border-[#05070A]" />}
+                  <img src={selectedConv.otherUser.image || '/placeholder-user.png'} className="size-full rounded-xl object-cover border border-white/5" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <h3 className="font-bold text-white text-sm tracking-tight leading-none">{selectedMatch.name}</h3>
+                  <h3 className="font-bold text-white text-sm tracking-tight leading-none">{selectedConv.otherUser.name}</h3>
                   <p className="text-[9px] font-bold uppercase tracking-widest text-emerald-500 leading-none">Online</p>
                 </div>
               </div>
@@ -117,19 +182,21 @@ export default function ChatPage() {
             </header>
 
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-              {messages.map((msg, i) => (
+              {messages.map((msg) => (
                 <div 
                   key={msg.id} 
-                  className={`flex flex-col gap-1.5 ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}
+                  className={`flex flex-col gap-1.5 ${msg.senderId === user?.id ? 'items-end' : 'items-start'}`}
                 >
                   <div className={`max-w-[70%] p-3.5 rounded-2xl text-[13px] font-medium leading-relaxed shadow-xl ${
-                    msg.sender === 'me' 
+                    msg.senderId === user?.id 
                     ? 'brand-gradient text-white rounded-br-none' 
                     : 'glass-panel text-slate-200 border border-white/5 rounded-bl-none'
                   }`}>
-                    {msg.text}
+                    {msg.content}
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 px-1">{msg.time}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 px-1">
+                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
                 </div>
               ))}
               <div ref={scrollRef} />
